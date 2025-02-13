@@ -1,0 +1,16 @@
+{
+    "name": "medienbaecker/playground",
+    "description": "Kirby Playground",
+    "license": "MIT",
+    "type": "kirby-plugin",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Thomas Günther",
+            "email": "mail@medienbaecker.com"
+        }
+    ],
+    "require": {
+        "getkirby/composer-installer": "^1.1"
+    }
+}
