@@ -38,16 +38,28 @@ Kirby::plugin('medienbaecker/playground', [
           $this->next();
         }
 
-        $page = new Page([
-          'slug'     => $component ?? 'playground',
+        $playgroundPage = new Page([
+          'slug'     => 'playground',
           'template' => 'playground',
           'content'  => [
-            'title' => $component ? "Playground: {$component}" : 'Playground',
-            'component' => $component
+            'title' => 'Playground'
           ]
         ]);
 
-        return site()->visit($page);
+        if ($component) {
+          $componentPage = new Page([
+            'slug'     => $component,
+            'template' => 'playground',
+            'parent' => $playgroundPage,
+            'content'  => [
+              'title' => "Playground: {$component}",
+              'component' => $component
+            ]
+          ]);
+          return site()->visit($componentPage);
+        } else {
+          return site()->visit($playgroundPage);
+        }
       }
     ]
   ]
