@@ -19,7 +19,7 @@ class Playground
      *   bold: false|true|int|[min,max] - insert bold text (default: false)
      *   italic: false|true|int|[min,max] - insert italic text (default: false)
      *   prefix: string - text before lorem ipsum (default: 'Lorem ipsum ')
-     *   suffix: string - text after lorem ipsum (default: '')
+     *   suffix: string - text after lorem ipsum (default: '.')
      * }
      */
     public static function text(array $options = []): string
@@ -27,7 +27,9 @@ class Playground
         $wordCount = max(1, self::resolveCount($options['words'] ?? 20, 20));
         $paragraphCount = self::resolveCount($options['paragraphs'] ?? false, 0);
         $prefix = $options['prefix'] ?? 'Lorem ipsum ';
-        $suffix = $options['suffix'] ?? '';
+        $suffix = $options['suffix'] ?? '.';
+        if (!$prefix) $prefix = '';
+        if (!$suffix) $suffix = '';
 
         // Generate and shuffle words
         $loremWords = explode(' ', self::LOREM);
@@ -38,18 +40,15 @@ class Playground
         shuffle($text);
 
         // Insert random sentence breaks
-        for ($i = rand(6, 12); $i < count($text); $i += rand(6, 12)) {
+        for ($i = rand(6, 12); $i < count($text) - 1; $i += rand(6, 12)) {
             $text[$i] .= '.';
             if (isset($text[$i + 1])) {
                 $text[$i + 1] = ucfirst($text[$i + 1]);
             }
         }
 
-        // Capitalize first word (unless prefix), end with period (unless suffix)
+        // Capitalize first word (unless prefix)
         $text[0] = $prefix ? lcfirst($text[0]) : ucfirst($text[0]);
-        if (!$suffix && !str_ends_with($text[count($text) - 1], '.')) {
-            $text[count($text) - 1] .= '.';
-        }
 
         // Apply formatting
         self::wrapWords($text, $options['links'] ?? false, fn($w) => '<a href="#">' . $w . '</a>');

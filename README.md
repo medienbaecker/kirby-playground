@@ -59,11 +59,21 @@ Playground::text([
 
     // start with (default: 'Lorem ipsum ')
     'prefix' => 'Lorem ipsum ',
+    'prefix' => false,
 
-    // end with (default: '')
-    'suffix' => '!',
+    // end with (default: '.')
+    'suffix' => '.',
+    'suffix' => false,
 ])
 ```
+
+For names, titles, or other non-sentence content, set `prefix` and `suffix` to `false` (or `null` or `''`):
+
+```php
+Playground::text(['words' => 5, 'prefix' => false, 'suffix' => false])
+```
+
+This way you will get random words, _not_ starting with Lorem ipsum and _not_ ending with a period.
 
 ### Images
 
