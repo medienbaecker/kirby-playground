@@ -7,7 +7,7 @@ use Kirby\Cms\Files;
 class Playground
 {
     private const IMAGE_VARIANTS = ['landscape', 'portrait', 'square'];
-    private const LOREM = 'Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum';
+    private const LOREM = 'dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum';
 
     /**
      * Random lorem ipsum text (HTML)
@@ -18,7 +18,7 @@ class Playground
      *   links: false|true|int|[min,max] - insert links (default: false)
      *   bold: false|true|int|[min,max] - insert bold text (default: false)
      *   italic: false|true|int|[min,max] - insert italic text (default: false)
-     *   prefix: string - text before lorem ipsum (default: '')
+     *   prefix: string - text before lorem ipsum (default: 'Lorem ipsum ')
      *   suffix: string - text after lorem ipsum (default: '')
      * }
      */
@@ -26,7 +26,7 @@ class Playground
     {
         $wordCount = max(1, self::resolveCount($options['words'] ?? 20, 20));
         $paragraphCount = self::resolveCount($options['paragraphs'] ?? false, 0);
-        $prefix = $options['prefix'] ?? '';
+        $prefix = $options['prefix'] ?? 'Lorem ipsum ';
         $suffix = $options['suffix'] ?? '';
 
         // Generate and shuffle words
