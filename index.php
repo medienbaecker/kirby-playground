@@ -38,6 +38,9 @@ Kirby::plugin('medienbaecker/playground', [
         [
             'pattern' => 'media/playground/(:any)/(:any)/(:any)',
             'action'  => function (string $variant, string $hash, string $filename) {
+                if (kirby()->option('medienbaecker.playground.auth') && !kirby()->user()) {
+                    $this->next();
+                }
                 $variants = ['landscape', 'portrait', 'square'];
                 if (!in_array($variant, $variants)) {
                     return false;
@@ -49,6 +52,9 @@ Kirby::plugin('medienbaecker/playground', [
         [
             'pattern' => 'playground/(:any).jpg',
             'action'  => function ($variant) {
+                if (kirby()->option('medienbaecker.playground.auth') && !kirby()->user()) {
+                    $this->next();
+                }
                 $variants = ['landscape', 'portrait', 'square'];
                 if (!in_array($variant, $variants)) {
                     return false;
