@@ -95,6 +95,9 @@ Playground::images(4, ['width' => 400, 'height' => 300, 'seed' => 'thumbs'])
 // Random image (downloads fresh each page load - slow!)
 Playground::image()
 Playground::images(6)
+
+// With file content (alt, caption, etc.)
+Playground::image(['seed' => 'hero', 'content' => ['alt' => 'Hero image', 'caption' => Playground::text(['words' => 10])]])
 ```
 
 **Use seeds for fast page loads.** Unseeded images download from picsum.photos on every request. Seeded images are cached locally after the first download.

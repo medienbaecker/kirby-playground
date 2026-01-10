@@ -87,6 +87,7 @@ class Playground
      *   seed: string - seed for consistent random image
      *   width: int - image width (default: 1200)
      *   height: int - image height (default: 800)
+     *   content: array - file content fields (alt, caption, etc.)
      * }
      */
     public static function image(array|string $options = []): PlaygroundFile
@@ -99,6 +100,7 @@ class Playground
         $seed = $options['seed'] ?? null;
         $width = max(100, min(2000, $options['width'] ?? 1200));
         $height = max(100, min(2000, $options['height'] ?? 800));
+        $content = array_merge(['alt' => 'Placeholder image'], $options['content'] ?? []);
 
         // Generate cache ID based on what makes this image unique
         if ($id !== null) {
@@ -120,10 +122,7 @@ class Playground
             'parent'   => \site(),
             'root'     => $path,
             'url'      => \url("playground/image/{$cacheId}.jpg"),
-            'content'  => [
-                'alt' => 'Placeholder image',
-                'focus' => '50% 50%'
-            ]
+            'content'  => $content
         ]);
     }
 
