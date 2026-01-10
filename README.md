@@ -77,15 +77,36 @@ This way you will get random words, _not_ starting with Lorem ipsum and _not_ en
 
 ### Images
 
-Returns virtual Kirby File objects with full thumb support:
+Returns virtual Kirby File objects with full thumb support. Images are downloaded from [picsum.photos](https://picsum.photos) and cached locally.
 
 ```php
-Playground::image('landscape')->thumb('card')
-Playground::image('square')->crop(200, 200)
-Playground::images(6) // returns a Files collection
+// Seeded image (recommended - cached locally)
+Playground::image('hero')  // shorthand
+Playground::image(['seed' => 'hero'])
+Playground::image(['seed' => 'card', 'width' => 400, 'height' => 300])
+
+// Specific image by picsum ID
+Playground::image(['id' => 237])
+
+// Multiple images
+Playground::images(6, ['seed' => 'gallery'])  // gallery-0, gallery-1, ...
+Playground::images(4, ['width' => 400, 'height' => 300, 'seed' => 'thumbs'])
+
+// Random image (downloads fresh each page load - slow!)
+Playground::image()
+Playground::images(6)
 ```
 
-Variants: `landscape`, `portrait`, `square`
+**Use seeds for fast page loads.** Unseeded images download from picsum.photos on every request. Seeded images are cached locally after the first download.
+
+Full thumb support:
+
+```php
+Playground::image('hero')->thumb('card')
+Playground::image('test')->crop(200, 200)
+```
+
+Images are cached in `media/plugins/kirby-playground/source/`. Clear the media folder to re-download.
 
 ## Configuration
 

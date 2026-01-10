@@ -3,10 +3,11 @@
 namespace Medienbaecker;
 
 use Kirby\Cms\Files;
+use Kirby\Filesystem\F;
+use Kirby\Http\Remote;
 
 class Playground
 {
-    private const IMAGE_VARIANTS = ['landscape', 'portrait', 'square'];
     private const LOREM = 'dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum';
 
     /**
@@ -71,43 +72,117 @@ class Playground
     }
 
     /**
-     * Virtual placeholder image as Kirby File object
+     * Get source directory for cached images
      */
-    public static function image(string $variant = 'landscape', array $content = []): PlaygroundFile
+    public static function sourceDir(): string
     {
-        $variant = in_array($variant, self::IMAGE_VARIANTS) ? $variant : 'landscape';
+        return \kirby()->root('media') . '/plugins/kirby-playground/source';
+    }
+
+    /**
+     * Virtual placeholder image as Kirby File object
+     *
+     * @param array|string $options Seed string or options array {
+     *   id: int - specific picsum image ID
+     *   seed: string - seed for consistent random image
+     *   width: int - image width (default: 1200)
+     *   height: int - image height (default: 800)
+     * }
+     */
+    public static function image(array|string $options = []): PlaygroundFile
+    {
+        if (is_string($options)) {
+            $options = ['seed' => $options];
+        }
+
+        $id = $options['id'] ?? null;
+        $seed = $options['seed'] ?? null;
+        $width = max(100, min(2000, $options['width'] ?? 1200));
+        $height = max(100, min(2000, $options['height'] ?? 800));
+
+        // Generate cache ID based on what makes this image unique
+        if ($id !== null) {
+            $cacheId = md5("id:{$id}:{$width}:{$height}");
+        } elseif ($seed !== null) {
+            $cacheId = md5("seed:{$seed}:{$width}:{$height}");
+        } else {
+            $cacheId = md5(uniqid('', true));
+        }
+
+        $path = self::sourceDir() . "/{$cacheId}.jpg";
+
+        if (!file_exists($path)) {
+            self::fetchImage($cacheId, $width, $height, $seed, $id);
+        }
 
         return new PlaygroundFile([
-            'filename' => "playground-{$variant}.jpg",
+            'filename' => "{$cacheId}.jpg",
             'parent'   => \site(),
-            'root'     => __DIR__ . "/assets/{$variant}.jpg",
-            'url'      => \url("playground/{$variant}.jpg"),
-            'content'  => array_merge([
+            'root'     => $path,
+            'url'      => \url("playground/image/{$cacheId}.jpg"),
+            'content'  => [
                 'alt' => 'Placeholder image',
                 'focus' => '50% 50%'
-            ], $content)
+            ]
         ]);
     }
 
     /**
      * Multiple placeholder images as Files collection
      */
-    public static function images(int|array $options = 3): Files
+    public static function images(int $count = 3, array $options = []): Files
     {
-        if (is_int($options)) {
-            $options = ['count' => $options];
-        }
-
-        $count = $options['count'] ?? 3;
-        $variants = $options['variants'] ?? self::IMAGE_VARIANTS;
-        $content = $options['content'] ?? [];
-
         $files = [];
+        $baseSeed = $options['seed'] ?? null;
+
         for ($i = 0; $i < $count; $i++) {
-            $files[] = self::image($variants[$i % count($variants)], $content);
+            $opts = $options;
+            unset($opts['id']); // id doesn't make sense for multiple images
+
+            if ($baseSeed !== null) {
+                $opts['seed'] = "{$baseSeed}-{$i}";
+            }
+
+            $files[] = self::image($opts);
         }
 
         return new Files($files);
+    }
+
+    /**
+     * Download image from picsum.photos and cache it
+     */
+    private static function fetchImage(string $cacheId, int $width, int $height, ?string $seed = null, ?int $id = null): void
+    {
+        $dir = self::sourceDir();
+        if (!is_dir($dir) && !mkdir($dir, 0755, true)) {
+            throw new \Exception('Cannot create cache directory: ' . $dir);
+        }
+
+        // Build URL based on what's provided (id takes precedence)
+        if ($id !== null) {
+            $url = "https://picsum.photos/id/{$id}/{$width}/{$height}";
+        } elseif ($seed !== null) {
+            $url = "https://picsum.photos/seed/{$seed}/{$width}/{$height}";
+        } else {
+            $url = "https://picsum.photos/{$width}/{$height}";
+        }
+
+        $response = Remote::get($url, ['timeout' => 10]);
+
+        if ($response->code() !== 200) {
+            throw new \Exception(
+                "Failed to download from picsum.photos (HTTP {$response->code()}). " .
+                    "Check your internet connection."
+            );
+        }
+
+        $content = $response->content();
+        if (empty($content)) {
+            throw new \Exception('Empty response from picsum.photos');
+        }
+
+        F::write($dir . "/{$cacheId}.jpg", $content);
     }
 
     /**

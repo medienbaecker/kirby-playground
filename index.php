@@ -36,32 +36,44 @@ Kirby::plugin('medienbaecker/playground', [
 
     'routes' => [
         [
-            'pattern' => 'media/playground/(:any)/(:any)/(:any)',
-            'action'  => function (string $variant, string $hash, string $filename) {
+            'pattern' => 'media/playground/(:any)/(:any)',
+            'action'  => function (string $hash, string $filename) {
                 if (kirby()->option('medienbaecker.playground.auth') && !kirby()->user()) {
                     $this->next();
                 }
-                $variants = ['landscape', 'portrait', 'square'];
-                if (!in_array($variant, $variants)) {
+
+                // Extract cache ID (32-char MD5 hash) from thumb filename
+                $cacheId = substr(pathinfo($filename, PATHINFO_FILENAME), 0, 32);
+
+                $sourcePath = \Medienbaecker\Playground::sourceDir() . "/{$cacheId}.jpg";
+                if (!file_exists($sourcePath)) {
                     return false;
                 }
-                $file = \Medienbaecker\Playground::image($variant);
+
+                $file = new \Medienbaecker\PlaygroundFile([
+                    'filename' => "{$cacheId}.jpg",
+                    'parent'   => site(),
+                    'root'     => $sourcePath,
+                    'url'      => url("playground/image/{$cacheId}.jpg"),
+                ]);
+
                 return \Kirby\Cms\Media::thumb($file, $hash, $filename);
             }
         ],
         [
-            'pattern' => 'playground/(:any).jpg',
-            'action'  => function ($variant) {
+            'pattern' => 'playground/image/(:any).jpg',
+            'action'  => function (string $cacheId) {
                 if (kirby()->option('medienbaecker.playground.auth') && !kirby()->user()) {
                     $this->next();
                 }
-                $variants = ['landscape', 'portrait', 'square'];
-                if (!in_array($variant, $variants)) {
+
+                $path = \Medienbaecker\Playground::sourceDir() . "/{$cacheId}.jpg";
+                if (!file_exists($path)) {
                     return false;
                 }
-                $path = __DIR__ . "/assets/{$variant}.jpg";
+
                 return new Response(
-                    file_get_contents($path),
+                    \Kirby\Filesystem\F::read($path),
                     'image/jpeg',
                     200,
                     ['Cache-Control' => 'public, max-age=31536000']

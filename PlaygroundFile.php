@@ -3,10 +3,11 @@
 namespace Medienbaecker;
 
 use Kirby\Cms\File;
+use Kirby\Filesystem\F;
 
 /**
  * Virtual File for playground images with thumb support.
- * Overrides root/media paths since files live in plugin assets, not content folder.
+ * Overrides root/media paths since files live in media cache, not content folder.
  */
 class PlaygroundFile extends File
 {
@@ -25,18 +26,18 @@ class PlaygroundFile extends File
 
     public function mediaDir(): string
     {
-        return kirby()->root('media') . '/playground/' . $this->variant() . '/' . $this->mediaHash();
+        return kirby()->root('media') . '/playground/' . $this->mediaHash();
     }
 
     public function mediaUrl(?string $filename = null): string
     {
-        $base = url('media/playground/' . $this->variant() . '/' . $this->mediaHash());
+        $base = url('media/playground/' . $this->mediaHash());
         return $filename ? $base . '/' . $filename : $base;
     }
 
     public function mediaHash(): string
     {
-        return $this->mediaToken() . '-' . filemtime($this->root());
+        return $this->mediaToken() . '-' . $this->modifiedFile();
     }
 
     public function mediaToken(): string
@@ -44,8 +45,9 @@ class PlaygroundFile extends File
         return substr(md5($this->root()), 0, 10);
     }
 
-    protected function variant(): string
+    protected function modifiedFile(): int
     {
-        return str_replace(['playground-', '.jpg'], '', $this->filename());
+        // Use content hash instead of mtime (stable for downloaded files)
+        return crc32(F::read($this->root()));
     }
 }
