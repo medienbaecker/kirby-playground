@@ -32,13 +32,10 @@ class Playground
         if (!$prefix) $prefix = '';
         if (!$suffix) $suffix = '';
 
-        // Generate and shuffle words
+        // Pick random words from pool
         $loremWords = explode(' ', self::LOREM);
-        $text = [];
-        for ($i = 0; $i < $wordCount; $i++) {
-            $text[] = $loremWords[$i % count($loremWords)];
-        }
-        shuffle($text);
+        shuffle($loremWords);
+        $text = array_slice($loremWords, 0, $wordCount);
 
         // Insert random sentence breaks
         for ($i = rand(6, 12); $i < count($text) - 1; $i += rand(6, 12)) {
