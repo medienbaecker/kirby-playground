@@ -16,13 +16,13 @@ Kirby::plugin('medienbaecker/playground', [
     'siteMethods' => [
         'playgroundLinks' => function () {
             $files = Dir::files(kirby()->root('snippets') . '/playground');
-            $links = array_map(function ($file) {
+            return array_map(function ($file) {
                 $name = pathinfo($file, PATHINFO_FILENAME);
-                $title = ucwords(str_replace('-', ' ', $name));
-                return "<li><a href='" . url("playground/{$name}") . "'>{$title}</a></li>";
+                return [
+                    'url'   => url("playground/{$name}"),
+                    'title' => ucwords(str_replace('-', ' ', $name))
+                ];
             }, $files);
-
-            return '<ul class="playground-nav">' . implode('', $links) . '</ul>';
         }
     ],
 
@@ -31,6 +31,9 @@ Kirby::plugin('medienbaecker/playground', [
     ],
 
     'snippets' => [
+        'playground/section'   => __DIR__ . '/snippets/section.php',
+        'playground/label'     => __DIR__ . '/snippets/label.php',
+        'playground/overview'  => __DIR__ . '/snippets/overview.php',
         'playground/not-found' => __DIR__ . '/snippets/not-found.php'
     ],
 

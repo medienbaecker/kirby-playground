@@ -1,5 +1,7 @@
-<div class="wrap playground-list">
-  <div class="inner rich-text">
-    <?= site()->playgroundLinks() ?>
-  </div>
+<div class="playground-overview">
+	<ul>
+		<?php foreach (site()->playgroundLinks() as $link): ?>
+			<li><a href="<?= $link['url'] ?>"><?= $link['title'] ?></a></li>
+		<?php endforeach ?>
+	</ul>
 </div>
