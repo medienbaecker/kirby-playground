@@ -1,9 +1,10 @@
 <?php snippet('head') ?>
 
-<?= css([
+<?php $componentCss = asset("assets/css/playground/{$page->component()}.css") ?>
+<?= css(array_filter([
 	'assets/css/playground/playground.css',
-	"assets/css/playground/{$page->component()}.css"
-]) ?>
+	F::exists($componentCss->root()) ? $componentCss->url() : null,
+])) ?>
 
 <?php snippet(["playground/{$page->component()}", 'playground/overview']) ?>
 
