@@ -61,6 +61,9 @@ return [
                 $this->next();
             }
 
+            // Playground pages show dynamic content and should never be cached
+            kirby()->response()->cache(false);
+
             $playgroundPage = new Page([
                 'slug'     => 'playground',
                 'template' => 'playground',
