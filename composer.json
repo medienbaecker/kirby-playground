@@ -11,5 +11,15 @@
     ],
     "require": {
         "getkirby/composer-installer": "^1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Medienbaecker\\Playground\\": "classes/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "getkirby/composer-installer": true
+        }
     }
 }

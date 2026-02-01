@@ -1,6 +1,6 @@
 <?php
 
-namespace Medienbaecker;
+namespace Medienbaecker\Playground;
 
 use Kirby\Cms\File;
 use Kirby\Filesystem\F;
@@ -9,7 +9,7 @@ use Kirby\Filesystem\F;
  * Virtual File for playground images with thumb support.
  * Overrides root/media paths since files live in media cache, not content folder.
  */
-class PlaygroundFile extends File
+class VirtualFile extends File
 {
     protected string|null $customRoot = null;
 

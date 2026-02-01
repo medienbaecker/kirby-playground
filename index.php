@@ -1,12 +1,15 @@
 <?php
 
 use Kirby\Cms\App as Kirby;
-use Kirby\Cms\Page;
 use Kirby\Filesystem\Dir;
-use Kirby\Http\Response;
 
-require_once __DIR__ . '/Playground.php';
-require_once __DIR__ . '/PlaygroundFile.php';
+// Manual installation: load classes directly if Composer autoload isn't available
+if (!class_exists('Medienbaecker\Playground\Playground')) {
+    require __DIR__ . '/classes/VirtualFile.php';
+    require __DIR__ . '/classes/TextGenerator.php';
+    require __DIR__ . '/classes/ImageGenerator.php';
+    require __DIR__ . '/classes/Playground.php';
+}
 
 Kirby::plugin('medienbaecker/playground', [
     'options' => [
@@ -37,82 +40,9 @@ Kirby::plugin('medienbaecker/playground', [
         'playground/not-found' => __DIR__ . '/snippets/not-found.php'
     ],
 
-    'routes' => [
-        [
-            'pattern' => 'media/playground/(:any)/(:any)',
-            'action'  => function (string $hash, string $filename) {
-                if (kirby()->option('medienbaecker.playground.auth') && !kirby()->user()) {
-                    $this->next();
-                }
-
-                // Extract cache ID (32-char MD5 hash) from thumb filename
-                $cacheId = substr(pathinfo($filename, PATHINFO_FILENAME), 0, 32);
-
-                $sourcePath = \Medienbaecker\Playground::sourceDir() . "/{$cacheId}.jpg";
-                if (!file_exists($sourcePath)) {
-                    return false;
-                }
-
-                $file = new \Medienbaecker\PlaygroundFile([
-                    'filename' => "{$cacheId}.jpg",
-                    'parent'   => site(),
-                    'root'     => $sourcePath,
-                    'url'      => url("playground/image/{$cacheId}.jpg"),
-                ]);
-
-                return \Kirby\Cms\Media::thumb($file, $hash, $filename);
-            }
-        ],
-        [
-            'pattern' => 'playground/image/(:any).jpg',
-            'action'  => function (string $cacheId) {
-                if (kirby()->option('medienbaecker.playground.auth') && !kirby()->user()) {
-                    $this->next();
-                }
-
-                $path = \Medienbaecker\Playground::sourceDir() . "/{$cacheId}.jpg";
-                if (!file_exists($path)) {
-                    return false;
-                }
-
-                return new Response(
-                    \Kirby\Filesystem\F::read($path),
-                    'image/jpeg',
-                    200,
-                    ['Cache-Control' => 'public, max-age=31536000']
-                );
-            }
-        ],
-        [
-            'pattern' => 'playground/(:any?)',
-            'action'  => function ($component = null) {
-                if (kirby()->option('medienbaecker.playground.auth') && !kirby()->user()) {
-                    $this->next();
-                }
-
-                $playgroundPage = new Page([
-                    'slug'     => 'playground',
-                    'template' => 'playground',
-                    'content'  => [
-                        'title' => 'Playground'
-                    ]
-                ]);
-
-                if ($component) {
-                    $componentPage = new Page([
-                        'slug'     => $component,
-                        'template' => 'playground',
-                        'parent' => $playgroundPage,
-                        'content'  => [
-                            'title' => "Playground: {$component}",
-                            'component' => $component
-                        ]
-                    ]);
-                    return site()->visit($componentPage);
-                } else {
-                    return site()->visit($playgroundPage);
-                }
-            }
-        ]
-    ]
+    'routes' => require __DIR__ . '/routes.php'
 ]);
+
+// Backwards compatibility: old namespace → new namespace
+class_alias(\Medienbaecker\Playground\Playground::class, 'Medienbaecker\Playground');
+class_alias(\Medienbaecker\Playground\VirtualFile::class, 'Medienbaecker\PlaygroundFile');
