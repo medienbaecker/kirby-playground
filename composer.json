@@ -3,6 +3,7 @@
     "description": "Kirby Playground",
     "license": "MIT",
     "type": "kirby-plugin",
+    "version": "1.2.3",
     "authors": [
         {
             "name": "Thomas Günther",
