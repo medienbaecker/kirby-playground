@@ -13,22 +13,23 @@ For example, if you have a snippet named `buttons.php`, it will be available at 
 
 - Custom route handling for `/playground/(:any?)` that can optionally be restricted to logged-in users
 - Components are rendered through virtual pages, without requiring actual page files
-- Loads CSS files from `assets/css/playground/[component-name].css` and a global `playground.css`
-- Built-in fallback to a component list when accessing non-existent components
+- Optionally loads `assets/css/playground/playground.css` and `assets/css/playground/[component-name].css`
+- Optionally loads `assets/js/playground/[component-name].js`
+- Unknown components return a 404 with a list of the components you do have
 - Placeholder helpers for lorem ipsum text and images
 
 ## Placeholder Content
 
-Generate placeholder content directly in your playground snippets (or anywhere else) by using the `Playground` class:
+Generate placeholder content directly in your playground snippets (or anywhere else) by using the `Placeholder` class:
 
 ```php
-use Medienbaecker\Playground;
+use Medienbaecker\Playground\Placeholder;
 ```
 
 ### Text
 
 ```php
-Playground::text([
+Placeholder::text([
     // word count (default: 20)
     'words' => 50,
     'words' => [30, 60],
@@ -70,7 +71,7 @@ Playground::text([
 For names, titles, or other non-sentence content, set `prefix` and `suffix` to `false` (or `null` or `''`):
 
 ```php
-Playground::text(['words' => 5, 'prefix' => false, 'suffix' => false])
+Placeholder::text(['words' => 5, 'prefix' => false, 'suffix' => false])
 ```
 
 This way you will get random words, _not_ starting with Lorem ipsum and _not_ ending with a period.
@@ -81,23 +82,23 @@ Returns virtual Kirby File objects with full thumb support. Images are downloade
 
 ```php
 // Seeded image (recommended - cached locally)
-Playground::image('hero')  // shorthand
-Playground::image(['seed' => 'hero'])
-Playground::image(['seed' => 'card', 'width' => 400, 'height' => 300])
+Placeholder::image('hero')  // shorthand
+Placeholder::image(['seed' => 'hero'])
+Placeholder::image(['seed' => 'card', 'width' => 400, 'height' => 300])
 
 // Specific image by picsum ID
-Playground::image(['id' => 237])
+Placeholder::image(['id' => 237])
 
 // Multiple images
-Playground::images(6, ['seed' => 'gallery'])  // gallery-0, gallery-1, ...
-Playground::images(4, ['width' => 400, 'height' => 300, 'seed' => 'thumbs'])
+Placeholder::images(6, ['seed' => 'gallery'])  // gallery-0, gallery-1, ...
+Placeholder::images(4, ['width' => 400, 'height' => 300, 'seed' => 'thumbs'])
 
 // Random image (downloads fresh each page load - slow!)
-Playground::image()
-Playground::images(6)
+Placeholder::image()
+Placeholder::images(6)
 
 // With file content (alt, caption, etc.)
-Playground::image(['seed' => 'hero', 'content' => ['alt' => 'Hero image', 'caption' => Playground::text(['words' => 10])]])
+Placeholder::image(['seed' => 'hero', 'content' => ['alt' => 'Hero image', 'caption' => Placeholder::text(['words' => 10])]])
 ```
 
 **Use seeds for fast page loads.** Unseeded images download from picsum.photos on every request. Seeded images are cached locally after the first download.
@@ -105,11 +106,11 @@ Playground::image(['seed' => 'hero', 'content' => ['alt' => 'Hero image', 'capti
 Full thumb support:
 
 ```php
-Playground::image('hero')->thumb('card')
-Playground::image('test')->crop(200, 200)
+Placeholder::image('hero')->thumb('card')
+Placeholder::image('test')->crop(200, 200)
 ```
 
-Images are cached in `media/plugins/kirby-playground/source/`. Clear the media folder to re-download.
+Images are cached in `media/playground-source/`. Delete that folder to re-download.
 
 ## Configuration
 
@@ -122,6 +123,8 @@ return [
 ];
 ```
 
+Playground pages are wrapped in `snippet('head')` and `snippet('bottom')`. If your site uses other names, override `site/snippets/playground-ui/head.php` and `bottom.php`. The same works for `playground-ui/overview` and `playground-ui/not-found`.
+
 ## Directory Structure
 
 ```
@@ -130,6 +133,9 @@ assets/
 │   └── playground/
 │       ├── playground.css
 │       └── your-component.css
+├── js/
+│   └── playground/
+│       └── your-component.js
 site/
 ├── snippets/
 │   └── playground/

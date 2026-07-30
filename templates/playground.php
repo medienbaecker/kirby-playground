@@ -1,11 +1,24 @@
-<?php snippet('head') ?>
+<?php snippet('playground-ui/head') ?>
 
-<?php $componentCss = asset("assets/css/playground/{$page->component()}.css") ?>
+<?php
+$component    = $page->component()->value();
+$globalCss    = asset('assets/css/playground/playground.css');
+$componentCss = asset("assets/css/playground/{$component}.css");
+$componentJs  = asset("assets/js/playground/{$component}.js");
+?>
 <?= css(array_filter([
-	'assets/css/playground/playground.css',
-	F::exists($componentCss->root()) ? $componentCss->url() : null,
+	$globalCss->exists() ? $globalCss->url() : null,
+	$componentCss->exists() ? $componentCss->url() : null,
 ])) ?>
 
-<?php snippet(["playground/{$page->component()}", 'playground/overview']) ?>
+<?php if ($component): ?>
+	<?php snippet(["playground/{$component}", 'playground-ui/not-found']) ?>
+<?php else: ?>
+	<?php snippet('playground-ui/overview') ?>
+<?php endif ?>
 
-<?php snippet('bottom') ?>
+<?= js(array_filter([
+	$componentJs->exists() ? $componentJs->url() : null,
+])) ?>
+
+<?php snippet('playground-ui/bottom') ?>

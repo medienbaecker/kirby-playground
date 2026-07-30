@@ -13,7 +13,9 @@ class ImageGenerator
      */
     public function sourceDir(): string
     {
-        return kirby()->root('media') . '/plugins/kirby-playground/source';
+        // Kept out of media/plugins/, where Assets::clean() sweeps anything
+        // that isn't a registered plugin asset
+        return kirby()->root('media') . '/playground-source';
     }
 
     /**

@@ -1,7 +1,5 @@
-<div class="playground-overview">
-	<ul>
-		<?php foreach (site()->playgroundLinks() as $link): ?>
-			<li><a href="<?= $link['url'] ?>"><?= $link['title'] ?></a></li>
-		<?php endforeach ?>
-	</ul>
+<div class="playground-not-found">
+	<p>No component named <strong><?= esc($page->component()) ?></strong>. Create it at <code>site/snippets/playground/<?= esc($page->component()) ?>.php</code></p>
 </div>
+
+<?php snippet('playground-ui/overview') ?>

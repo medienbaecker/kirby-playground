@@ -4,7 +4,7 @@ namespace Medienbaecker\Playground;
 
 use Kirby\Cms\Files;
 
-class Playground
+class Placeholder
 {
     private static ?TextGenerator $textGenerator = null;
     private static ?ImageGenerator $imageGenerator = null;

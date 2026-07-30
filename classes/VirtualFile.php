@@ -12,6 +12,7 @@ use Kirby\Filesystem\F;
 class VirtualFile extends File
 {
     protected string|null $customRoot = null;
+    protected string|null $cachedMediaHash = null;
 
     public function __construct(array $props)
     {
@@ -37,7 +38,7 @@ class VirtualFile extends File
 
     public function mediaHash(): string
     {
-        return $this->mediaToken() . '-' . $this->modifiedFile();
+        return $this->cachedMediaHash ??= $this->mediaToken() . '-' . $this->modifiedFile();
     }
 
     public function mediaToken(): string
