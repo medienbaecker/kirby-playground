@@ -4,7 +4,7 @@
  * colours, the contexts that redefine them, type, lengths, shadows, easings, durations and the rest
  */
 const container = document.querySelector(".playground-ui-tokens");
-const canvas = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
+const context = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
 
 const rules = [];
 const pending = [...document.styleSheets].flatMap((sheet) => {
@@ -84,10 +84,10 @@ const channels = (color) => {
     return { r: r / scale, g: g / scale, b: b / scale, a };
   }
 
-  canvas.clearRect(0, 0, 1, 1);
-  canvas.fillStyle = color;
-  canvas.fillRect(0, 0, 1, 1);
-  const [r, g, b, a] = canvas.getImageData(0, 0, 1, 1).data;
+  context.clearRect(0, 0, 1, 1);
+  context.fillStyle = color;
+  context.fillRect(0, 0, 1, 1);
+  const [r, g, b, a] = context.getImageData(0, 0, 1, 1).data;
 
   return { r: r / 255, g: g / 255, b: b / 255, a: a / 255 };
 };

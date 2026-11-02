@@ -39,7 +39,9 @@ async function render(form) {
 
   for (const field of form.elements) {
     if (field.type === "checkbox") {
-      props[field.name] = field.checked;
+      if (field.checked) {
+        props[field.name] = true;
+      }
     } else if (field.value !== "") {
       props[field.name] = field.type === "number" ? Number(field.value) : field.value;
     }
@@ -91,14 +93,20 @@ async function check(button) {
   button.disabled = true;
   result.textContent = "Checking…";
 
-  if (window.axe === undefined) {
-    await new Promise((resolve, reject) => {
-      const script = document.createElement("script");
-      script.src = button.dataset.script;
-      script.onload = resolve;
-      script.onerror = reject;
-      document.head.append(script);
-    });
+  try {
+    if (window.axe === undefined) {
+      await new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = button.dataset.script;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.append(script);
+      });
+    }
+  } catch {
+    result.textContent = "axe-core could not be loaded.";
+    button.disabled = false;
+    return;
   }
 
   for (const section of cases) {
@@ -131,4 +139,10 @@ async function check(button) {
   button.disabled = false;
 }
 
-document.querySelector(".playground-ui-header__axe")?.addEventListener("click", (event) => check(event.currentTarget));
+const axeButton = document.querySelector(".playground-ui-header__axe");
+
+if (document.querySelector(".playground-ui-case") === null) {
+  axeButton?.parentElement.remove();
+} else {
+  axeButton?.addEventListener("click", () => check(axeButton));
+}

@@ -66,9 +66,13 @@ class Playground
             return;
         }
 
+        $controls = static::controls($snippet, $props);
+
         if (static::$props !== null) {
-            $editable = array_column(static::controls($snippet, $props), 'name');
-            $props    = [...array_diff_key($props, array_flip($editable)), ...static::$props];
+            $editable = array_flip(array_column($controls, 'name'));
+            $passed   = array_intersect_key(static::$props, $editable);
+            $props    = array_replace(array_diff_key($props, array_diff_key($editable, $passed)), $passed);
+            $controls = static::controls($snippet, $props);
         }
 
         static::output([
@@ -78,7 +82,7 @@ class Playground
             'accessibility' => $accessibility,
             'attributes'    => $attributes,
             'php'           => static::php($snippet, $props),
-            'controls'      => static::controls($snippet, $props),
+            'controls'      => $controls,
         ]);
     }
 
@@ -224,7 +228,7 @@ class Playground
     }
 
     /**
-     * Templates and snippets that call a snippet, with the number of calls, playground pages left out
+     * Templates, snippets and plugins that call a snippet, with the number of calls, playground pages left out
      *
      * @return array<string, int> Path from the index root and calls
      */
@@ -232,12 +236,14 @@ class Playground
     {
         $pattern = '/snippet\(\s*[\'"]' . preg_quote($name, '/') . '[\'"]/';
         $index   = kirby()->root('index') . '/';
+        $plugins = kirby()->root('plugins');
+        $ignore  = array_map('realpath', [...glob("{$plugins}/*/node_modules"), ...glob("{$plugins}/*/vendor")]);
         $usage   = [];
 
-        foreach (['templates', 'snippets'] as $folder) {
+        foreach (['templates', 'snippets', 'plugins'] as $folder) {
             $root = kirby()->root($folder);
 
-            foreach (Dir::index($root, true) as $file) {
+            foreach (is_dir($root) ? Dir::index($root, true, $ignore) : [] as $file) {
                 if (pathinfo($file, PATHINFO_EXTENSION) !== 'php' || ($folder === 'snippets' && str_starts_with($file, 'playground/'))) {
                     continue;
                 }
@@ -344,7 +350,7 @@ class Playground
             return '[]';
         }
 
-        $indent = str_repeat('    ', $depth + 1);
+        $indent = str_repeat("\t", $depth + 1);
         $list   = array_is_list($value);
         $keys   = array_map(fn ($key) => var_export($key, true), array_keys($value));
         $width  = max(array_map('strlen', $keys));
@@ -354,13 +360,13 @@ class Playground
             $value
         );
 
-        return "[\n" . implode("\n", $lines) . "\n" . str_repeat('    ', $depth) . ']';
+        return "[\n" . implode("\n", $lines) . "\n" . str_repeat("\t", $depth) . ']';
     }
 
     private static function id(string $label): string
     {
-        $base = Str::slug($label) ?: 'case';
-        $id   = $base;
+        $base   = Str::slug($label) ?: 'case';
+        $id     = $base;
         $number = 1;
 
         while (isset(static::$ids[$id])) {

@@ -13,6 +13,7 @@ $componentCss = asset("assets/css/playground/{$component}.css");
 $componentJs  = asset("assets/js/playground/{$component}.js");
 $components   = Playground::components();
 $index        = array_search($component, array_column($components, 'name'), true);
+$case         = get('case');
 ?>
 <?= css(array_filter([
 	$plugin->asset('playground.css')->url(),
@@ -20,7 +21,7 @@ $index        = array_search($component, array_column($components, 'name'), true
 	$componentCss->exists() ? $componentCss->url() : null,
 ])) ?>
 
-<?php if ($index !== false && $case = get('case')): ?>
+<?php if ($index !== false && $case !== null): ?>
 	<?= Playground::isolate($component, $case, json_decode(get('props', ''), true)) ?? '<p class="playground-ui-not-found">No case with the id <code>' . esc($case) . '</code>.</p>' ?>
 <?php elseif ($index !== false): ?>
 	<?php $names = Playground::shows($component) ?>

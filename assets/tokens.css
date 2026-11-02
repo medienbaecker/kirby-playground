@@ -1,8 +1,3 @@
-.playground-ui-tokens {
-  --playground-ui-line: color-mix(in srgb, currentColor, transparent 85%);
-  --playground-ui-muted: color-mix(in srgb, currentColor, transparent 40%);
-}
-
 .playground-ui-tokens code,
 .playground-ui-tokens__title,
 .playground-ui-tokens__group-title,

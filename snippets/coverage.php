@@ -25,9 +25,27 @@ $shown      = count(array_filter($components, fn ($component) => $component['pag
 					<?php foreach ($gaps as $component): ?>
 						<tr>
 							<th scope="row"><code><?= str_replace('/', '/<wbr>', esc($component['name'])) ?></code></th>
-							<td><?= $component['page'] ? '<a href="' . $component['page']['url'] . '">' . esc($component['page']['title']) . '</a>' : '<span class="playground-ui-coverage__missing">None</span>' ?></td>
-							<td><?= $component['docblock'] ? 'Yes' : '<span class="playground-ui-coverage__missing">None</span>' ?></td>
-							<td><?= $component['status'] ? esc($component['status']) : '<span class="playground-ui-coverage__missing">None</span>' ?></td>
+							<td>
+								<?php if ($component['page']): ?>
+									<a href="<?= esc($component['page']['url'], 'attr') ?>"><?= esc($component['page']['title']) ?></a>
+								<?php else: ?>
+									<span class="playground-ui-coverage__missing">None</span>
+								<?php endif ?>
+							</td>
+							<td>
+								<?php if ($component['docblock']): ?>
+									Yes
+								<?php else: ?>
+									<span class="playground-ui-coverage__missing">None</span>
+								<?php endif ?>
+							</td>
+							<td>
+								<?php if ($component['status']): ?>
+									<?= esc($component['status']) ?>
+								<?php else: ?>
+									<span class="playground-ui-coverage__missing">None</span>
+								<?php endif ?>
+							</td>
 						</tr>
 					<?php endforeach ?>
 				</tbody>

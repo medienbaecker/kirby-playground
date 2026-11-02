@@ -5,9 +5,20 @@
 .playground-ui-case__header,
 .playground-ui-case__accessibility,
 .playground-ui-controls,
-.playground-ui-code {
+.playground-ui-code,
+.playground-ui-tokens {
   --playground-ui-line: color-mix(in srgb, currentColor, transparent 85%);
   --playground-ui-muted: color-mix(in srgb, currentColor, transparent 40%);
+}
+
+.playground-ui-header,
+.playground-ui-overview,
+.playground-ui-coverage,
+.playground-ui-component,
+.playground-ui-case__header,
+.playground-ui-case__accessibility,
+.playground-ui-controls,
+.playground-ui-code {
   font-family: system-ui, sans-serif;
   font-size: 0.875rem;
   line-height: 1.5;
@@ -104,26 +115,6 @@
   align-items: baseline;
   gap: 0.5rem 1rem;
   margin: 0.75rem 0 0;
-}
-
-.playground-ui-header__axe {
-  padding: 0.25rem 0.75rem;
-  border: 1px solid currentColor;
-  border-radius: 0.25rem;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
-}
-
-.playground-ui-header__axe:focus-visible {
-  background: color-mix(in srgb, currentColor 10%, transparent);
-}
-
-@media (hover: hover) {
-  .playground-ui-header__axe:hover {
-    background: color-mix(in srgb, currentColor 10%, transparent);
-  }
 }
 
 .playground-ui-axe {
@@ -315,6 +306,10 @@
   position: absolute;
   inset-block-start: 0;
   inset-inline-end: 0;
+}
+
+.playground-ui-code__copy,
+.playground-ui-header__axe {
   padding: 0.25rem 0.75rem;
   border: 1px solid currentColor;
   border-radius: 0.25rem;
@@ -324,12 +319,14 @@
   cursor: pointer;
 }
 
-.playground-ui-code__copy:focus-visible {
+.playground-ui-code__copy:focus-visible,
+.playground-ui-header__axe:focus-visible {
   background: color-mix(in srgb, currentColor 10%, transparent);
 }
 
 @media (hover: hover) {
-  .playground-ui-code__copy:hover {
+  .playground-ui-code__copy:hover,
+  .playground-ui-header__axe:hover {
     background: color-mix(in srgb, currentColor 10%, transparent);
   }
 }

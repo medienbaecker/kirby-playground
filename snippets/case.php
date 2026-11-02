@@ -25,7 +25,7 @@
 			<summary>Props</summary>
 			<form class="playground-ui-controls__form">
 				<?php foreach ($controls as $control): ?>
-					<?php $field = "{$id}-{$control['name']}" ?>
+					<?php $field = "props-{$id}-{$control['name']}" ?>
 					<label class="playground-ui-controls__name" for="<?= esc($field, 'attr') ?>"><code>$<?= esc($control['name']) ?></code></label>
 					<?php if ($control['input'] === 'select'): ?>
 						<select id="<?= esc($field, 'attr') ?>" name="<?= esc($control['name'], 'attr') ?>">
