@@ -4,6 +4,7 @@ use Medienbaecker\Playground\Playground;
 
 ?>
 <div class="playground-ui-overview">
+	<h1 class="playground-ui-overview__title">Playground</h1>
 	<?php foreach (Playground::groups() as $group => $components): ?>
 		<?php if ($group !== ''): ?>
 			<h2 class="playground-ui-overview__group"><?= esc($group) ?></h2>

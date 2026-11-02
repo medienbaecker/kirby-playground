@@ -1,7 +1,6 @@
 <?php
 
 use Kirby\Cms\App as Kirby;
-use Medienbaecker\Playground\Playground;
 
 // Manual installation: load classes directly if Composer autoload isn't available
 if (!class_exists('Medienbaecker\Playground\Placeholder')) {
@@ -16,10 +15,6 @@ if (!class_exists('Medienbaecker\Playground\Placeholder')) {
 Kirby::plugin('medienbaecker/playground', [
     'options' => [
         'auth' => false
-    ],
-
-    'siteMethods' => [
-        'playgroundLinks' => fn () => Playground::components()
     ],
 
     'templates' => [

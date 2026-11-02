@@ -5,13 +5,9 @@
  * @var \Medienbaecker\Playground\Docblock $docblock
  */
 
-$sections = [
-	'use'           => 'When to use',
-	'avoid'         => 'When not to use',
-	'accessibility' => 'Accessibility',
-];
-$props  = $docblock->props();
-$status = $docblock->tag('status')[0] ?? null;
+$props         = $docblock->props();
+$status        = $docblock->tag('status')[0] ?? null;
+$accessibility = $docblock->tag('accessibility');
 
 ?>
 <section class="playground-ui-component">
@@ -26,16 +22,14 @@ $status = $docblock->tag('status')[0] ?? null;
 		<div class="playground-ui-component__description"><?= markdown($docblock->description) ?></div>
 	<?php endif ?>
 
-	<?php foreach ($sections as $tag => $heading): ?>
-		<?php if ($items = $docblock->tag($tag)): ?>
-			<h3 class="playground-ui-component__heading"><?= $heading ?></h3>
-			<ul class="playground-ui-component__list">
-				<?php foreach ($items as $item): ?>
-					<li><?= markdown($item, ['inline' => true]) ?></li>
-				<?php endforeach ?>
-			</ul>
-		<?php endif ?>
-	<?php endforeach ?>
+	<?php if ($accessibility): ?>
+		<h3 class="playground-ui-component__heading">Accessibility</h3>
+		<ul class="playground-ui-component__list">
+			<?php foreach ($accessibility as $item): ?>
+				<li><?= markdown($item, ['inline' => true]) ?></li>
+			<?php endforeach ?>
+		</ul>
+	<?php endif ?>
 
 	<?php if ($props): ?>
 		<div class="playground-ui-props" role="region" aria-label="Props of <?= esc($name, 'attr') ?>" tabindex="0">

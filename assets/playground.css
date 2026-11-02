@@ -25,6 +25,12 @@
   padding: 1.5rem;
 }
 
+.playground-ui-overview__title {
+  margin: 0 0 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
 .playground-ui-overview__group {
   margin-block: 1.5rem 0.25rem;
   font-size: 0.875rem;

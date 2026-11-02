@@ -17,17 +17,23 @@ class Docblock
     }
 
     /**
-     * Parses the first docblock in a file
+     * Parses the first docblock in a file that is not a one-line `@var` hint
      */
     public static function fromFile(string $path): static
     {
-        if (preg_match('!/\*\*(.*?)\*/!s', file_get_contents($path), $match) !== 1) {
+        preg_match_all('!/\*\*(.*?)\*/!s', file_get_contents($path), $matches);
+
+        $bodies = array_filter($matches[1], fn ($body) => preg_match('/^\s*@var\s[^\n]*$/', $body) !== 1);
+
+        if ($bodies === []) {
             return new static();
         }
 
+        $body = reset($bodies);
+
         $lines = array_map(
             fn ($line) => rtrim(preg_replace('/^\s*\*?\s?/', '', $line)),
-            explode("\n", $match[1])
+            explode("\n", $body)
         );
 
         $text = [];

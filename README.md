@@ -34,6 +34,9 @@ Playground::case('Long label', fn () => snippet('components/button', ['label' =>
 
 // With an accessibility note for this case
 Playground::case('Icon only', fn () => snippet('components/button', ['iconOnly' => true]), accessibility: 'The label stays readable for screen readers');
+
+// With attributes on the case's wrapper, e.g. to paint it in a surface colour
+Playground::case('On purple', fn () => snippet('components/button'), attributes: ['data-background' => 'purple-700']);
 ```
 
 ## Component Docs
@@ -59,9 +62,7 @@ Each named component gets a section above the cases, read from its own docblock:
  * Shown as the description, Markdown allowed.
  *
  * @status ready
- * @use When to use it, one item per tag
- * @avoid When not to use it
- * @accessibility What to keep in mind
+ * @accessibility What to keep in mind, one item per tag
  * @var string|null $label Shown in the props table
  */
 ```

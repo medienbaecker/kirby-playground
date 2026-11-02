@@ -13,8 +13,10 @@ class Playground
 
     /**
      * Renders one labelled case with an anchor and its HTML
+     *
+     * @param array<string, mixed> $attributes Added to the case's wrapper, e.g. a surface colour
      */
-    public static function case(string $label, Closure $render, string|null $accessibility = null): void
+    public static function case(string $label, Closure $render, string|null $accessibility = null, array $attributes = []): void
     {
         ob_start();
 
@@ -29,6 +31,7 @@ class Playground
             'label'         => $label,
             'html'          => $html,
             'accessibility' => $accessibility,
+            'attributes'    => $attributes,
         ]);
     }
 

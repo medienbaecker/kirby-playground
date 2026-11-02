@@ -5,10 +5,11 @@
  * @var string $label
  * @var string $html The rendered case
  * @var string|null $accessibility
+ * @var array<string, mixed> $attributes
  */
 
 ?>
-<section class="playground-ui-case" id="<?= esc($id, 'attr') ?>">
+<section <?= attr([...$attributes, 'class' => 'playground-ui-case', 'id' => $id]) ?>>
 	<h2 class="playground-ui-case__label"><a href="#<?= esc($id, 'attr') ?>"><?= esc($label) ?></a></h2>
 	<?= $html ?>
 	<?php if ($accessibility): ?>
