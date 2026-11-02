@@ -38,7 +38,11 @@ $usage         = Playground::usage($name);
 		<div class="playground-ui-props" role="region" aria-label="Props of <?= esc($name, 'attr') ?>" tabindex="0">
 			<table class="playground-ui-props__table">
 				<thead>
-					<tr><th scope="col">Prop</th><th scope="col">Type</th><th scope="col">Description</th></tr>
+					<tr>
+						<th scope="col">Prop</th>
+						<th scope="col">Type</th>
+						<th scope="col">Description</th>
+					</tr>
 				</thead>
 				<tbody>
 					<?php foreach ($props as $prop): ?>

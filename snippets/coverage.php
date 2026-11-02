@@ -14,7 +14,12 @@ $shown      = count(array_filter($components, fn ($component) => $component['pag
 		<div class="playground-ui-coverage__table" role="region" aria-label="Components with gaps" tabindex="0">
 			<table>
 				<thead>
-					<tr><th scope="col">Component</th><th scope="col">Playground page</th><th scope="col">Docblock</th><th scope="col">Status</th></tr>
+					<tr>
+						<th scope="col">Component</th>
+						<th scope="col">Playground page</th>
+						<th scope="col">Docblock</th>
+						<th scope="col">Status</th>
+					</tr>
 				</thead>
 				<tbody>
 					<?php foreach ($gaps as $component): ?>

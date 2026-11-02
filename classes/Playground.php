@@ -23,9 +23,9 @@ class Playground
         ob_start();
 
         try {
-            $result = $render();
+            $render();
         } finally {
-            $html = trim(ob_get_clean() . (is_string($result ?? null) ? $result : ''));
+            $html = trim(ob_get_clean());
         }
 
         snippet('playground-ui/case', [
@@ -135,7 +135,21 @@ class Playground
     {
         $file = Snippet::file("playground/{$component}");
 
-        return $file === null ? [] : array_map(fn ($value) => strtok($value, " \t"), Docblock::fromFile($file)->tag('component'));
+        return $file === null ? [] : array_map('trim', Docblock::fromFile($file)->tag('component'));
+    }
+
+    /**
+     * Path of a snippet's file from the index root, or its name with "(not found)"
+     */
+    public static function path(string $name): string
+    {
+        $file = Snippet::file($name);
+
+        if ($file === null) {
+            return "{$name} (not found)";
+        }
+
+        return Str::after($file, kirby()->root('index') . '/') ?: $file;
     }
 
     /**
@@ -184,10 +198,10 @@ class Playground
     {
         $base = Str::slug($label) ?: 'case';
         $id   = $base;
-        $n    = 1;
+        $number = 1;
 
         while (isset(static::$ids[$id])) {
-            $id = $base . '-' . ++$n;
+            $id = $base . '-' . ++$number;
         }
 
         static::$ids[$id] = true;

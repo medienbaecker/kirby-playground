@@ -1,7 +1,6 @@
 <?php
 
 use Kirby\Template\Snippet;
-use Kirby\Toolkit\Str;
 use Medienbaecker\Playground\Docblock;
 use Medienbaecker\Playground\Playground;
 
@@ -14,15 +13,6 @@ $componentCss = asset("assets/css/playground/{$component}.css");
 $componentJs  = asset("assets/js/playground/{$component}.js");
 $components   = Playground::components();
 $index        = array_search($component, array_column($components, 'name'), true);
-$relative     = function (string $name): string {
-	$file = Snippet::file($name);
-
-	if ($file === null) {
-		return "{$name} (not found)";
-	}
-
-	return str_starts_with($file, kirby()->root('index') . '/') ? Str::after($file, kirby()->root('index') . '/') : $file;
-};
 ?>
 <?= css(array_filter([
 	$plugin->asset('playground.css')->url(),
@@ -36,7 +26,7 @@ $relative     = function (string $name): string {
 		'title'     => $components[$index]['title'],
 		'previous'  => $components[$index - 1] ?? null,
 		'next'      => $components[$index + 1] ?? null,
-		'files'     => array_map($relative, ["playground/{$component}", ...$names]),
+		'files'     => array_map(Playground::path(...), ["playground/{$component}", ...$names]),
 	]) ?>
 	<?php foreach (array_filter($names, fn ($name) => Snippet::file($name) !== null) as $name): ?>
 		<?php snippet('playground-ui/component', [

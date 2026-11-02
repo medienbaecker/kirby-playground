@@ -1,3 +1,6 @@
+/**
+ * Copy buttons of the code panels, with a screen reader announcement
+ */
 function copy(element) {
   if (window.isSecureContext) {
     return navigator.clipboard.writeText(element.textContent);
