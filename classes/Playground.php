@@ -13,6 +13,13 @@ class Playground
     /** @var array<string, true> */
     private static array $ids = [];
 
+    private static string|null $only = null;
+
+    /** @var array<string, mixed>|null */
+    private static array|null $props = null;
+
+    private static string|null $isolated = null;
+
     /**
      * Renders one labelled case with an anchor and its HTML
      *
@@ -20,6 +27,12 @@ class Playground
      */
     public static function case(string $label, Closure $render, string|null $accessibility = null, array $attributes = []): void
     {
+        $id = static::id($label);
+
+        if (static::$only !== null && static::$only !== $id) {
+            return;
+        }
+
         ob_start();
 
         try {
@@ -28,13 +41,68 @@ class Playground
             $html = trim(ob_get_clean());
         }
 
-        snippet('playground-ui/case', [
-            'id'            => static::id($label),
+        static::output([
+            'id'            => $id,
             'label'         => $label,
             'html'          => $html,
             'accessibility' => $accessibility,
             'attributes'    => $attributes,
+            'php'           => null,
+            'controls'      => [],
         ]);
+    }
+
+    /**
+     * Renders one snippet as a case, with the PHP call that renders it and a form for its props
+     *
+     * @param array<string, mixed> $props
+     * @param array<string, mixed> $attributes Added to the case's wrapper, e.g. a surface colour
+     */
+    public static function component(string $label, string $snippet, array $props = [], string|null $accessibility = null, array $attributes = []): void
+    {
+        $id = static::id($label);
+
+        if (static::$only !== null && static::$only !== $id) {
+            return;
+        }
+
+        if (static::$props !== null) {
+            $editable = array_column(static::controls($snippet, $props), 'name');
+            $props    = [...array_diff_key($props, array_flip($editable)), ...static::$props];
+        }
+
+        static::output([
+            'id'            => $id,
+            'label'         => $label,
+            'html'          => trim(snippet($snippet, $props, true)),
+            'accessibility' => $accessibility,
+            'attributes'    => $attributes,
+            'php'           => static::php($snippet, $props),
+            'controls'      => static::controls($snippet, $props),
+        ]);
+    }
+
+    /**
+     * Renders a playground page and returns only the case with this id, its editable props replaced by `$props`
+     *
+     * @param array<string, mixed>|null $props
+     */
+    public static function isolate(string $component, string $id, array|null $props = null): string|null
+    {
+        static::$only  = $id;
+        static::$props = $props;
+
+        ob_start();
+
+        try {
+            snippet("playground/{$component}");
+        } finally {
+            ob_end_clean();
+            static::$only  = null;
+            static::$props = null;
+        }
+
+        return static::$isolated;
     }
 
     /**
@@ -192,6 +260,98 @@ class Playground
         $base = kirby()->language()?->url() ?? kirby()->url();
 
         return rtrim("{$base}/playground/{$name}", '/');
+    }
+
+    /**
+     * A form field for each `@var` prop with a type it can edit: text, toggle, number or a list of values
+     *
+     * @param array<string, mixed> $props
+     * @return array<array{name: string, input: string, value: mixed, options: array<string>}>
+     */
+    private static function controls(string $snippet, array $props): array
+    {
+        $file     = Snippet::file($snippet);
+        $controls = [];
+
+        foreach ($file === null ? [] : Docblock::fromFile($file)->props() as $prop) {
+            $value    = $props[$prop['name']] ?? null;
+            $types    = array_map('trim', explode('|', ltrim($prop['type'], '?')));
+            $types    = array_values(array_diff($types, ['null']));
+            $options  = array_map(fn ($type) => trim($type, "'\""), $types);
+
+            $input = match (true) {
+                is_object($value) || is_array($value)                            => null,
+                $types === ['string']                                            => 'text',
+                $types === ['bool']                                              => 'checkbox',
+                $types === ['int'], $types === ['float']                         => 'number',
+                $types !== [] && preg_grep('/^([\'"]).*\1$/', $types) === $types => 'select',
+                default                                                          => null,
+            };
+
+            if ($input !== null) {
+                $controls[] = [
+                    'name'    => $prop['name'],
+                    'input'   => $input,
+                    'value'   => $value,
+                    'options' => $input === 'select' ? $options : [],
+                ];
+            }
+        }
+
+        return $controls;
+    }
+
+    /**
+     * Echoes a rendered case, or keeps it when only one case is wanted
+     *
+     * @param array<string, mixed> $data
+     */
+    private static function output(array $data): void
+    {
+        $html = snippet('playground-ui/case', $data, true);
+
+        if (static::$only !== null) {
+            static::$isolated = $html;
+        } else {
+            echo $html;
+        }
+    }
+
+    /**
+     * The `snippet()` call that renders a component case
+     *
+     * @param array<string, mixed> $props
+     */
+    private static function php(string $snippet, array $props): string
+    {
+        return $props === [] ? "snippet('{$snippet}')" : "snippet('{$snippet}', " . static::export($props) . ')';
+    }
+
+    private static function export(mixed $value, int $depth = 0): string
+    {
+        if (is_object($value)) {
+            return '$' . lcfirst(Str::afterLast(get_class($value), '\\'));
+        }
+
+        if (is_array($value) === false) {
+            return $value === null ? 'null' : var_export($value, true);
+        }
+
+        if ($value === []) {
+            return '[]';
+        }
+
+        $indent = str_repeat('    ', $depth + 1);
+        $list   = array_is_list($value);
+        $keys   = array_map(fn ($key) => var_export($key, true), array_keys($value));
+        $width  = max(array_map('strlen', $keys));
+        $lines  = array_map(
+            fn ($key, $item) => $indent . ($list ? '' : str_pad($key, $width) . ' => ') . static::export($item, $depth + 1) . ',',
+            $keys,
+            $value
+        );
+
+        return "[\n" . implode("\n", $lines) . "\n" . str_repeat('    ', $depth) . ']';
     }
 
     private static function id(string $label): string

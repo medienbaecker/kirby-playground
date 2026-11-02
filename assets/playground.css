@@ -2,8 +2,9 @@
 .playground-ui-overview,
 .playground-ui-coverage,
 .playground-ui-component,
-.playground-ui-case__label,
+.playground-ui-case__header,
 .playground-ui-case__accessibility,
+.playground-ui-controls,
 .playground-ui-code {
   --playground-ui-line: color-mix(in srgb, currentColor, transparent 85%);
   --playground-ui-muted: color-mix(in srgb, currentColor, transparent 40%);
@@ -162,10 +163,65 @@
   color: var(--playground-ui-muted);
 }
 
+.playground-ui-case__header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0 1rem;
+  margin-block-end: 1rem;
+}
+
 .playground-ui-case__label {
-  margin: 0 0 1rem;
+  margin: 0;
   overflow-wrap: anywhere;
-  font-weight: normal;
+  font: inherit;
+}
+
+.playground-ui-case__alone {
+  color: var(--playground-ui-muted);
+}
+
+.playground-ui-case__render {
+  display: contents;
+}
+
+.playground-ui-controls {
+  margin-block-start: 1rem;
+}
+
+.playground-ui-controls summary {
+  inline-size: fit-content;
+  line-height: 2;
+  color: var(--playground-ui-muted);
+  cursor: pointer;
+}
+
+.playground-ui-controls__form {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 20rem);
+  justify-content: start;
+  gap: 0.5rem 1rem;
+  align-items: center;
+  margin-block-start: 0.5rem;
+}
+
+.playground-ui-controls__form :is(input, select) {
+  font: inherit;
+}
+
+.playground-ui-controls__form input:not([type="checkbox"]),
+.playground-ui-controls__form select {
+  inline-size: 100%;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid currentColor;
+  border-radius: 0.25rem;
+  background: transparent;
+  color: inherit;
+}
+
+.playground-ui-controls__form input[type="checkbox"] {
+  justify-self: start;
 }
 
 .playground-ui-case__label a {
@@ -219,19 +275,19 @@
   padding: 0.25rem 0.75rem;
   border: 1px solid currentColor;
   border-radius: 0.25rem;
-  background: Canvas;
+  background: transparent;
   color: inherit;
   font: inherit;
   cursor: pointer;
 }
 
 .playground-ui-code__copy:focus-visible {
-  background: color-mix(in srgb, currentColor, Canvas 90%);
+  background: color-mix(in srgb, currentColor 10%, transparent);
 }
 
 @media (hover: hover) {
   .playground-ui-code__copy:hover {
-    background: color-mix(in srgb, currentColor, Canvas 90%);
+    background: color-mix(in srgb, currentColor 10%, transparent);
   }
 }
 
