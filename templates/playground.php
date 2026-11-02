@@ -31,7 +31,7 @@ $relative     = function (string $name): string {
 ])) ?>
 
 <?php if ($index !== false): ?>
-	<?php $names = array_map(fn ($value) => strtok($value, " \t"), Docblock::fromFile(Snippet::file("playground/{$component}"))->tag('component')) ?>
+	<?php $names = Playground::shows($component) ?>
 	<?php snippet('playground-ui/header', [
 		'title'     => $components[$index]['title'],
 		'previous'  => $components[$index - 1] ?? null,

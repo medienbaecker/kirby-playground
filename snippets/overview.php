@@ -15,4 +15,5 @@ use Medienbaecker\Playground\Playground;
 			<?php endforeach ?>
 		</ul>
 	<?php endforeach ?>
+	<?php snippet('playground-ui/coverage') ?>
 </div>

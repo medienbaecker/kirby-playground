@@ -1,5 +1,6 @@
 .playground-ui-header,
 .playground-ui-overview,
+.playground-ui-coverage,
 .playground-ui-component,
 .playground-ui-case__label,
 .playground-ui-case__accessibility,
@@ -12,6 +13,7 @@
 }
 
 .playground-ui-header code,
+.playground-ui-coverage code,
 .playground-ui-component code,
 .playground-ui-code pre {
   font-family: ui-monospace, monospace;
@@ -29,6 +31,31 @@
   margin: 0 0 0.75rem;
   font-size: 1.5rem;
   font-weight: 600;
+}
+
+.playground-ui-coverage {
+  max-inline-size: 60rem;
+  margin-block-start: 2rem;
+  padding: 0;
+}
+
+.playground-ui-coverage__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.playground-ui-coverage__summary {
+  margin: 0.25rem 0 0;
+}
+
+.playground-ui-coverage__table a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.playground-ui-coverage__missing {
+  color: var(--playground-ui-muted);
 }
 
 .playground-ui-overview__group {
@@ -107,18 +134,22 @@
   font-weight: normal;
 }
 
-.playground-ui-props {
+.playground-ui-props,
+.playground-ui-coverage__table {
   margin-block-start: 1.25rem;
   overflow-x: auto;
 }
 
-.playground-ui-props__table {
+.playground-ui-props__table,
+.playground-ui-coverage__table table {
   inline-size: 100%;
   border-collapse: collapse;
 }
 
 .playground-ui-props th,
-.playground-ui-props td {
+.playground-ui-props td,
+.playground-ui-coverage__table th,
+.playground-ui-coverage__table td {
   padding: 0.5rem 1rem 0.5rem 0;
   border-block-end: 1px solid var(--playground-ui-line);
   text-align: start;
@@ -126,7 +157,8 @@
   font-weight: normal;
 }
 
-.playground-ui-props thead th {
+.playground-ui-props thead th,
+.playground-ui-coverage__table thead th {
   color: var(--playground-ui-muted);
 }
 

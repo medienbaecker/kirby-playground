@@ -14,7 +14,8 @@ if (!class_exists('Medienbaecker\Playground\Placeholder')) {
 
 Kirby::plugin('medienbaecker/playground', [
     'options' => [
-        'auth' => false
+        'auth'       => false,
+        'components' => 'components'
     ],
 
     'templates' => [
@@ -28,6 +29,7 @@ Kirby::plugin('medienbaecker/playground', [
         'playground-ui/header'    => __DIR__ . '/snippets/header.php',
         'playground-ui/component' => __DIR__ . '/snippets/component.php',
         'playground-ui/case'      => __DIR__ . '/snippets/case.php',
+        'playground-ui/coverage'  => __DIR__ . '/snippets/coverage.php',
         'playground-ui/not-found' => __DIR__ . '/snippets/not-found.php'
     ],
 
