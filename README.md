@@ -43,7 +43,7 @@ Playground::case('Icon only', fn () => snippet('components/button', ['iconOnly' 
 Playground::case('On purple', fn () => snippet('components/button'), attributes: ['data-background' => 'purple-700']);
 ```
 
-A case that renders one snippet can use `Playground::component()` instead. It also shows the `snippet()` call and a Props form built from the snippet's `@var` tags: a text field for `string`, a checkbox for `bool`, a number field for `int` and `float`, and a select for a list like `'small'|'medium'|'large'`. Props of other types keep their value. Changing a field renders the case again on the server.
+A case that renders one snippet can use `Playground::component()` instead. It also shows the `snippet()` call and a Props form built from the snippet's `@var` tags: a text field for `string`, a checkbox for `bool`, a number field for `int` and `float`, and a select for a list like `'small'|'medium'|'large'`. Props of other types keep their value. An empty field or an unchecked checkbox is not passed. Changing a field renders the case again on the server.
 
 ```php
 Playground::component('Large', 'components/button', ['label' => 'Lorem ipsum', 'size' => 'large']);
@@ -83,7 +83,7 @@ Each named component gets a section above the cases, read from its own docblock:
 
 The first paragraph is the summary and is not shown. A one-line `/** @var Page $page */` hint before it is skipped.
 
-Each component section also lists the templates and snippets that call it. The overview ends with a coverage table of the snippets in `site/snippets/components` that have no playground page, no docblock or no `@status`. A component counts as shown when a playground page names it in `@component` or has the same name.
+Each component section also lists the templates, snippets and plugins that call it. The overview ends with a coverage table of the snippets in `site/snippets/components` that have no playground page, no docblock or no `@status`. A component counts as shown when a playground page names it in `@component` or has the same name.
 
 ## Tokens
 
