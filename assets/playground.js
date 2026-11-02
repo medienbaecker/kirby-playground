@@ -78,3 +78,57 @@ for (const form of document.querySelectorAll(".playground-ui-controls__form")) {
     timeout = setTimeout(() => render(form), 300);
   });
 }
+
+/**
+ * Runs axe-core on every case and lists the violations under each one
+ */
+async function check(button) {
+  const result = button.nextElementSibling;
+  const cases = document.querySelectorAll(".playground-ui-case");
+  let violations = 0;
+  let failing = 0;
+
+  button.disabled = true;
+  result.textContent = "Checking…";
+
+  if (window.axe === undefined) {
+    await new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = button.dataset.script;
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.append(script);
+    });
+  }
+
+  for (const section of cases) {
+    section.querySelector(".playground-ui-axe")?.remove();
+
+    const { violations: found } = await axe.run({ include: [section.querySelector(".playground-ui-case__render")] });
+
+    if (found.length === 0) {
+      continue;
+    }
+
+    const list = document.createElement("ul");
+    list.className = "playground-ui-axe";
+
+    for (const violation of found) {
+      const item = document.createElement("li");
+      const link = document.createElement("a");
+      link.href = violation.helpUrl;
+      link.textContent = violation.id;
+      item.append(link, `: ${violation.help}, ${violation.nodes.length} ${violation.nodes.length === 1 ? "element" : "elements"}`);
+      list.append(item);
+    }
+
+    section.querySelector(".playground-ui-case__render").after(list);
+    violations += found.length;
+    failing += 1;
+  }
+
+  result.textContent = violations === 0 ? `No violations in ${cases.length} cases.` : `${violations} violations in ${failing} of ${cases.length} cases.`;
+  button.disabled = false;
+}
+
+document.querySelector(".playground-ui-header__axe")?.addEventListener("click", (event) => check(event.currentTarget));

@@ -98,6 +98,49 @@
   overflow-wrap: anywhere;
 }
 
+.playground-ui-header__check {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1rem;
+  margin: 0.75rem 0 0;
+}
+
+.playground-ui-header__axe {
+  padding: 0.25rem 0.75rem;
+  border: 1px solid currentColor;
+  border-radius: 0.25rem;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.playground-ui-header__axe:focus-visible {
+  background: color-mix(in srgb, currentColor 10%, transparent);
+}
+
+@media (hover: hover) {
+  .playground-ui-header__axe:hover {
+    background: color-mix(in srgb, currentColor 10%, transparent);
+  }
+}
+
+.playground-ui-axe {
+  margin: 1rem 0 0;
+  padding: 0.5rem 0.75rem 0.5rem 1.75rem;
+  border-inline-start: 3px solid currentColor;
+  list-style: disc;
+  font-family: system-ui, sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.playground-ui-axe a {
+  color: inherit;
+  font-family: ui-monospace, monospace;
+}
+
 .playground-ui-component {
   max-inline-size: 60rem;
   border-block-start: 1px solid var(--playground-ui-line);

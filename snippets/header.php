@@ -25,6 +25,10 @@ use Medienbaecker\Playground\Playground;
 		<?php endif ?>
 	</nav>
 	<h1 class="playground-ui-header__title"><?= esc($title) ?></h1>
+	<p class="playground-ui-header__check">
+		<button type="button" class="playground-ui-header__axe" data-script="<?= esc(kirby()->plugin('medienbaecker/playground')->asset('axe.min.js')->url(), 'attr') ?>">Check accessibility</button>
+		<span class="playground-ui-header__result" aria-live="polite"></span>
+	</p>
 	<ul class="playground-ui-header__files">
 		<?php foreach ($files as $file): ?>
 			<li><code><?= str_replace('/', '/<wbr>', esc($file)) ?></code></li>
