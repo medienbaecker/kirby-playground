@@ -1,0 +1,254 @@
+.playground-ui-tokens {
+  --playground-ui-line: color-mix(in srgb, currentColor, transparent 85%);
+  --playground-ui-muted: color-mix(in srgb, currentColor, transparent 40%);
+}
+
+.playground-ui-tokens code,
+.playground-ui-tokens__title,
+.playground-ui-tokens__group-title,
+.playground-ui-tokens__context-title,
+.playground-ui-tokens__swatch,
+.playground-ui-tokens__bar-row,
+.playground-ui-tokens__meta,
+.playground-ui-tokens__shadow-item,
+.playground-ui-tokens__easing,
+.playground-ui-tokens__table {
+  font-family: system-ui, sans-serif;
+  font-size: 0.875rem;
+  font-weight: normal;
+  line-height: 1.5;
+}
+
+.playground-ui-tokens code {
+  font-family: ui-monospace, monospace;
+  font-size: 0.8125rem;
+  overflow-wrap: anywhere;
+}
+
+.playground-ui-tokens ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.playground-ui-tokens__section {
+  padding: 1.5rem;
+  border-block-start: 1px solid var(--playground-ui-line);
+}
+
+.playground-ui-tokens__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.playground-ui-tokens__group {
+  margin-block-start: 1.5rem;
+}
+
+.playground-ui-tokens__group-title {
+  margin: 0 0 0.75rem;
+}
+
+.playground-ui-tokens__muted {
+  color: var(--playground-ui-muted);
+}
+
+.playground-ui-tokens [data-faint] {
+  outline: 1px solid var(--playground-ui-line);
+  outline-offset: -1px;
+}
+
+.playground-ui-tokens__swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 10rem), 1fr));
+  gap: 1rem 0.75rem;
+}
+
+.playground-ui-tokens__swatch {
+  display: flex;
+  flex-direction: column;
+}
+
+.playground-ui-tokens__chip {
+  block-size: 3rem;
+  margin-block-end: 0.25rem;
+}
+
+.playground-ui-tokens__context {
+  margin-inline: -1.5rem;
+  padding: 1.5rem;
+}
+
+.playground-ui-tokens__context-title {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.5rem;
+  margin: 0 0 0.75rem;
+}
+
+.playground-ui-tokens__roles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.playground-ui-tokens__role {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr) minmax(0, 1fr) 8rem;
+  align-items: center;
+  gap: 0.25rem 0.75rem;
+
+  @media (max-width: 48rem) {
+    grid-template-columns: 1.5rem minmax(0, 1fr) auto;
+  }
+}
+
+.playground-ui-tokens__role-chip {
+  grid-column: 1;
+  block-size: 1.5rem;
+
+  @media (max-width: 48rem) {
+    grid-row: span 2;
+  }
+}
+
+.playground-ui-tokens__role-name {
+  grid-column: 2;
+
+  @media (max-width: 48rem) {
+    grid-column: 2 / -1;
+  }
+}
+
+.playground-ui-tokens__role-grade {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+
+  @media (max-width: 48rem) {
+    grid-column: 3;
+  }
+}
+
+.playground-ui-tokens__role-grade[data-grade="fail"] {
+  color: inherit;
+  font-weight: 700;
+}
+
+.playground-ui-tokens__bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  overflow-x: auto;
+}
+
+.playground-ui-tokens__bar-row {
+  display: flex;
+  align-items: center;
+  gap: 0 0.75rem;
+
+  @media (max-width: 40rem) {
+    flex-wrap: wrap;
+  }
+}
+
+.playground-ui-tokens__meta,
+.playground-ui-tokens__bar-name {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.5rem;
+}
+
+.playground-ui-tokens__bar-name {
+  flex: none;
+  inline-size: 18rem;
+  max-inline-size: 100%;
+}
+
+.playground-ui-tokens__bar {
+  flex: none;
+  block-size: 0.75rem;
+  background-color: currentColor;
+}
+
+.playground-ui-tokens__samples {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.playground-ui-tokens__sample-row {
+  display: flex;
+  flex-direction: column;
+}
+
+.playground-ui-tokens__sample {
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.playground-ui-tokens__shadows,
+.playground-ui-tokens__easings {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+  gap: 1.5rem 1rem;
+}
+
+.playground-ui-tokens__shadow-item,
+.playground-ui-tokens__easing {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.playground-ui-tokens__card {
+  block-size: 6rem;
+  background-color: Canvas;
+}
+
+.playground-ui-tokens__text-shadow {
+  padding: 1rem;
+  background-color: #888;
+  color: #fff;
+  font-size: 1.5rem;
+}
+
+.playground-ui-tokens__curve {
+  inline-size: 6rem;
+  block-size: 8rem;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+.playground-ui-tokens__curve path {
+  vector-effect: non-scaling-stroke;
+}
+
+.playground-ui-tokens__curve .playground-ui-tokens__curve-frame {
+  stroke: var(--playground-ui-line);
+}
+
+.playground-ui-tokens__table {
+  overflow-x: auto;
+}
+
+.playground-ui-tokens__table table {
+  inline-size: 100%;
+  border-collapse: collapse;
+}
+
+.playground-ui-tokens__table th,
+.playground-ui-tokens__table td {
+  padding: 0.5rem 1rem 0.5rem 0;
+  border-block-end: 1px solid var(--playground-ui-line);
+  text-align: start;
+  vertical-align: top;
+  font-weight: normal;
+}
+
+.playground-ui-tokens__table thead th {
+  color: var(--playground-ui-muted);
+}

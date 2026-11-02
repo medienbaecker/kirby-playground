@@ -1,0 +1,497 @@
+/**
+ * Draws every custom property that the site's stylesheets define on `:root` or on an attribute
+ * selector like `[data-tone="dark"]` that redefines them, read through the CSSOM and sorted by what its value resolves to:
+ * colours, the contexts that redefine them, type, lengths, shadows, easings, durations and the rest
+ */
+const container = document.querySelector(".playground-ui-tokens");
+const canvas = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
+
+const rules = [];
+const pending = [...document.styleSheets].flatMap((sheet) => {
+  try {
+    return [...sheet.cssRules];
+  } catch {
+    return [];
+  }
+});
+
+while (pending.length) {
+  const rule = pending.shift();
+  if (rule.style) rules.push(rule);
+  if (rule.cssRules) pending.unshift(...rule.cssRules);
+}
+
+const declared = new Map();
+const contexts = new Map();
+const sharedWithRoot = new Set();
+const usage = new Map();
+
+for (const rule of rules) {
+  const properties = [...rule.style];
+
+  for (const property of properties.filter((property) => !property.startsWith("--"))) {
+    for (const [, name] of rule.style.getPropertyValue(property).matchAll(/var\((--[\w-]+)/g)) {
+      if (!usage.has(property)) usage.set(property, new Set());
+      usage.get(property).add(name);
+    }
+  }
+
+  const tokens = properties.filter((property) => property.startsWith("--"));
+  const selectors = (rule.selectorText ?? "").split(",").map((selector) => selector.trim());
+  if (!tokens.length) continue;
+
+  for (const selector of selectors) {
+    const match = selector.match(/^\[([\w-]+)="([^"]+)"\]$/);
+    if (selector !== ":root" && !match) continue;
+
+    if (match && !contexts.has(selector)) {
+      contexts.set(selector, { selector, attributes: { [match[1]]: match[2] }, tokens: new Map() });
+    }
+
+    if (match && selectors.includes(":root")) sharedWithRoot.add(selector);
+
+    const target = match ? contexts.get(selector).tokens : declared;
+    for (const token of tokens) target.set(token, rule.style.getPropertyValue(token).trim());
+  }
+}
+
+for (const [selector, context] of contexts) {
+  if (![...context.tokens.keys()].some((name) => declared.has(name))) contexts.delete(selector);
+}
+
+const isContextual = (name) => [...contexts.values()].some((context) => context.tokens.has(name));
+const rootRoles = new Map(
+  [...declared].filter(([name]) => isContextual(name) && ![...sharedWithRoot].some((selector) => contexts.get(selector).tokens.has(name))),
+);
+
+if (rootRoles.size) {
+  contexts.set(":root", { selector: ":root", attributes: {}, tokens: rootRoles });
+}
+
+const bodyRule = rules.find((rule) => rule.selectorText === "body");
+const referenceOf = (value) => value?.match(/^var\((--[\w-]+)\)$/)?.[1];
+const surfaceToken = referenceOf(bodyRule?.style.getPropertyValue("background-color"));
+const textToken = referenceOf(bodyRule?.style.getPropertyValue("color"));
+
+const escape = (text) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const valueOf = (element, name) => getComputedStyle(element).getPropertyValue(name).trim();
+
+const channels = (color) => {
+  if (/^(rgba?\(|color\(srgb )/.test(color)) {
+    const [r, g, b, a = 1] = color.match(/[\d.]+/g).map(Number);
+    const scale = color.startsWith("color(") ? 1 : 255;
+
+    return { r: r / scale, g: g / scale, b: b / scale, a };
+  }
+
+  canvas.clearRect(0, 0, 1, 1);
+  canvas.fillStyle = color;
+  canvas.fillRect(0, 0, 1, 1);
+  const [r, g, b, a] = canvas.getImageData(0, 0, 1, 1).data;
+
+  return { r: r / 255, g: g / 255, b: b / 255, a: a / 255 };
+};
+
+const colourIn = (element, name) => {
+  const probe = document.createElement("span");
+  probe.style.color = `var(${name})`;
+  element.append(probe);
+  const color = channels(getComputedStyle(probe).color);
+  probe.remove();
+
+  return color;
+};
+
+const toHex = ({ r, g, b, a }) => {
+  const channel = (value) => Math.round(value * 255).toString(16).padStart(2, "0");
+  const hex = `#${channel(r)}${channel(g)}${channel(b)}`;
+
+  return a < 1 ? `${hex} ${Math.round(a * 100)}%` : hex;
+};
+
+const blend = (foreground, background) => ({
+  r: foreground.r * foreground.a + background.r * (1 - foreground.a),
+  g: foreground.g * foreground.a + background.g * (1 - foreground.a),
+  b: foreground.b * foreground.a + background.b * (1 - foreground.a),
+  a: 1,
+});
+
+const luminance = ({ r, g, b }) => {
+  const linear = (channel) => (channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4);
+
+  return 0.2126 * linear(r) + 0.7152 * linear(g) + 0.0722 * linear(b);
+};
+
+const contrast = (foreground, background) => {
+  const [light, dark] = [luminance(blend(foreground, background)), luminance(background)].sort((a, b) => b - a);
+
+  return (light + 0.05) / (dark + 0.05);
+};
+
+const gradeFor = (ratio) => (ratio >= 7 ? "AAA" : ratio >= 4.5 ? "AA" : ratio >= 3 ? "AA large" : "fail");
+
+const scaleOf = (name) => name.replace(/-+[^-]+$/, "");
+const typeProperty = ({ name }) =>
+  ["font-size", "font-family", "font-weight"].find((property) => [...(usage.get(property) ?? [])].some((used) => scaleOf(used) === scaleOf(name)));
+
+const kindOf = (name, value) => {
+  if (CSS.supports("color", value)) return "colour";
+  if (typeProperty({ name })) return "type";
+  if (CSS.supports("transition-duration", value)) return "duration";
+  if (/^(cubic-bezier|linear)\(/.test(value) && CSS.supports("transition-timing-function", value)) return "easing";
+  if (CSS.supports("inline-size", value)) return "length";
+  if (CSS.supports("box-shadow", value)) return "shadow";
+  return "other";
+};
+
+const root = document.documentElement;
+const kinds = { colour: [], type: [], length: [], shadow: [], easing: [], duration: [], other: [] };
+
+for (const [name, value] of declared) {
+  if (isContextual(name)) continue;
+  kinds[kindOf(name, valueOf(root, name))].push({ name, value });
+}
+
+const groupBy = (tokens, keyOf) => {
+  const groups = new Map();
+
+  for (const token of tokens) {
+    const key = keyOf(token);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(token);
+  }
+
+  return groups;
+};
+
+const prefixOf = ({ name }) => `--${name.slice(2).split("-")[0]}`;
+const familyOf = ({ name }) => (/-\d+$/.test(name) ? name.replace(/-\d+$/, "") : prefixOf({ name }));
+const patternOf = ({ name, value }) => {
+  if (referenceOf(value)) return `${prefixOf({ name })} aliases`;
+  const [first, ...rest] = name.slice(2).split(/-+/);
+
+  return `--${[first, ...rest.map(() => "*")].join("-")}`;
+};
+
+const nameAndReference = ({ name, value }) => {
+  const reference = referenceOf(value);
+
+  return `<code>${name}</code>${reference ? ` <code class="playground-ui-tokens__muted">${reference}</code>` : ""}`;
+};
+
+const section = (title, body) => `
+  <section class="playground-ui-tokens__section">
+    <h2 class="playground-ui-tokens__title">${title}</h2>
+    ${body}
+  </section>`;
+
+const groups = (map, render) =>
+  [...map]
+    .map(
+      ([key, tokens]) => `
+        <div class="playground-ui-tokens__group">
+          <h3 class="playground-ui-tokens__group-title"><code>${escape(key)}</code></h3>
+          ${render(tokens)}
+        </div>`,
+    )
+    .join("");
+
+const swatches = (tokens) => `
+  <ul class="playground-ui-tokens__swatches">
+    ${tokens
+      .map(
+        (token) => `
+          <li class="playground-ui-tokens__swatch" data-token="${token.name}">
+            <span class="playground-ui-tokens__chip" style="background-color: var(${token.name})"></span>
+            <code>${token.name}</code>
+            <code class="playground-ui-tokens__muted">${referenceOf(token.value) ? `${referenceOf(token.value)} / ` : ""}<span data-hex></span></code>
+          </li>`,
+      )
+      .join("")}
+  </ul>`;
+
+const bars = (tokens, unit) => `
+  <ul class="playground-ui-tokens__bars">
+    ${tokens
+      .map(
+        (token) => `
+          <li class="playground-ui-tokens__bar-row" data-token="${token.name}">
+            <span class="playground-ui-tokens__bar-name">${nameAndReference(token)}</span>
+            <span class="playground-ui-tokens__bar" style="inline-size: ${unit === "ms" ? `${durationOf(valueOf(root, token.name)) / 4}px` : `var(${token.name})`}"></span>
+            <code class="playground-ui-tokens__muted" data-${unit}></code>
+          </li>`,
+      )
+      .join("")}
+  </ul>`;
+
+const durationOf = (value) => parseFloat(value) * (value.endsWith("ms") ? 1 : 1000);
+
+const samples = (tokens) => `
+  <ul class="playground-ui-tokens__samples">
+    ${tokens
+      .map(
+        (token) => `
+          <li class="playground-ui-tokens__sample-row" data-token="${token.name}">
+            <span class="playground-ui-tokens__meta">${nameAndReference(token)} <code class="playground-ui-tokens__muted" data-${typeProperty(token) === "font-size" ? "px" : "value"}></code></span>
+            <span class="playground-ui-tokens__sample" style="${typeProperty(token)}: var(${token.name})">Lorem ipsum</span>
+          </li>`,
+      )
+      .join("")}
+  </ul>`;
+
+const shadows = (tokens) => `
+  <ul class="playground-ui-tokens__shadows">
+    ${tokens
+      .map(
+        (token) => `
+          <li class="playground-ui-tokens__shadow-item">
+            ${
+              usage.get("text-shadow")?.has(token.name)
+                ? `<span class="playground-ui-tokens__text-shadow" style="text-shadow: var(${token.name})">Lorem ipsum</span>`
+                : `<span class="playground-ui-tokens__card" style="box-shadow: var(${token.name})"></span>`
+            }
+            <span>${nameAndReference(token)}</span>
+          </li>`,
+      )
+      .join("")}
+  </ul>`;
+
+const pointsOf = (value) => {
+  const numbers = value.match(/-?[\d.]+/g).map(Number);
+  if (value.startsWith("cubic-bezier")) return { bezier: numbers };
+
+  const stops = value
+    .slice(7, -1)
+    .split(",")
+    .flatMap((stop) => {
+      const [output, ...positions] = stop.trim().split(/\s+/).map(parseFloat);
+      return positions.length ? positions.map((position) => ({ output, position: position / 100 })) : [{ output, position: null }];
+    });
+
+  stops[0].position ??= 0;
+  stops.at(-1).position ??= 1;
+
+  for (let index = 1; index < stops.length; index++) {
+    if (stops[index].position !== null) continue;
+    const next = stops.findIndex((stop, position) => position > index && stop.position !== null);
+    const step = (stops[next].position - stops[index - 1].position) / (next - index + 1);
+    stops[index].position = stops[index - 1].position + step;
+  }
+
+  return { stops };
+};
+
+const curve = (value) => {
+  const { bezier, stops } = pointsOf(value);
+  const path = bezier
+    ? `M0,1 C${bezier[0]},${1 - bezier[1]} ${bezier[2]},${1 - bezier[3]} 1,0`
+    : `M${stops.map(({ output, position }) => `${position},${1 - output}`).join(" L")}`;
+
+  return `
+    <svg class="playground-ui-tokens__curve" viewBox="-0.1 -0.3 1.2 1.6" aria-hidden="true">
+      <path class="playground-ui-tokens__curve-frame" d="M0,0 H1 M0,1 H1" />
+      <path d="${path}" />
+    </svg>`;
+};
+
+const easings = (tokens) => `
+  <ul class="playground-ui-tokens__easings">
+    ${tokens
+      .map(
+        (token) => `
+          <li class="playground-ui-tokens__easing">
+            ${curve(valueOf(root, token.name))}
+            <span>${nameAndReference(token)}</span>
+            <code class="playground-ui-tokens__muted">${escape(valueOf(root, token.name))}</code>
+          </li>`,
+      )
+      .join("")}
+  </ul>`;
+
+const table = (tokens) => `
+  <div class="playground-ui-tokens__table" role="region" aria-label="Other tokens" tabindex="0">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Token</th>
+          <th scope="col">Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${tokens
+          .map(
+            (token) => `
+              <tr>
+                <th scope="row">${nameAndReference(token)}</th>
+                <td><code>${escape(valueOf(root, token.name))}</code></td>
+              </tr>`,
+          )
+          .join("")}
+      </tbody>
+    </table>
+  </div>`;
+
+const attributesOf = (attributes) =>
+  Object.entries(attributes)
+    .map(([attribute, value]) => ` ${attribute}="${value}"`)
+    .join("");
+
+const paint = surfaceToken && textToken ? ` style="background-color: var(${surfaceToken}); color: var(${textToken})"` : "";
+
+const readability = (attributes) => {
+  const probe = document.createElement("div");
+  probe.innerHTML = `<div${attributesOf(attributes)}${paint}></div>`;
+  container.append(probe);
+  const ratio = contrast(colourIn(probe.firstChild, textToken), colourIn(probe.firstChild, surfaceToken));
+  probe.remove();
+
+  return ratio;
+};
+
+const partnerOf = (context) => {
+  if (!paint || context.selector === ":root") return null;
+
+  const hasSurface = context.tokens.has(surfaceToken);
+  const hasText = context.tokens.has(textToken);
+  if (hasSurface && hasText) return null;
+
+  const wanted = hasSurface ? textToken : surfaceToken;
+  const other = hasSurface ? surfaceToken : textToken;
+  const ownAttribute = Object.keys(context.attributes)[0];
+  const overlap = (candidate) => [...candidate.tokens.keys()].filter((name) => name !== wanted && context.tokens.has(name)).length;
+
+  const candidates = [...contexts.values()]
+    .filter((candidate) => candidate.selector !== ":root" && !(ownAttribute in candidate.attributes))
+    .filter((candidate) => candidate.tokens.has(wanted) && !candidate.tokens.has(other))
+    .map((candidate) => ({
+      candidate,
+      overlap: overlap(candidate),
+      ratio: readability({ ...context.attributes, ...candidate.attributes }),
+    }))
+    .sort((a, b) => a.overlap - b.overlap || b.ratio - a.ratio);
+
+  return candidates[0]?.candidate ?? null;
+};
+
+const band = (context) => {
+  const partner = partnerOf(context);
+  const attributes = { ...context.attributes, ...partner?.attributes };
+
+  return `
+    <div class="playground-ui-tokens__context"${attributesOf(attributes)}${paint}>
+      <h4 class="playground-ui-tokens__context-title">
+        <code>${escape(context.selector)}</code>
+        ${partner ? `<span class="playground-ui-tokens__muted">on <code>${escape(partner.selector)}</code></span>` : ""}
+      </h4>
+      <ul class="playground-ui-tokens__roles">
+        ${[...context.tokens]
+          .map(
+            ([name, value]) => `
+              <li class="playground-ui-tokens__role" data-token="${name}">
+                <span class="playground-ui-tokens__role-chip" style="background-color: var(${name})"></span>
+                <code class="playground-ui-tokens__role-name">${name}</code>
+                <code class="playground-ui-tokens__muted playground-ui-tokens__role-value">${referenceOf(value) ? `${referenceOf(value)} / ` : ""}<span data-hex>${escape(value)}</span></code>
+                <code class="playground-ui-tokens__muted playground-ui-tokens__role-grade" data-grade></code>
+              </li>`,
+          )
+          .join("")}
+      </ul>
+    </div>`;
+};
+
+const contextGroups = groupBy([...contexts.values()], (context) => Object.keys(context.attributes)[0] ?? ":root");
+
+const typeGroups = groupBy(kinds.type, typeProperty);
+const lengthGroups = new Map(
+  [...groupBy(kinds.length, prefixOf)].flatMap(([prefix, tokens]) => {
+    const patterns = groupBy(tokens, patternOf);
+    return patterns.size > 1 ? [...patterns] : [[prefix, tokens]];
+  }),
+);
+
+container.innerHTML = [
+  kinds.colour.length && section("Colours", groups(groupBy(kinds.colour, familyOf), swatches)),
+  contexts.size &&
+    section(
+      "Contexts",
+      [...contextGroups]
+        .map(
+          ([attribute, members]) => `
+            <div class="playground-ui-tokens__group">
+              <h3 class="playground-ui-tokens__group-title"><code>${escape(attribute)}</code></h3>
+              ${members.map(band).join("")}
+            </div>`,
+        )
+        .join(""),
+    ),
+  kinds.type.length && section("Type", groups(typeGroups, samples)),
+  kinds.length.length && section("Lengths", groups(lengthGroups, (tokens) => bars(tokens, "px"))),
+  kinds.shadow.length && section("Shadows", groups(groupBy(kinds.shadow, prefixOf), shadows)),
+  kinds.easing.length && section("Easings", groups(groupBy(kinds.easing, prefixOf), easings)),
+  kinds.duration.length && section("Durations", groups(groupBy(kinds.duration, prefixOf), (tokens) => bars(tokens, "ms"))),
+  kinds.other.length && section("Other", groups(groupBy(kinds.other, prefixOf), table)),
+]
+  .filter(Boolean)
+  .join("");
+
+const pageBackground = surfaceToken ? colourIn(container, surfaceToken) : channels(getComputedStyle(document.body).backgroundColor);
+
+for (const swatch of container.querySelectorAll(".playground-ui-tokens__swatch")) {
+  const color = colourIn(swatch, swatch.dataset.token);
+  swatch.querySelector("[data-hex]").textContent = toHex(color);
+  if (toHex(blend(color, pageBackground)) === toHex(pageBackground)) swatch.querySelector(".playground-ui-tokens__chip").dataset.faint = "";
+}
+
+for (const context of container.querySelectorAll(".playground-ui-tokens__context")) {
+  const background = surfaceToken ? colourIn(context, surfaceToken) : pageBackground;
+
+  for (const role of context.querySelectorAll(".playground-ui-tokens__role")) {
+    const name = role.dataset.token;
+    const value = valueOf(context, name);
+    const chip = role.querySelector(".playground-ui-tokens__role-chip");
+
+    if (!CSS.supports("color", value)) {
+      chip.style.visibility = "hidden";
+      role.querySelector("[data-hex]").textContent = value;
+      continue;
+    }
+
+    const color = colourIn(context, name);
+    role.querySelector("[data-hex]").textContent = toHex(color);
+
+    if (toHex(blend(color, background)) === toHex(background)) {
+      chip.dataset.faint = "";
+      role.querySelector("[data-grade]").textContent = "n/a";
+      continue;
+    }
+
+    const ratio = contrast(color, background);
+    const grade = gradeFor(ratio);
+    role.querySelector("[data-grade]").textContent = `${ratio.toFixed(2)} · ${grade}`;
+    role.querySelector("[data-grade]").dataset.grade = grade;
+  }
+}
+
+for (const list of container.querySelectorAll(".playground-ui-tokens__bars")) {
+  const width = (row) => row.querySelector(".playground-ui-tokens__bar").getBoundingClientRect().width;
+  list.append(...[...list.children].sort((a, b) => width(a) - width(b)));
+}
+
+for (const output of container.querySelectorAll("[data-ms]")) {
+  output.textContent = `${durationOf(valueOf(root, output.closest("[data-token]").dataset.token))}ms`;
+}
+
+for (const output of container.querySelectorAll(".playground-ui-tokens__sample-row [data-value]")) {
+  output.textContent = valueOf(root, output.closest("[data-token]").dataset.token);
+}
+
+const showPixels = () => {
+  for (const output of container.querySelectorAll("[data-px]")) {
+    const row = output.closest("[data-token]");
+    const measured = row.querySelector(".playground-ui-tokens__bar")?.getBoundingClientRect().width ?? parseFloat(getComputedStyle(row.querySelector(".playground-ui-tokens__sample")).fontSize);
+    output.textContent = `${Math.round(measured)}px`;
+  }
+};
+
+showPixels();
+addEventListener("resize", showPixels);
