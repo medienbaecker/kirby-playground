@@ -9,14 +9,64 @@
 
 For example, if you have a snippet named `buttons.php`, it will be available at `/playground/buttons`.
 
+Subfolders become groups in the overview: `/site/snippets/playground/form/input.php` is listed under "Form" and available at `/playground/form/input`.
+
 ## Features
 
-- Custom route handling for `/playground/(:any?)` that can optionally be restricted to logged-in users
+- Custom route handling for `/playground/(:all?)` that can optionally be restricted to logged-in users
 - Components are rendered through virtual pages, without requiring actual page files
 - Optionally loads `assets/css/playground/playground.css` and `assets/css/playground/[component-name].css`
 - Optionally loads `assets/js/playground/[component-name].js`
 - Unknown components return a 404 with a list of the components you do have
+- A header with links to the overview and the previous and next component
+- Component docs and a props table from docblocks, and cases with their HTML
+- Loads its own `playground.css` and `playground.js` for the header, docs and cases
 - Placeholder helpers for lorem ipsum text and images
+
+## Cases
+
+Wrap each case in `Playground::case()` to give it a label, an anchor and a panel with its rendered HTML and a Copy button:
+
+```php
+use Medienbaecker\Playground\Playground;
+
+Playground::case('Long label', fn () => snippet('components/button', ['label' => 'Lorem ipsum dolor sit amet']));
+
+// With an accessibility note for this case
+Playground::case('Icon only', fn () => snippet('components/button', ['iconOnly' => true]), accessibility: 'The label stays readable for screen readers');
+```
+
+## Component Docs
+
+Name the components a playground snippet shows in its docblock:
+
+```php
+<?php
+
+/**
+ * @component components/button
+ */
+```
+
+Each named component gets a section above the cases, read from its own docblock:
+
+```php
+<?php
+
+/**
+ * Button Component
+ *
+ * Shown as the description, Markdown allowed.
+ *
+ * @status ready
+ * @use When to use it, one item per tag
+ * @avoid When not to use it
+ * @accessibility What to keep in mind
+ * @var string|null $label Shown in the props table
+ */
+```
+
+The first paragraph is the summary and is not shown.
 
 ## Placeholder Content
 
@@ -123,7 +173,7 @@ return [
 ];
 ```
 
-Playground pages are wrapped in `snippet('head')` and `snippet('bottom')`. If your site uses other names, override `site/snippets/playground-ui/head.php` and `bottom.php`. The same works for `playground-ui/overview` and `playground-ui/not-found`.
+Playground pages are wrapped in `snippet('head')` and `snippet('bottom')`. If your site uses other names, override `site/snippets/playground-ui/head.php` and `bottom.php`. The same works for `playground-ui/overview`, `playground-ui/header`, `playground-ui/component`, `playground-ui/case` and `playground-ui/not-found`.
 
 ## Directory Structure
 

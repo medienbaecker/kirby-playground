@@ -1,0 +1,204 @@
+.playground-ui-header,
+.playground-ui-overview,
+.playground-ui-component,
+.playground-ui-case__label,
+.playground-ui-case__accessibility,
+.playground-ui-code {
+  --playground-ui-line: color-mix(in srgb, currentColor, transparent 85%);
+  --playground-ui-muted: color-mix(in srgb, currentColor, transparent 40%);
+  font-family: system-ui, sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.playground-ui-header code,
+.playground-ui-component code,
+.playground-ui-code pre {
+  font-family: ui-monospace, monospace;
+  font-size: 0.8125rem;
+}
+
+.playground-ui-header,
+.playground-ui-overview,
+.playground-ui-component,
+.playground-ui-case {
+  padding: 1.5rem;
+}
+
+.playground-ui-overview__group {
+  margin-block: 1.5rem 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.playground-ui-overview__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.playground-ui-header__nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+}
+
+.playground-ui-header__siblings {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.playground-ui-header__title {
+  margin-block: 1.5rem 0.5rem;
+  font-size: 2rem;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.playground-ui-header__files {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--playground-ui-muted);
+  overflow-wrap: anywhere;
+}
+
+.playground-ui-component {
+  max-inline-size: 60rem;
+  border-block-start: 1px solid var(--playground-ui-line);
+}
+
+.playground-ui-component__name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+  font-size: 1rem;
+}
+
+.playground-ui-component__heading {
+  margin-block: 1.25rem 0.25rem;
+  font-size: 0.875rem;
+}
+
+.playground-ui-component__list {
+  margin: 0;
+  padding-inline-start: 1.25rem;
+  list-style: disc;
+}
+
+.playground-ui-component__description > * + * {
+  margin-block-start: 0.75em;
+}
+
+.playground-ui-component__status {
+  padding: 0.125rem 0.5rem;
+  border: 1px solid currentColor;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: normal;
+}
+
+.playground-ui-props {
+  margin-block-start: 1.25rem;
+  overflow-x: auto;
+}
+
+.playground-ui-props__table {
+  inline-size: 100%;
+  border-collapse: collapse;
+}
+
+.playground-ui-props th,
+.playground-ui-props td {
+  padding: 0.5rem 1rem 0.5rem 0;
+  border-block-end: 1px solid var(--playground-ui-line);
+  text-align: start;
+  vertical-align: top;
+  font-weight: normal;
+}
+
+.playground-ui-props thead th {
+  color: var(--playground-ui-muted);
+}
+
+.playground-ui-case__label {
+  margin: 0 0 1rem;
+  overflow-wrap: anywhere;
+  font-weight: normal;
+}
+
+.playground-ui-case__label a {
+  color: var(--playground-ui-muted);
+  text-decoration: none;
+}
+
+.playground-ui-case__label a::before {
+  content: "# " / "";
+}
+
+@media (hover: hover) {
+  .playground-ui-case__label a:is(:hover, :focus-visible) {
+    text-decoration: underline;
+  }
+}
+
+.playground-ui-case__accessibility {
+  margin-block: 1rem 0;
+}
+
+.playground-ui-code {
+  position: relative;
+  margin-block-start: 1rem;
+}
+
+.playground-ui-code summary {
+  inline-size: fit-content;
+  line-height: 2;
+  color: var(--playground-ui-muted);
+  cursor: pointer;
+}
+
+.playground-ui-code pre {
+  margin: 0.5rem 0 0;
+  padding: 1rem;
+  max-block-size: 30rem;
+  overflow: auto;
+  border: 1px solid var(--playground-ui-line);
+  white-space: pre;
+}
+
+.playground-ui-code__copy {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid currentColor;
+  border-radius: 0.25rem;
+  background: Canvas;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .playground-ui-code__copy:hover {
+    background: color-mix(in srgb, currentColor, Canvas 90%);
+  }
+}
+
+.playground-ui-code__copy:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.playground-ui-code__status {
+  position: absolute;
+  clip-path: inset(50%);
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+}

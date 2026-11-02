@@ -1,10 +1,12 @@
 <?php
 
 use Kirby\Cms\App as Kirby;
-use Kirby\Filesystem\Dir;
+use Medienbaecker\Playground\Playground;
 
 // Manual installation: load classes directly if Composer autoload isn't available
 if (!class_exists('Medienbaecker\Playground\Placeholder')) {
+    require __DIR__ . '/classes/Docblock.php';
+    require __DIR__ . '/classes/Playground.php';
     require __DIR__ . '/classes/VirtualFile.php';
     require __DIR__ . '/classes/TextGenerator.php';
     require __DIR__ . '/classes/ImageGenerator.php';
@@ -17,18 +19,7 @@ Kirby::plugin('medienbaecker/playground', [
     ],
 
     'siteMethods' => [
-        'playgroundLinks' => function () {
-            $files = Dir::files(kirby()->root('snippets') . '/playground');
-            $files = array_filter($files, fn($file) => pathinfo($file, PATHINFO_EXTENSION) === 'php');
-
-            return array_map(function ($file) {
-                $name = pathinfo($file, PATHINFO_FILENAME);
-                return [
-                    'url'   => url("playground/{$name}"),
-                    'title' => ucwords(str_replace('-', ' ', $name))
-                ];
-            }, array_values($files));
-        }
+        'playgroundLinks' => fn () => Playground::components()
     ],
 
     'templates' => [
@@ -39,6 +30,9 @@ Kirby::plugin('medienbaecker/playground', [
         'playground-ui/head'      => __DIR__ . '/snippets/head.php',
         'playground-ui/bottom'    => __DIR__ . '/snippets/bottom.php',
         'playground-ui/overview'  => __DIR__ . '/snippets/overview.php',
+        'playground-ui/header'    => __DIR__ . '/snippets/header.php',
+        'playground-ui/component' => __DIR__ . '/snippets/component.php',
+        'playground-ui/case'      => __DIR__ . '/snippets/case.php',
         'playground-ui/not-found' => __DIR__ . '/snippets/not-found.php'
     ],
 

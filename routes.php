@@ -4,8 +4,8 @@ use Kirby\Cms\Media;
 use Kirby\Cms\Page;
 use Kirby\Exception\NotFoundException;
 use Kirby\Http\Response;
-use Kirby\Template\Snippet;
 use Medienbaecker\Playground\ImageGenerator;
+use Medienbaecker\Playground\Playground;
 use Medienbaecker\Playground\VirtualFile;
 
 // Routes are scoped to all languages so they resolve under a language prefix.
@@ -72,7 +72,7 @@ return [
         }
     ],
     [
-        'pattern'  => 'playground/(:any?)',
+        'pattern'  => 'playground/(:all?)',
         'language' => '*',
         'action'   => function (...$args) use ($language) {
             if (kirby()->option('medienbaecker.playground.auth') && !kirby()->user()) {
@@ -94,14 +94,24 @@ return [
             ]);
 
             if ($component) {
-                if (Snippet::file("playground/{$component}") === null) {
+                if (in_array($component, array_column(Playground::components(), 'name'), true) === false) {
                     kirby()->response()->code(404);
                 }
 
+                $parent = $playgroundPage;
+
+                foreach (array_slice(explode('/', $component), 0, -1) as $folder) {
+                    $parent = Page::factory([
+                        'slug'     => $folder,
+                        'template' => 'playground',
+                        'parent'   => $parent,
+                    ]);
+                }
+
                 $componentPage = Page::factory([
-                    'slug'     => $component,
+                    'slug'     => basename($component),
                     'template' => 'playground',
-                    'parent'   => $playgroundPage,
+                    'parent'   => $parent,
                     'content'  => [
                         'title'     => "Playground: {$component}",
                         'component' => $component
