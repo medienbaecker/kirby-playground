@@ -20,6 +20,10 @@ Subfolders become groups in the overview: `/site/snippets/playground/form/input.
 - Unknown components return a 404 with a list of the components you do have
 - A header with links to the overview and the previous and next component
 - Component docs and a props table from docblocks, and cases with their HTML
+- Component cases with the `snippet()` call that renders them and a form to change their props
+- A URL for every case, and an accessibility check with axe-core
+- A coverage table on the overview and a list of the files that use each component
+- A script that screenshots every case and lists what changed
 - Loads its own `playground.css` and `playground.js` for the header, docs and cases
 - Placeholder helpers for lorem ipsum text and images
 
@@ -38,6 +42,16 @@ Playground::case('Icon only', fn () => snippet('components/button', ['iconOnly' 
 // With attributes on the case's wrapper, e.g. to paint it in a surface colour
 Playground::case('On purple', fn () => snippet('components/button'), attributes: ['data-background' => 'purple-700']);
 ```
+
+A case that renders one snippet can use `Playground::component()` instead. It also shows the `snippet()` call and a Props form built from the snippet's `@var` tags: a text field for `string`, a checkbox for `bool`, a number field for `int` and `float`, and a select for a list like `'small'|'medium'|'large'`. Props of other types keep their value. Changing a field renders the case again on the server.
+
+```php
+Playground::component('Large', 'components/button', ['label' => 'Lorem ipsum', 'size' => 'large']);
+```
+
+Every case has its own URL, linked as "Open alone": `/playground/buttons?case=large`. On that URL, placeholder text and unseeded placeholder images are the same on every request.
+
+The "Check accessibility" button in the header runs [axe-core](https://github.com/dequelabs/axe-core) (MPL-2.0, included) on every case and lists the violations under it.
 
 ## Component Docs
 
@@ -67,7 +81,23 @@ Each named component gets a section above the cases, read from its own docblock:
  */
 ```
 
-The first paragraph is the summary and is not shown.
+The first paragraph is the summary and is not shown. A one-line `/** @var Page $page */` hint before it is skipped.
+
+Each component section also lists the templates and snippets that call it. The overview ends with a coverage table of the snippets in `site/snippets/components` that have no playground page, no docblock or no `@status`. A component counts as shown when a playground page names it in `@component` or has the same name.
+
+## Tokens
+
+The plugin adds a Tokens page at `/playground/tokens`. It reads every custom property your stylesheets define on `:root` or redefine on an attribute selector like `[data-tone="dark"]`, and draws each by its value: colours as swatches, contexts as painted bands with contrast grades, font tokens as samples, lengths and durations as bars, shadows, easing curves, and a table for the rest.
+
+## Screenshots
+
+`bin/shots.mjs` takes a screenshot of every case at 320 and 1280 pixels in Chromium and WebKit, using the Playwright of your site. Run it from the site's root:
+
+```bash
+node site/plugins/kirby-playground/bin/shots.mjs http://example.test
+```
+
+It writes `.playground-shots/report.html` with every shot that is new or differs from the approved set. Approve the current shots with `--approve`. Add `/.playground-shots` to your `.gitignore`. Playground pages without cases are shot as a whole page with `?seed`, which keeps their placeholders the same on every request.
 
 ## Placeholder Content
 
@@ -174,7 +204,9 @@ return [
 ];
 ```
 
-Playground pages are wrapped in `snippet('head')` and `snippet('bottom')`. If your site uses other names, override `site/snippets/playground-ui/head.php` and `bottom.php`. The same works for `playground-ui/overview`, `playground-ui/header`, `playground-ui/component`, `playground-ui/case` and `playground-ui/not-found`.
+The coverage table reads the snippets in `site/snippets/components`. Set another folder with `'medienbaecker.playground.components' => 'ui'`.
+
+Playground pages are wrapped in `snippet('head')` and `snippet('bottom')`. If your site uses other names, override `site/snippets/playground-ui/head.php` and `bottom.php`. The same works for `playground-ui/overview`, `playground-ui/header`, `playground-ui/component`, `playground-ui/case`, `playground-ui/coverage` and `playground-ui/not-found`.
 
 ## Directory Structure
 

@@ -39,7 +39,7 @@ class ImageGenerator
         } elseif ($seed !== null) {
             $cacheId = md5("seed:{$seed}:{$width}:{$height}");
         } else {
-            $cacheId = md5(uniqid('', true));
+            $cacheId = md5((string) mt_rand());
         }
 
         $path = $this->sourceDir() . "/{$cacheId}.jpg";

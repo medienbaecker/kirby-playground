@@ -36,6 +36,9 @@ $index        = array_search($component, array_column($components, 'name'), true
 			'docblock' => Docblock::fromFile(Snippet::file($name)),
 		]) ?>
 	<?php endforeach ?>
+	<?php if (get('seed') !== null): ?>
+		<?php mt_srand(crc32($component)) ?>
+	<?php endif ?>
 	<?php snippet("playground/{$component}") ?>
 <?php elseif ($component): ?>
 	<?php snippet('playground-ui/not-found') ?>

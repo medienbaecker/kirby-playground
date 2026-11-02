@@ -84,6 +84,7 @@ class Playground
 
     /**
      * Renders a playground page and returns only the case with this id, its editable props replaced by `$props`
+     * Placeholders are seeded with the id, so the case looks the same on every request
      *
      * @param array<string, mixed>|null $props
      */
@@ -91,6 +92,8 @@ class Playground
     {
         static::$only  = $id;
         static::$props = $props;
+
+        mt_srand(crc32("{$component}#{$id}"));
 
         ob_start();
 
