@@ -5,6 +5,7 @@ namespace Medienbaecker\Playground;
 use Closure;
 use Kirby\Filesystem\Dir;
 use Kirby\Filesystem\F;
+use Kirby\Template\Snippet;
 use Kirby\Toolkit\Str;
 
 class Playground
@@ -37,18 +38,20 @@ class Playground
     }
 
     /**
-     * Every playground snippet, root files first, then grouped by folder
+     * Every playground snippet of the site and of plugins, root files first, then grouped by folder
      *
      * @return array<array{name: string, title: string, group: string, url: string}>
      */
     public static function components(): array
     {
-        $root  = kirby()->root('snippets') . '/playground';
-        $files = is_dir($root) ? Dir::index($root, true) : [];
-        $files = array_filter($files, fn ($file) => pathinfo($file, PATHINFO_EXTENSION) === 'php');
+        $root    = kirby()->root('snippets') . '/playground';
+        $files   = is_dir($root) ? Dir::index($root, true) : [];
+        $files   = array_filter($files, fn ($file) => pathinfo($file, PATHINFO_EXTENSION) === 'php');
+        $names   = array_map(fn ($file) => substr($file, 0, -4), $files);
+        $plugins = array_filter(array_keys(kirby()->extensions('snippets')), fn ($name) => str_starts_with($name, 'playground/'));
+        $names   = array_unique([...$names, ...array_map(fn ($name) => Str::after($name, 'playground/'), $plugins)]);
 
-        $components = array_map(function ($file) {
-            $name   = substr($file, 0, -4);
+        $components = array_map(function ($name) {
             $folder = dirname($name);
 
             return [
@@ -57,7 +60,7 @@ class Playground
                 'group' => $folder === '.' ? '' : static::title($folder),
                 'url'   => static::url($name),
             ];
-        }, $files);
+        }, $names);
 
         usort($components, fn ($a, $b) => [$a['group'], $a['title']] <=> [$b['group'], $b['title']]);
 
@@ -130,9 +133,9 @@ class Playground
      */
     public static function shows(string $component): array
     {
-        $file = kirby()->root('snippets') . "/playground/{$component}.php";
+        $file = Snippet::file("playground/{$component}");
 
-        return array_map(fn ($value) => strtok($value, " \t"), Docblock::fromFile($file)->tag('component'));
+        return $file === null ? [] : array_map(fn ($value) => strtok($value, " \t"), Docblock::fromFile($file)->tag('component'));
     }
 
     /**
