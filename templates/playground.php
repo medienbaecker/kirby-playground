@@ -26,10 +26,9 @@ $case         = get('case');
 <?php elseif ($index !== false): ?>
 	<?php $names = Playground::shows($component) ?>
 	<?php snippet('playground-ui/header', [
-		'title'     => $components[$index]['title'],
-		'previous'  => $components[$index - 1] ?? null,
-		'next'      => $components[$index + 1] ?? null,
-		'files'     => array_map(Playground::path(...), ["playground/{$component}", ...$names]),
+		'title'    => $components[$index]['title'],
+		'previous' => $components[$index - 1] ?? null,
+		'next'     => $components[$index + 1] ?? null,
 	]) ?>
 	<?php foreach (array_filter($names, fn ($name) => Snippet::file($name) !== null) as $name): ?>
 		<?php snippet('playground-ui/component', [
@@ -37,9 +36,6 @@ $case         = get('case');
 			'docblock' => Docblock::fromFile(Snippet::file($name)),
 		]) ?>
 	<?php endforeach ?>
-	<?php if (get('seed') !== null): ?>
-		<?php mt_srand(crc32($component)) ?>
-	<?php endif ?>
 	<?php snippet("playground/{$component}") ?>
 <?php elseif ($component): ?>
 	<?php snippet('playground-ui/not-found') ?>

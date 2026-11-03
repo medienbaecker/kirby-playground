@@ -14,7 +14,6 @@
 <section class="playground-ui-case" id="<?= esc($id, 'attr') ?>">
 	<div class="playground-ui-case__header">
 		<h2 class="playground-ui-case__label"><a href="#<?= esc($id, 'attr') ?>"><?= esc($label) ?></a></h2>
-		<a class="playground-ui-case__alone" href="?case=<?= esc(rawurlencode($id), 'attr') ?>">Open alone</a>
 	</div>
 	<div <?= attr([...$attributes, 'class' => 'playground-ui-case__render']) ?>><?= $html ?></div>
 	<?php if ($accessibility): ?>

@@ -1,7 +1,5 @@
 <?php
 
-use Medienbaecker\Playground\Playground;
-
 /**
  * @var string $name Snippet name, e.g. `components/button`
  * @var \Medienbaecker\Playground\Docblock $docblock
@@ -10,7 +8,6 @@ use Medienbaecker\Playground\Playground;
 $props         = $docblock->props();
 $status        = $docblock->tag('status')[0] ?? null;
 $accessibility = $docblock->tag('accessibility');
-$usage         = Playground::usage($name);
 
 ?>
 <section class="playground-ui-component">
@@ -55,16 +52,5 @@ $usage         = Playground::usage($name);
 				</tbody>
 			</table>
 		</div>
-	<?php endif ?>
-
-	<h3 class="playground-ui-component__heading">Used in</h3>
-	<?php if ($usage): ?>
-		<ul class="playground-ui-component__list">
-			<?php foreach ($usage as $file => $calls): ?>
-				<li><code><?= str_replace('/', '/<wbr>', esc($file)) ?></code><?= $calls > 1 ? ", {$calls} calls" : '' ?></li>
-			<?php endforeach ?>
-		</ul>
-	<?php else: ?>
-		<p>No template or snippet calls it.</p>
 	<?php endif ?>
 </section>

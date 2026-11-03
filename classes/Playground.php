@@ -5,7 +5,6 @@ namespace Medienbaecker\Playground;
 use Closure;
 use ReflectionClass;
 use Kirby\Filesystem\Dir;
-use Kirby\Filesystem\F;
 use Kirby\Template\Snippet;
 use Kirby\Toolkit\Str;
 
@@ -214,54 +213,6 @@ class Playground
         $file = Snippet::file("playground/{$component}");
 
         return $file === null ? [] : array_map('trim', Docblock::fromFile($file)->tag('component'));
-    }
-
-    /**
-     * Path of a snippet's file from the index root, or its name with "(not found)"
-     */
-    public static function path(string $name): string
-    {
-        $file = Snippet::file($name);
-
-        if ($file === null) {
-            return "{$name} (not found)";
-        }
-
-        return Str::after($file, kirby()->root('index') . '/') ?: $file;
-    }
-
-    /**
-     * Templates, snippets and plugins that call a snippet, with the number of calls, playground pages left out
-     *
-     * @return array<string, int> Path from the index root and calls
-     */
-    public static function usage(string $name): array
-    {
-        $pattern = '/snippet\(\s*[\'"]' . preg_quote($name, '/') . '[\'"]/';
-        $index   = kirby()->root('index') . '/';
-        $plugins = kirby()->root('plugins');
-        $ignore  = array_map('realpath', [...glob("{$plugins}/*/node_modules"), ...glob("{$plugins}/*/vendor")]);
-        $usage   = [];
-
-        foreach (['templates', 'snippets', 'plugins'] as $folder) {
-            $root = kirby()->root($folder);
-
-            foreach (is_dir($root) ? Dir::index($root, true, $ignore) : [] as $file) {
-                if (pathinfo($file, PATHINFO_EXTENSION) !== 'php' || ($folder === 'snippets' && str_starts_with($file, 'playground/'))) {
-                    continue;
-                }
-
-                $calls = preg_match_all($pattern, F::read("{$root}/{$file}"));
-
-                if ($calls > 0) {
-                    $usage[Str::after("{$root}/{$file}", $index)] = $calls;
-                }
-            }
-        }
-
-        arsort($usage);
-
-        return $usage;
     }
 
     /**

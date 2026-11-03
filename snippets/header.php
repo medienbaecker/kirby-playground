@@ -4,7 +4,6 @@
  * @var string $title
  * @var array|null $previous
  * @var array|null $next
- * @var array<string> $files Paths shown in the header
  */
 
 use Medienbaecker\Playground\Playground;
@@ -26,9 +25,4 @@ use Medienbaecker\Playground\Playground;
 	</nav>
 	<h1 class="playground-ui-header__title"><?= esc($title) ?></h1>
 	<p class="playground-ui-header__axe" aria-live="polite" data-script="<?= esc(kirby()->plugin('medienbaecker/playground')->asset('axe.min.js')->url(), 'attr') ?>"></p>
-	<ul class="playground-ui-header__files">
-		<?php foreach ($files as $file): ?>
-			<li><code><?= str_replace('/', '/<wbr>', esc($file)) ?></code></li>
-		<?php endforeach ?>
-	</ul>
 </header>

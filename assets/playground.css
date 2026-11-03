@@ -143,13 +143,6 @@
   overflow-wrap: anywhere;
 }
 
-.playground-ui-header__files {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  color: var(--playground-ui-muted);
-  overflow-wrap: anywhere;
-}
 
 .playground-ui-header__axe {
   margin: 0 0 0.75rem;
@@ -258,9 +251,6 @@
   font: inherit;
 }
 
-.playground-ui-case__alone {
-  color: var(--playground-ui-muted);
-}
 
 .playground-ui-case__render {
   padding: 0.5rem;
