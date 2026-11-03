@@ -3,35 +3,35 @@
 use Kirby\Cms\App as Kirby;
 
 if (!class_exists('Medienbaecker\Playground\Placeholder')) {
-    require __DIR__ . '/classes/Docblock.php';
-    require __DIR__ . '/classes/Playground.php';
-    require __DIR__ . '/classes/VirtualFile.php';
-    require __DIR__ . '/classes/TextGenerator.php';
-    require __DIR__ . '/classes/ImageGenerator.php';
-    require __DIR__ . '/classes/Placeholder.php';
+	require __DIR__ . '/classes/Docblock.php';
+	require __DIR__ . '/classes/Playground.php';
+	require __DIR__ . '/classes/VirtualFile.php';
+	require __DIR__ . '/classes/TextGenerator.php';
+	require __DIR__ . '/classes/ImageGenerator.php';
+	require __DIR__ . '/classes/Placeholder.php';
 }
 
 Kirby::plugin('medienbaecker/playground', [
-    'options' => [
-        'auth' => false
-    ],
+	'options' => [
+		'auth' => false
+	],
 
-    'templates' => [
-        'playground' => __DIR__ . '/templates/playground.php'
-    ],
+	'templates' => [
+		'playground' => __DIR__ . '/templates/playground.php'
+	],
 
-    'snippets' => [
-        'playground-ui/head'      => __DIR__ . '/snippets/head.php',
-        'playground-ui/bottom'    => __DIR__ . '/snippets/bottom.php',
-        'playground-ui/header'    => __DIR__ . '/snippets/header.php',
-        'playground-ui/component' => __DIR__ . '/snippets/component.php',
-        'playground-ui/case'      => __DIR__ . '/snippets/case.php',
-        'playground-ui/not-found' => __DIR__ . '/snippets/not-found.php',
-        'playground-ui/swatches'  => __DIR__ . '/snippets/swatches.php',
-        'playground-ui/sizes'     => __DIR__ . '/snippets/sizes.php',
-        'playground-ui/type'      => __DIR__ . '/snippets/type.php',
-        'playground-ui/sidebar'   => __DIR__ . '/snippets/sidebar.php'
-    ],
+	'snippets' => [
+		'playground-ui/head'      => __DIR__ . '/snippets/head.php',
+		'playground-ui/bottom'    => __DIR__ . '/snippets/bottom.php',
+		'playground-ui/header'    => __DIR__ . '/snippets/header.php',
+		'playground-ui/component' => __DIR__ . '/snippets/component.php',
+		'playground-ui/case'      => __DIR__ . '/snippets/case.php',
+		'playground-ui/not-found' => __DIR__ . '/snippets/not-found.php',
+		'playground-ui/swatches'  => __DIR__ . '/snippets/swatches.php',
+		'playground-ui/sizes'     => __DIR__ . '/snippets/sizes.php',
+		'playground-ui/type'      => __DIR__ . '/snippets/type.php',
+		'playground-ui/sidebar'   => __DIR__ . '/snippets/sidebar.php'
+	],
 
-    'routes' => require __DIR__ . '/routes.php'
+	'routes' => require __DIR__ . '/routes.php'
 ]);

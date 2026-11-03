@@ -6,84 +6,84 @@ use Kirby\Toolkit\Str;
 
 class Docblock
 {
-    /**
-     * @param string $description Everything between the summary paragraph and the first tag
-     * @param array<array{0: string, 1: string}> $tags Name and value of every tag, in file order
-     */
-    public function __construct(
-        public readonly string $description = '',
-        public readonly array $tags = []
-    ) {
-    }
+	/**
+	 * @param string $description Everything between the summary paragraph and the first tag
+	 * @param array<array{0: string, 1: string}> $tags Name and value of every tag, in file order
+	 */
+	public function __construct(
+		public readonly string $description = '',
+		public readonly array $tags = []
+	) {
+	}
 
-    /**
-     * Parses the first docblock in a file that is not a one-line `@var` hint
-     */
-    public static function fromFile(string $path): static
-    {
-        preg_match_all('!/\*\*(.*?)\*/!s', file_get_contents($path), $matches);
+	/**
+	 * Parses the first docblock in a file that is not a one-line `@var` hint
+	 */
+	public static function fromFile(string $path): static
+	{
+		preg_match_all('!/\*\*(.*?)\*/!s', file_get_contents($path), $matches);
 
-        $bodies = array_filter($matches[1], fn ($body) => preg_match('/^\s*@var\s[^\n]*$/', $body) !== 1);
+		$bodies = array_filter($matches[1], fn ($body) => preg_match('/^\s*@var\s[^\n]*$/', $body) !== 1);
 
-        if ($bodies === []) {
-            return new static();
-        }
+		if ($bodies === []) {
+			return new static();
+		}
 
-        $body = reset($bodies);
+		$body = reset($bodies);
 
-        $lines = array_map(
-            fn ($line) => rtrim(preg_replace('/^\s*\*?\s?/', '', $line)),
-            explode("\n", $body)
-        );
+		$lines = array_map(
+			fn ($line) => rtrim(preg_replace('/^\s*\*?\s?/', '', $line)),
+			explode("\n", $body)
+		);
 
-        $text = [];
-        $tags = [];
+		$text = [];
+		$tags = [];
 
-        foreach ($lines as $line) {
-            if (preg_match('/^@([\w-]+)\s*(.*)$/', $line, $tag) === 1) {
-                $tags[] = [$tag[1], $tag[2]];
-            } elseif ($tags !== [] && $line !== '') {
-                $tags[array_key_last($tags)][1] .= ' ' . trim($line);
-            } elseif ($tags === []) {
-                $text[] = $line;
-            }
-        }
+		foreach ($lines as $line) {
+			if (preg_match('/^@([\w-]+)\s*(.*)$/', $line, $tag) === 1) {
+				$tags[] = [$tag[1], $tag[2]];
+			} elseif ($tags !== [] && $line !== '') {
+				$tags[array_key_last($tags)][1] .= ' ' . trim($line);
+			} elseif ($tags === []) {
+				$text[] = $line;
+			}
+		}
 
-        return new static(trim(Str::after(trim(implode("\n", $text)), "\n\n")), $tags);
-    }
+		return new static(trim(Str::after(trim(implode("\n", $text)), "\n\n")), $tags);
+	}
 
-    /**
-     * All values of one tag
-     *
-     * @return array<string>
-     */
-    public function tag(string $name): array
-    {
-        return array_values(array_map(
-            fn ($tag) => $tag[1],
-            array_filter($this->tags, fn ($tag) => $tag[0] === $name)
-        ));
-    }
+	/**
+	 * All values of one tag
+	 *
+	 * @return array<string>
+	 */
+	public function tag(string $name): array
+	{
+		return array_values(array_map(
+			fn ($tag) => $tag[1],
+			array_filter($this->tags, fn ($tag) => $tag[0] === $name)
+		));
+	}
 
-    /**
-     * The `@var` tags as props
-     *
-     * @return array<array{name: string, type: string, description: string}>
-     */
-    public function props(): array
-    {
-        $props = [];
+	/**
+	 * The `@var` tags as props
+	 *
+	 * @return array<array{name: string, type: string, description: string}>
+	 */
+	public function props(): array
+	{
+		$props = [];
 
-        foreach ($this->tag('var') as $value) {
-            if (preg_match('/^(.*?)\s*\$(\w+)\s*(.*)$/', $value, $match) === 1) {
-                $props[] = [
-                    'name'        => $match[2],
-                    'type'        => $match[1],
-                    'description' => $match[3],
-                ];
-            }
-        }
+		foreach ($this->tag('var') as $value) {
+			if (preg_match('/^(.*?)\s*\$(\w+)\s*(.*)$/', $value, $match) === 1) {
+				$props[] = [
+					'name'        => $match[2],
+					'type'        => $match[1],
+					'description' => $match[3],
+				];
+			}
+		}
 
-        return $props;
-    }
+		return $props;
+	}
 }
