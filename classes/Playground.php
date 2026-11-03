@@ -143,7 +143,7 @@ class Playground
             ];
         }, array_unique($names));
 
-        usort($components, fn ($a, $b) => [$a['group'] !== 'Base', $a['group'], $a['title']] <=> [$b['group'] !== 'Base', $b['group'], $b['title']]);
+        usort($components, fn ($a, $b) => [$a['group'] !== 'Base', $a['group'], strtr($a['title'], ' ', '~')] <=> [$b['group'] !== 'Base', $b['group'], strtr($b['title'], ' ', '~')]);
 
         return $components;
     }
