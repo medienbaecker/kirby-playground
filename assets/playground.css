@@ -375,3 +375,38 @@
   overflow: hidden;
   white-space: nowrap;
 }
+
+.playground-ui-props__name {
+  font-weight: 700;
+}
+
+.playground-ui-type {
+  --playground-ui-type-builtin: color-mix(in srgb, #2563eb 70%, currentColor);
+  --playground-ui-type-class: color-mix(in srgb, #c2410c 70%, currentColor);
+  --playground-ui-type-value: color-mix(in srgb, #15803d 70%, currentColor);
+}
+
+.playground-ui-type__builtin {
+  color: var(--playground-ui-type-builtin);
+}
+
+.playground-ui-type__class {
+  color: var(--playground-ui-type-class);
+  text-decoration: none;
+}
+
+.playground-ui-type__value {
+  padding-inline: 0.25em;
+  border: 1px solid currentColor;
+  border-radius: 0.25em;
+  color: var(--playground-ui-type-value);
+}
+
+.playground-ui-type__null,
+.playground-ui-type__pipe {
+  color: var(--playground-ui-muted);
+}
+
+.playground-ui-type__pipe {
+  padding-inline: 0.125em;
+}
