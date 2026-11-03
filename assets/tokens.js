@@ -257,14 +257,54 @@ const swatches = (tokens) => `
       .join("")}
   </ul>`;
 
+const legend = (name) => `
+  <p class="playground-ui-tokens__legend">
+    <code>${escape(name)}</code>
+    <code class="playground-ui-tokens__muted playground-ui-tokens__readout" aria-hidden="true"></code>
+  </p>`;
+
+const ramp = ([family, tokens]) => `
+  <div class="playground-ui-tokens__group">
+    <div class="playground-ui-tokens__ramp">
+      ${tokens
+        .map(
+          (token) => `
+            <button type="button" class="playground-ui-tokens__step" data-token="${token.name}" data-copy="var(${token.name})" style="background-color: var(${token.name})">
+              <code>${escape(token.name.slice(family.length + 1))}</code>
+            </button>`,
+        )
+        .join("")}
+    </div>
+    ${legend(`${family}-*`)}
+  </div>`;
+
+const squares = ([key, tokens]) => `
+  <div class="playground-ui-tokens__group">
+    <ul class="playground-ui-tokens__squares" data-sort>
+      ${tokens
+        .map(
+          (token) => `
+            <li>
+              <button type="button" class="playground-ui-tokens__square-button" data-token="${token.name}" data-copy="var(${token.name})">
+                <span class="playground-ui-tokens__square" style="inline-size: min(var(${token.name}), 6rem); block-size: min(var(${token.name}), 6rem)"></span>
+                <span class="playground-ui-tokens__measure" style="inline-size: var(${token.name})" data-measure></span>
+                <code class="playground-ui-tokens__muted" data-px></code>
+              </button>
+            </li>`,
+        )
+        .join("")}
+    </ul>
+    ${legend(key)}
+  </div>`;
+
 const bars = (tokens, unit) => `
-  <ul class="playground-ui-tokens__bars">
+  <ul class="playground-ui-tokens__bars" data-sort>
     ${tokens
       .map(
         (token) => `
           <li class="playground-ui-tokens__bar-row" data-token="${token.name}">
             <span class="playground-ui-tokens__bar-name">${nameAndReference(token)}</span>
-            <span class="playground-ui-tokens__bar" style="inline-size: ${unit === "ms" ? `${durationOf(token.resolved) / 4}px` : `var(${token.name})`}"></span>
+            <span class="playground-ui-tokens__bar" style="inline-size: ${unit === "ms" ? `${durationOf(token.resolved) / 4}px` : `var(${token.name})`}" data-measure></span>
             <code class="playground-ui-tokens__muted" data-${unit}>${unit === "ms" ? `${durationOf(token.resolved)}ms` : ""}</code>
           </li>`,
       )
@@ -566,7 +606,7 @@ const component = ([block, states]) => {
 };
 
 container.innerHTML = [
-  kinds.colour.length && section("Colours", groups(groupBy(kinds.colour, familyOf), swatches)),
+  kinds.colour.length && section("Colours", [...groupBy(kinds.colour, familyOf)].map(ramp).join("")),
   contexts.size &&
     section(
       "Contexts",
@@ -581,7 +621,7 @@ container.innerHTML = [
         .join(""),
     ),
   kinds.type.length && section("Type", groups(typeGroups, samples)),
-  kinds.length.length && section("Lengths", groups(lengthGroups, (tokens) => bars(tokens, "px"))),
+  kinds.length.length && section("Lengths", [...lengthGroups].map(squares).join("")),
   kinds.shadow.length && section("Shadows", groups(groupBy(kinds.shadow, prefixOf), shadows)),
   kinds.easing.length && section("Easings", groups(groupBy(kinds.easing, prefixOf), easings)),
   kinds.duration.length && section("Durations", groups(groupBy(kinds.duration, prefixOf), (tokens) => bars(tokens, "ms"))),
@@ -629,18 +669,64 @@ for (const context of container.querySelectorAll(".playground-ui-tokens__context
   }
 }
 
-for (const list of container.querySelectorAll(".playground-ui-tokens__bars")) {
-  const width = (row) => row.querySelector(".playground-ui-tokens__bar").getBoundingClientRect().width;
+for (const step of container.querySelectorAll(".playground-ui-tokens__step")) {
+  const color = colourIn(step, step.dataset.token);
+  const shown = blend(color, pageBackground);
+  const black = { r: 0, g: 0, b: 0, a: 1 };
+  const white = { r: 1, g: 1, b: 1, a: 1 };
+
+  step.style.color = contrast(black, shown) > contrast(white, shown) ? "#000" : "#fff";
+  step.dataset.label = `${step.dataset.token} ${toHex(color)}`;
+  step.setAttribute("aria-label", step.dataset.label);
+  if (toHex(shown) === toHex(pageBackground)) step.dataset.faint = "";
+}
+
+for (const list of container.querySelectorAll("[data-sort]")) {
+  const width = (row) => row.querySelector("[data-measure]").getBoundingClientRect().width;
   list.append(...[...list.children].sort((a, b) => width(a) - width(b)));
 }
 
 const showPixels = () => {
   for (const output of container.querySelectorAll("[data-px]")) {
     const row = output.closest("[data-token]");
-    const measured = row.querySelector(".playground-ui-tokens__bar")?.getBoundingClientRect().width ?? parseFloat(getComputedStyle(row.querySelector(".playground-ui-tokens__sample")).fontSize);
+    const measured = row.querySelector("[data-measure]")?.getBoundingClientRect().width ?? parseFloat(getComputedStyle(row.querySelector(".playground-ui-tokens__sample")).fontSize);
     output.textContent = `${Math.round(measured)}px`;
+
+    if (row.matches("[data-copy]")) {
+      row.dataset.label = `${row.dataset.token} ${output.textContent}`;
+      row.setAttribute("aria-label", row.dataset.label);
+    }
   }
 };
 
 showPixels();
 addEventListener("resize", showPixels);
+
+container.insertAdjacentHTML("beforeend", `<p class="playground-ui-tokens__status" role="status"></p>`);
+const status = container.querySelector(".playground-ui-tokens__status");
+
+const readoutOf = (button) => button.closest(".playground-ui-tokens__group").querySelector(".playground-ui-tokens__readout");
+
+for (const type of ["mouseover", "focusin"]) {
+  container.addEventListener(type, (event) => {
+    const button = event.target.closest("[data-copy]");
+    if (button) readoutOf(button).textContent = button.dataset.label;
+  });
+}
+
+for (const type of ["mouseout", "focusout"]) {
+  container.addEventListener(type, (event) => {
+    const button = event.target.closest("[data-copy]");
+    if (button && !button.contains(event.relatedTarget)) readoutOf(button).textContent = "";
+  });
+}
+
+container.addEventListener("click", async (event) => {
+  const button = event.target.closest("[data-copy]");
+  if (!button) return;
+
+  await copy(button.dataset.copy);
+  readoutOf(button).textContent = `${button.dataset.label} · Copied ${button.dataset.copy}`;
+  const message = `Copied ${button.dataset.copy}`;
+  status.textContent = status.textContent === message ? `${message}.` : message;
+});

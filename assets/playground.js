@@ -1,10 +1,14 @@
 /**
- * Copy buttons of the code panels, with a screen reader announcement
+ * Copies text, with a fallback for plain-http dev domains
  */
-function copy(element) {
+function copy(text) {
   if (window.isSecureContext) {
-    return navigator.clipboard.writeText(element.textContent);
+    return navigator.clipboard.writeText(text);
   }
+
+  const element = document.createElement("span");
+  element.textContent = text;
+  document.body.append(element);
 
   const range = document.createRange();
   range.selectNodeContents(element);
@@ -12,6 +16,7 @@ function copy(element) {
   getSelection().addRange(range);
   document.execCommand("copy");
   getSelection().removeAllRanges();
+  element.remove();
 }
 
 for (const button of document.querySelectorAll(".playground-ui-code__copy")) {
@@ -20,7 +25,7 @@ for (const button of document.querySelectorAll(".playground-ui-code__copy")) {
   let timeout;
 
   button.addEventListener("click", async () => {
-    await copy(code);
+    await copy(code.textContent);
     button.textContent = "Copied";
     status.textContent = status.textContent === "Copied to clipboard" ? "Copied to clipboard." : "Copied to clipboard";
     clearTimeout(timeout);

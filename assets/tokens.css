@@ -260,3 +260,84 @@
 .playground-ui-tokens__table thead th {
   color: var(--playground-ui-muted);
 }
+
+.playground-ui-tokens__ramp {
+  display: flex;
+  flex-wrap: wrap;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.playground-ui-tokens__step {
+  display: flex;
+  flex: 1 1 0;
+  align-items: flex-end;
+  min-inline-size: 1.75rem;
+  block-size: 56px;
+  padding: 0.375rem;
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+.playground-ui-tokens__step code {
+  font-size: 0.6875rem;
+  line-height: 1;
+}
+
+.playground-ui-tokens__step:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: -4px;
+}
+
+.playground-ui-tokens__legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0 1rem;
+  min-block-size: 1.5em;
+  margin: 0.5rem 0 0;
+}
+
+.playground-ui-tokens__squares {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem 0.75rem;
+}
+
+.playground-ui-tokens__square-button {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.playground-ui-tokens__square {
+  background-color: currentColor;
+}
+
+.playground-ui-tokens__measure {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  block-size: 0;
+  visibility: hidden;
+}
+
+.playground-ui-tokens__status {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
