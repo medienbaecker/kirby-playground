@@ -190,6 +190,17 @@
   }
 }
 
+@media (min-width: 50rem) and (hover: hover) {
+  .playground-ui-sidebar__toggle {
+    opacity: 0;
+  }
+
+  .playground-ui-sidebar:hover .playground-ui-sidebar__toggle,
+  .playground-ui-sidebar__toggle:focus-visible {
+    opacity: 1;
+  }
+}
+
 /* Intro */
 
 .playground-ui-intro {
