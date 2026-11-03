@@ -41,7 +41,7 @@ $type  = function (string $type): string {
 					<?php foreach ($props as $prop): ?>
 						<tr>
 							<th scope="row"><code class="playground-ui-props__name">$<?= preg_replace('/([A-Z])/', '<wbr>$1', esc($prop['name'])) ?></code></th>
-							<td><code class="playground-ui-type"><?= implode('<span class="playground-ui-type__pipe">|</span><wbr>', array_map($type, explode('|', preg_replace('/^\?(.*)$/', '$1|null', $prop['type'])))) ?></code></td>
+							<td><code><?= implode('<span class="playground-ui-type__pipe">|</span><wbr>', array_map($type, explode('|', preg_replace('/^\?(.*)$/', '$1|null', $prop['type'])))) ?></code></td>
 							<td><?= markdown($prop['description'], ['inline' => true, 'safe' => true]) ?></td>
 						</tr>
 					<?php endforeach ?>

@@ -99,12 +99,8 @@ class Playground
 		static::$only = $case;
 
 		ob_start();
-
-		try {
-			snippet("playground/{$component}");
-		} finally {
-			ob_end_clean();
-		}
+		snippet("playground/{$component}");
+		ob_end_clean();
 
 		echo static::$frame ?: '<p class="playground-ui-not-found">No case with the id <code>' . esc($case) . '</code>.</p>';
 	}
@@ -176,7 +172,6 @@ class Playground
 		$files = [];
 
 		foreach ($names as $name) {
-			$name = trim($name);
 			$file = Snippet::file($name);
 
 			if ($file !== null) {

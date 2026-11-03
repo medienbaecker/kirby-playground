@@ -191,7 +191,7 @@
 	gap: 1rem;
 }
 
-.playground-ui-header__title {
+.playground-ui__title {
 	margin: 0;
 	font-size: 1.75rem;
 	font-weight: 600;
@@ -311,10 +311,6 @@
 .playground-ui-case__label a {
 	color: var(--playground-ui-muted);
 	text-decoration: none;
-}
-
-.playground-ui-case__label a:focus-visible {
-	text-decoration: underline;
 }
 
 @media (hover: hover) {

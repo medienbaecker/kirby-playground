@@ -36,6 +36,6 @@ if (window.frameElement) {
 	const render = document.querySelector(".playground-ui-case__render");
 
 	new ResizeObserver(() => {
-		frameElement.style.blockSize = `${Math.floor(render.getBoundingClientRect().bottom + scrollY)}px`;
+		frameElement.style.blockSize = `${Math.floor(render.getBoundingClientRect().bottom)}px`;
 	}).observe(render);
 }

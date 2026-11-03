@@ -10,14 +10,6 @@ use Kirby\Http\Remote;
 class ImageGenerator
 {
 	/**
-	 * Folder of the downloaded source images
-	 */
-	public static function sourceDir(): string
-	{
-		return kirby()->root('media') . '/playground-source';
-	}
-
-	/**
 	 * Placeholder image from picsum.photos, downloaded on first use
 	 */
 	public static function image(array|string $options = []): VirtualFile
@@ -38,7 +30,7 @@ class ImageGenerator
 			$cacheId = md5("seed:{$seed}:{$width}:{$height}");
 			$path    = "seed/{$seed}/";
 		} else {
-			$cacheId = md5((string) mt_rand());
+			$cacheId = md5(uniqid('', true));
 			$path    = '';
 		}
 
@@ -84,7 +76,7 @@ class ImageGenerator
 		return new VirtualFile([
 			'filename' => "{$cacheId}.jpg",
 			'parent'   => site(),
-			'root'     => static::sourceDir() . "/{$cacheId}.jpg",
+			'root'     => kirby()->root('media') . "/playground-source/{$cacheId}.jpg",
 			'url'      => url("playground/image/{$cacheId}.jpg"),
 			'content'  => $content,
 		]);

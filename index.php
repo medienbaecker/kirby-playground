@@ -2,14 +2,14 @@
 
 use Kirby\Cms\App as Kirby;
 
-if (!class_exists('Medienbaecker\Playground\Placeholder')) {
-	require __DIR__ . '/classes/Docblock.php';
-	require __DIR__ . '/classes/Playground.php';
-	require __DIR__ . '/classes/VirtualFile.php';
-	require __DIR__ . '/classes/TextGenerator.php';
-	require __DIR__ . '/classes/ImageGenerator.php';
-	require __DIR__ . '/classes/Placeholder.php';
-}
+load([
+	'Medienbaecker\Playground\Docblock'       => 'classes/Docblock.php',
+	'Medienbaecker\Playground\Playground'     => 'classes/Playground.php',
+	'Medienbaecker\Playground\VirtualFile'    => 'classes/VirtualFile.php',
+	'Medienbaecker\Playground\TextGenerator'  => 'classes/TextGenerator.php',
+	'Medienbaecker\Playground\ImageGenerator' => 'classes/ImageGenerator.php',
+	'Medienbaecker\Playground\Placeholder'    => 'classes/Placeholder.php',
+], __DIR__);
 
 Kirby::plugin('medienbaecker/playground', [
 	'options' => [
@@ -23,7 +23,6 @@ Kirby::plugin('medienbaecker/playground', [
 	'snippets' => [
 		'playground-ui/head'      => __DIR__ . '/snippets/head.php',
 		'playground-ui/bottom'    => __DIR__ . '/snippets/bottom.php',
-		'playground-ui/header'    => __DIR__ . '/snippets/header.php',
 		'playground-ui/component' => __DIR__ . '/snippets/component.php',
 		'playground-ui/case'      => __DIR__ . '/snippets/case.php',
 		'playground-ui/not-found' => __DIR__ . '/snippets/not-found.php',
