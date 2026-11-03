@@ -11,13 +11,6 @@
   --playground-ui-tint: #18181b;
 }
 
-.playground-ui-tokens {
-  --playground-ui-ink: #f4f4f5;
-  --playground-ui-muted: #a1a1aa;
-  --playground-ui-line: #3f3f46;
-  --playground-ui-tint: #18181b;
-}
-
 .playground-ui-header,
 .playground-ui-overview,
 .playground-ui-component,
@@ -389,4 +382,86 @@
 
 .playground-ui-type__pipe {
   padding-inline: 0.125em;
+}
+
+.playground-ui-swatches,
+.playground-ui-sizes,
+.playground-ui-type__kicker {
+  --playground-ui-label: color-mix(in srgb, currentColor 65%, transparent);
+  font-family: ui-monospace, monospace;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.playground-ui-swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.playground-ui-swatches__item {
+  display: grid;
+  align-content: start;
+  gap: 0.125rem;
+}
+
+.playground-ui-swatches__color {
+  block-size: 4rem;
+  margin-block-end: 0.25rem;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 20%, transparent);
+}
+
+.playground-ui-swatches__item .playground-ui-value,
+.playground-ui-sizes thead th,
+.playground-ui-sizes .playground-ui-value,
+.playground-ui-type__kicker {
+  color: var(--playground-ui-label);
+}
+
+.playground-ui-sizes {
+  inline-size: 100%;
+  border-collapse: collapse;
+}
+
+.playground-ui-sizes th,
+.playground-ui-sizes td {
+  padding: 0.5rem 1rem 0.5rem 0;
+  border-block-end: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+  text-align: start;
+  vertical-align: middle;
+  font-weight: normal;
+  white-space: nowrap;
+}
+
+.playground-ui-sizes .playground-ui-value {
+  text-align: end;
+}
+
+.playground-ui-sizes td:last-child {
+  inline-size: 100%;
+}
+
+.playground-ui-sizes__square {
+  display: block;
+  background: color-mix(in srgb, currentColor 35%, transparent);
+}
+
+.playground-ui-type {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.playground-ui-type__kicker {
+  margin: 0 0 0.25rem;
+}
+
+.playground-ui-type__sample {
+  margin: 0;
+  overflow: hidden;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }

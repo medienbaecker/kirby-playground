@@ -23,9 +23,10 @@ $case         = get('case');
 
 <?php if ($index !== false && $case !== null): ?>
 	<?php Playground::render($component, $case) ?>
-	<?php if ($componentJs->exists()): ?>
-		<?= js($componentJs->url()) ?>
-	<?php endif ?>
+	<?= js(array_filter([
+		$plugin->asset('frame.js')->url(),
+		$componentJs->exists() ? $componentJs->url() : null,
+	])) ?>
 <?php else: ?>
 	<?php if ($index !== false): ?>
 		<?php snippet('playground-ui/header', [

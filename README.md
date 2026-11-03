@@ -9,7 +9,7 @@
 
 For example, if you have a snippet named `buttons.php`, it will be available at `/playground/buttons`.
 
-Subfolders become groups in the overview: `/site/snippets/playground/form/input.php` is listed under "Form" and available at `/playground/form/input`. A `base` folder comes first, for pages that are not components, like typography or spacing; the plugin puts its Tokens page there.
+Subfolders become groups in the overview: `/site/snippets/playground/form/input.php` is listed under "Form" and available at `/playground/form/input`. A `base` folder comes first, for pages that are not components, like typography or spacing.
 
 ## Features
 
@@ -94,7 +94,14 @@ The overview also lists the snippets in `site/snippets/components` that have no 
 
 ## Tokens
 
-The plugin adds a Tokens page at `/playground/base/tokens`. It reads every custom property your stylesheets define on `:root` or redefine on an attribute selector like `[data-tone="dark"]`, and draws each by its value: colours as swatches, contexts as painted bands with contrast grades, font tokens as samples, lengths and durations as bars, shadows, easing curves, and a table for the rest. Custom properties that components set on their own selectors, like `.stack { --stack-gap }`, follow in a Components section, one block per class with its states like `&[aria-busy="true"]` inside. States you trigger yourself, like `:hover` or `:focus-visible`, are left out.
+Three helpers turn design tokens into cases. Each takes a label and the custom property names, in the order to show them, and writes their computed values next to them:
+
+```php
+Playground::swatches('Purple', ['--brand-purple-100', '--brand-purple-300', '--brand-purple-700']);
+Playground::swatches('Roles on purple', ['--color-text', '--color-accent'], attributes: ['data-tone' => 'dark']);
+Playground::sizes('Spacing', ['--spacing-xs', '--spacing-s', '--spacing-m']);
+Playground::type('Font sizes', ['--font-size-s', '--font-size-base', '--font-size-l']);
+```
 
 ## Placeholder Content
 

@@ -53,6 +53,37 @@ class Playground
     }
 
     /**
+     * A case with a swatch for each colour token: its colour, name and value
+     *
+     * @param array<string> $tokens Custom property names, e.g. `--color-accent`
+     * @param array<string, mixed> $attributes Added to the box around the rendered case, e.g. a surface colour
+     */
+    public static function swatches(string $label, array $tokens, array $attributes = []): void
+    {
+        static::case($label, fn () => snippet('playground-ui/swatches', ['tokens' => $tokens]), attributes: $attributes);
+    }
+
+    /**
+     * A case with a table row for each length token: its name, value and a square of that size
+     *
+     * @param array<string> $tokens Custom property names, e.g. `--spacing-m`
+     */
+    public static function sizes(string $label, array $tokens): void
+    {
+        static::case($label, fn () => snippet('playground-ui/sizes', ['tokens' => $tokens]));
+    }
+
+    /**
+     * A case with a line of text for each font size token, its name and value above it
+     *
+     * @param array<string> $tokens Custom property names, e.g. `--font-size-l`
+     */
+    public static function type(string $label, array $tokens): void
+    {
+        static::case($label, fn () => snippet('playground-ui/type', ['tokens' => $tokens]));
+    }
+
+    /**
      * Renders a playground page, or only the case with this id for its frame
      */
     public static function render(string $component, string|null $case = null): void
