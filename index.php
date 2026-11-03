@@ -24,7 +24,6 @@ Kirby::plugin('medienbaecker/playground', [
     'snippets' => [
         'playground-ui/head'      => __DIR__ . '/snippets/head.php',
         'playground-ui/bottom'    => __DIR__ . '/snippets/bottom.php',
-        'playground-ui/overview'  => __DIR__ . '/snippets/overview.php',
         'playground-ui/header'    => __DIR__ . '/snippets/header.php',
         'playground-ui/component' => __DIR__ . '/snippets/component.php',
         'playground-ui/case'      => __DIR__ . '/snippets/case.php',

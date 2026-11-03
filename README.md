@@ -9,7 +9,7 @@
 
 For example, if you have a snippet named `buttons.php`, it will be available at `/playground/buttons`.
 
-Subfolders become groups in the overview: `/site/snippets/playground/form/input.php` is listed under "Form" and available at `/playground/form/input`. A `base` folder comes first, for pages that are not components, like typography or spacing.
+Subfolders become groups in the sidebar: `/site/snippets/playground/form/input.php` is listed under "Form" and available at `/playground/form/input`. A `base` folder comes first, for pages that are not components, like typography or spacing.
 
 ## Features
 
@@ -200,7 +200,7 @@ return [
 ];
 ```
 
-Playground pages are wrapped in `snippet('head')` and `snippet('bottom')`. If your site uses other names, override `site/snippets/playground-ui/head.php` and `bottom.php`. The same works for `playground-ui/overview`, `playground-ui/header`, `playground-ui/component`, `playground-ui/case` and `playground-ui/not-found`.
+Playground pages are wrapped in `snippet('head')` and `snippet('bottom')`. If your site uses other names, override `site/snippets/playground-ui/head.php` and `bottom.php`. The same works for `playground-ui/sidebar`, `playground-ui/header`, `playground-ui/component`, `playground-ui/case` and `playground-ui/not-found`.
 
 ## Directory Structure
 

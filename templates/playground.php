@@ -4,14 +4,19 @@ use Kirby\Template\Snippet;
 use Medienbaecker\Playground\Docblock;
 use Medienbaecker\Playground\Playground;
 
+$component    = $page->component()->value();
+$components   = Playground::components();
+
+if ($page->component()->isEmpty() && $components !== []) {
+	go($components[0]['url']);
+}
+
 snippet('playground-ui/head');
 
-$component    = $page->component()->value();
 $plugin       = kirby()->plugin('medienbaecker/playground');
 $globalCss    = asset('assets/css/playground/playground.css');
 $componentCss = asset("assets/css/playground/{$component}.css");
 $componentJs  = asset("assets/js/playground/{$component}.js");
-$components   = Playground::components();
 $index        = array_search($component, array_column($components, 'name'), true);
 $case         = get('case');
 ?>
@@ -29,7 +34,7 @@ $case         = get('case');
 	])) ?>
 <?php else: ?>
 	<main class="playground-ui">
-		<?php if ($index !== false): ?>
+		<?php if ($components !== []): ?>
 			<script>document.documentElement.toggleAttribute("data-playground-sidebar-hidden", localStorage.getItem("playground-sidebar") === "hidden")</script>
 			<?php snippet('playground-ui/sidebar', ['current' => $component]) ?>
 		<?php endif ?>
@@ -46,10 +51,8 @@ $case         = get('case');
 					<?php endforeach ?>
 				</div>
 				<?php Playground::render($component) ?>
-			<?php elseif ($component): ?>
-				<?php snippet('playground-ui/not-found') ?>
 			<?php else: ?>
-				<?php snippet('playground-ui/overview') ?>
+				<?php snippet('playground-ui/not-found') ?>
 			<?php endif ?>
 		</div>
 	</main>

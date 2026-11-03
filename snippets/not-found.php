@@ -1,5 +1,2 @@
-<div class="playground-ui-not-found">
-	<p>No component named <strong><?= esc($page->component()) ?></strong>. Create it at <code>site/snippets/playground/<?= esc($page->component()) ?>.php</code></p>
-</div>
-
-<?php snippet('playground-ui/overview') ?>
+<?php $name = $page->component()->value() ?: 'button' ?>
+<p class="playground-ui-not-found">No playground page <strong><?= esc($name) ?></strong>. Create it at <code>site/snippets/playground/<?= esc($name) ?>.php</code></p>
