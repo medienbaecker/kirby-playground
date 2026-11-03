@@ -15,12 +15,10 @@ foreach ($coverage as $component) {
 }
 
 usort($groups[''], fn ($a, $b) => strcasecmp($a['title'], $b['title']));
-$missing = count(array_filter($coverage, fn ($component) => $component['page'] === null));
 
 ?>
 <header class="playground-ui-header">
 	<h1 class="playground-ui-header__title">Playground</h1>
-	<p class="playground-ui-overview__summary"><?= count(Playground::components()) ?> pages<?= $missing > 0 ? ", {$missing} " . ($missing === 1 ? 'component' : 'components') . ' without one' : '' ?></p>
 </header>
 <div class="playground-ui-overview">
 	<?php foreach ($groups as $group => $components): ?>

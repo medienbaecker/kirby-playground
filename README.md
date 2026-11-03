@@ -20,7 +20,7 @@ Subfolders become groups in the overview: `/site/snippets/playground/form/input.
 - Unknown components return a 404 with a list of the components you do have
 - A header with links to the overview and the previous and next component
 - Component docs and a props table from docblocks
-- Cases with the `snippet()` calls that render them, and component cases with a form to change their props
+- Cases with the `snippet()` calls that render them
 - A URL for every case, and an accessibility check with axe-core
 - The overview lists the components that have no playground page yet
 - Loads its own `playground.css` and `playground.js` for the header, docs and cases
@@ -42,13 +42,13 @@ Playground::case('Icon only', fn () => snippet('components/button', ['iconOnly' 
 Playground::case('On purple', fn () => snippet('components/button'), attributes: ['data-background' => 'purple-700']);
 ```
 
-A case that renders one snippet can use `Playground::component()` instead. It also has a Props form built from the snippet's `@var` tags: a text field for `string`, a Default, true or false select for `bool`, a number field for `int` and `float`, and a select for a list like `'small'|'medium'|'large'`. Props of other types keep their value. An empty field or Default is not passed. Changing a field renders the case again on the server.
+A case that renders one snippet can use `Playground::component()` instead:
 
 ```php
 Playground::component('Large', 'components/button', ['label' => 'Lorem ipsum', 'size' => 'large']);
 ```
 
-Each page runs [axe-core](https://github.com/dequelabs/axe-core) (MPL-2.0, included) on every case when it loads, lists the violations under the case and sums them up in the header. A case changed through its Props form is checked again.
+Each page runs [axe-core](https://github.com/dequelabs/axe-core) (MPL-2.0, included) on every case when it loads, lists the violations under the case and sums them up in the header.
 
 ## Component Docs
 

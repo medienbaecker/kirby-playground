@@ -24,5 +24,5 @@ use Medienbaecker\Playground\Playground;
 		<?php endif ?>
 	</nav>
 	<h1 class="playground-ui-header__title"><?= esc($title) ?></h1>
-	<p class="playground-ui-header__axe" aria-live="polite" data-script="<?= esc(kirby()->plugin('medienbaecker/playground')->asset('axe.min.js')->url(), 'attr') ?>"></p>
+	<p class="playground-ui-header__axe" aria-live="polite">Checking accessibility…</p>
 </header>

@@ -3,7 +3,6 @@
 .playground-ui-component,
 .playground-ui-case__header,
 .playground-ui-case__accessibility,
-.playground-ui-controls,
 .playground-ui-code,
 .playground-ui-case,
 .playground-ui-axe,
@@ -26,7 +25,6 @@
 .playground-ui-component,
 .playground-ui-case__header,
 .playground-ui-case__accessibility,
-.playground-ui-controls,
 .playground-ui-code,
 .playground-ui-axe,
 .playground-ui-not-found {
@@ -45,27 +43,32 @@
 
 .playground-ui-header,
 .playground-ui-overview,
-.playground-ui-component,
-.playground-ui-case {
+.playground-ui-component {
   padding: 1.5rem 0.75rem;
+}
+
+.playground-ui-case {
+  padding-block: 1.5rem;
+}
+
+.playground-ui-case > :not(.playground-ui-case__render) {
+  margin-inline: 0.75rem;
 }
 
 @media (min-width: 40rem) {
   .playground-ui-header,
   .playground-ui-overview,
-  .playground-ui-component,
-  .playground-ui-case {
+  .playground-ui-component {
     padding-inline: 1.5rem;
+  }
+
+  .playground-ui-case > :not(.playground-ui-case__render) {
+    margin-inline: 1.5rem;
   }
 }
 
 .playground-ui-overview {
   border-block-start: 1px solid var(--playground-ui-line);
-}
-
-.playground-ui-overview__summary {
-  margin: 0;
-  color: var(--playground-ui-muted);
 }
 
 .playground-ui-overview__group {
@@ -310,7 +313,7 @@
   background: var(--playground-ui-tint);
 }
 
-:is(.playground-ui-header, .playground-ui-overview, .playground-ui-component, .playground-ui-case__header, .playground-ui-controls, .playground-ui-code, .playground-ui-axe, .playground-ui-not-found) :focus-visible,
+:is(.playground-ui-header, .playground-ui-overview, .playground-ui-component, .playground-ui-case__header, .playground-ui-code, .playground-ui-axe, .playground-ui-not-found) :focus-visible,
 .playground-ui-component__name:focus-visible {
   outline-color: var(--playground-ui-ink);
 }
@@ -338,25 +341,15 @@
 }
 
 .playground-ui-case__render {
-  padding: 2rem 0.5rem;
-  border: 1px solid var(--playground-ui-line);
+  padding-block: 2rem;
 }
 
 @media (min-width: 40rem) {
   .playground-ui-case__render {
-    padding: 5rem 1.5rem;
+    padding-block: 5rem;
   }
 }
 
-.playground-ui-controls {
-  margin-block-start: 1rem;
-}
-
-:is(.playground-ui-controls, .playground-ui-code) + :is(.playground-ui-controls, .playground-ui-code) {
-  margin-block-start: 0.5rem;
-}
-
-.playground-ui-controls summary,
 .playground-ui-code summary {
   display: inline-flex;
   align-items: center;
@@ -369,50 +362,23 @@
   cursor: pointer;
 }
 
-.playground-ui-controls summary::-webkit-details-marker,
 .playground-ui-code summary::-webkit-details-marker {
   display: none;
 }
 
-.playground-ui-controls summary::before,
 .playground-ui-code summary::before {
   content: "\25B8" / "";
   color: var(--playground-ui-muted);
 }
 
-.playground-ui-controls[open] summary::before,
 .playground-ui-code[open] summary::before {
   content: "\25BE" / "";
 }
 
 @media (hover: hover) {
-  .playground-ui-controls summary:hover,
   .playground-ui-code summary:hover {
     border-color: var(--playground-ui-muted);
   }
-}
-
-.playground-ui-controls__form {
-  display: grid;
-  grid-template-columns: max-content minmax(0, 20rem);
-  justify-content: start;
-  gap: 0.5rem 1rem;
-  align-items: center;
-  margin-block-start: 0.5rem;
-}
-
-.playground-ui-controls__form :is(input, select) {
-  font: inherit;
-}
-
-.playground-ui-controls__form input,
-.playground-ui-controls__form select {
-  inline-size: 100%;
-  padding: 0.25rem 0.5rem;
-  border: 1px solid currentColor;
-  border-radius: 0.25rem;
-  background: transparent;
-  color: inherit;
 }
 
 .playground-ui-case__label a {

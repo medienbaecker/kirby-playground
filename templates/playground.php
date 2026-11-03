@@ -13,7 +13,6 @@ $componentCss = asset("assets/css/playground/{$component}.css");
 $componentJs  = asset("assets/js/playground/{$component}.js");
 $components   = Playground::components();
 $index        = array_search($component, array_column($components, 'name'), true);
-$case         = get('case');
 
 Playground::recordSnippets();
 ?>
@@ -23,9 +22,7 @@ Playground::recordSnippets();
 	$componentCss->exists() ? $componentCss->url() : null,
 ])) ?>
 
-<?php if ($index !== false && $case !== null): ?>
-	<?= Playground::isolate($component, $case, json_decode(get('props', ''), true)) ?? '<p class="playground-ui-not-found">No case with the id <code>' . esc($case) . '</code>.</p>' ?>
-<?php elseif ($index !== false): ?>
+<?php if ($index !== false): ?>
 	<?php $names = Playground::shows($component) ?>
 	<?php snippet('playground-ui/header', [
 		'title'    => $components[$index]['title'],
@@ -46,6 +43,7 @@ Playground::recordSnippets();
 <?php endif ?>
 
 <?= js(array_filter([
+	$index !== false ? $plugin->asset('axe.min.js')->url() : null,
 	$plugin->asset('playground.js')->url(),
 	$componentJs->exists() ? $componentJs->url() : null,
 ])) ?>

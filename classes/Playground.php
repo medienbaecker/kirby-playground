@@ -14,13 +14,6 @@ class Playground
     /** @var array<string, true> */
     private static array $ids = [];
 
-    private static string|null $only = null;
-
-    /** @var array<string, mixed>|null */
-    private static array|null $props = null;
-
-    private static string|null $isolated = null;
-
     /** @var array<string>|null */
     private static array|null $calls = null;
 
@@ -35,12 +28,6 @@ class Playground
      */
     public static function case(string $label, Closure $render, string|null $accessibility = null, array $attributes = []): void
     {
-        $id = static::id($label);
-
-        if (static::$only !== null && static::$only !== $id) {
-            return;
-        }
-
         static::$calls     = [];
         static::$recording = static::$depth;
 
@@ -55,49 +42,25 @@ class Playground
             static::$recording = null;
         }
 
-        static::output([
-            'id'            => $id,
+        snippet('playground-ui/case', [
+            'id'            => static::id($label),
             'label'         => $label,
             'html'          => $html,
             'accessibility' => $accessibility,
             'attributes'    => $attributes,
-            'php'           => $calls === [] ? null : implode("\n\n", $calls),
-            'controls'      => [],
+            'php'           => implode("\n\n", $calls),
         ]);
     }
 
     /**
-     * Renders one snippet as a case, with the PHP call that renders it and a form for its props
+     * Renders one snippet as a case
      *
      * @param array<string, mixed> $props
      * @param array<string, mixed> $attributes Added to the box around the rendered case, e.g. a surface colour
      */
     public static function component(string $label, string $snippet, array $props = [], string|null $accessibility = null, array $attributes = []): void
     {
-        $id = static::id($label);
-
-        if (static::$only !== null && static::$only !== $id) {
-            return;
-        }
-
-        $controls = static::controls($snippet, $props);
-
-        if (static::$props !== null) {
-            $editable = array_flip(array_column($controls, 'name'));
-            $passed   = array_intersect_key(static::$props, $editable);
-            $props    = array_replace(array_diff_key($props, array_diff_key($editable, $passed)), $passed);
-            $controls = static::controls($snippet, $props);
-        }
-
-        static::output([
-            'id'            => $id,
-            'label'         => $label,
-            'html'          => trim(snippet($snippet, $props, true)),
-            'accessibility' => $accessibility,
-            'attributes'    => $attributes,
-            'php'           => static::php($snippet, $props),
-            'controls'      => $controls,
-        ]);
+        static::case($label, fn () => snippet($snippet, $props), $accessibility, $attributes);
     }
 
     /**
@@ -131,32 +94,6 @@ class Playground
                 }
             },
         ]]);
-    }
-
-    /**
-     * Renders a playground page and returns only the case with this id, its editable props replaced by `$props`
-     * Placeholders are seeded with the id, so the case looks the same on every request
-     *
-     * @param array<string, mixed>|null $props
-     */
-    public static function isolate(string $component, string $id, array|null $props = null): string|null
-    {
-        static::$only  = $id;
-        static::$props = $props;
-
-        mt_srand(crc32("{$component}#{$id}"));
-
-        ob_start();
-
-        try {
-            snippet("playground/{$component}");
-        } finally {
-            ob_end_clean();
-            static::$only  = null;
-            static::$props = null;
-        }
-
-        return static::$isolated;
     }
 
     /**
@@ -273,62 +210,7 @@ class Playground
     }
 
     /**
-     * A form field for each `@var` prop with a type it can edit: text, true or false, number or a list of values
-     *
-     * @param array<string, mixed> $props
-     * @return array<array{name: string, input: string, value: mixed, options: array<string>}>
-     */
-    private static function controls(string $snippet, array $props): array
-    {
-        $file     = Snippet::file($snippet);
-        $controls = [];
-
-        foreach ($file === null ? [] : Docblock::fromFile($file)->props() as $prop) {
-            $value    = $props[$prop['name']] ?? null;
-            $types    = array_map('trim', explode('|', ltrim($prop['type'], '?')));
-            $types    = array_values(array_diff($types, ['null']));
-            $options  = array_map(fn ($type) => trim($type, "'\""), $types);
-
-            $input = match (true) {
-                is_object($value) || is_array($value)                            => null,
-                $types === ['string']                                            => 'text',
-                $types === ['bool']                                              => 'boolean',
-                $types === ['int'], $types === ['float']                         => 'number',
-                $types !== [] && preg_grep('/^([\'"]).*\1$/', $types) === $types => 'select',
-                default                                                          => null,
-            };
-
-            if ($input !== null) {
-                $controls[] = [
-                    'name'    => $prop['name'],
-                    'input'   => $input,
-                    'value'   => $value,
-                    'options' => $input === 'select' ? $options : [],
-                ];
-            }
-        }
-
-        return $controls;
-    }
-
-    /**
-     * Echoes a rendered case, or keeps it when only one case is wanted
-     *
-     * @param array<string, mixed> $data
-     */
-    private static function output(array $data): void
-    {
-        $html = snippet('playground-ui/case', $data, true);
-
-        if (static::$only !== null) {
-            static::$isolated = $html;
-        } else {
-            echo $html;
-        }
-    }
-
-    /**
-     * The `snippet()` call that renders a component case
+     * The `snippet()` call of a component snippet
      *
      * @param array<string, mixed> $props
      */
