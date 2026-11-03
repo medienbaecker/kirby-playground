@@ -1,6 +1,6 @@
 # Kirby Playground
 
-![An overview of different button styles](https://github.com/user-attachments/assets/c33d7d9e-70b9-431f-a811-932a1cd62943)
+![The Quote playground: its docs and props table above a case in a resizable frame](.github/screenshot.png)
 
 A Kirby plugin that shows your snippets in test cases at `/playground`.
 
