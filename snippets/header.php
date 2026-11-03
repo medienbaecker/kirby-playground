@@ -24,5 +24,4 @@ use Medienbaecker\Playground\Playground;
 		<?php endif ?>
 	</nav>
 	<h1 class="playground-ui-header__title"><?= esc($title) ?></h1>
-	<p class="playground-ui-header__axe" aria-live="polite">Checking accessibility…</p>
 </header>

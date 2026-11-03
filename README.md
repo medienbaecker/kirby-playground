@@ -20,15 +20,14 @@ Subfolders become groups in the overview: `/site/snippets/playground/form/input.
 - Unknown components return a 404 with a list of the components you do have
 - A header with links to the overview and the previous and next component
 - Component docs and a props table from docblocks
-- Cases with the `snippet()` calls that render them
-- A URL for every case, and an accessibility check with axe-core
+- Every case in its own resizable frame
 - The overview lists the components that have no playground page yet
 - Loads its own `playground.css` and `playground.js` for the header, docs and cases
 - Placeholder helpers for lorem ipsum text and images
 
 ## Cases
 
-Wrap each case in `Playground::case()` to give it a label, an anchor, a frame and a PHP panel with a Copy button. The frame loads the case on its own at `?case=<id>`, so media queries react to its width: drag the bar on its right edge, and the width shows next to the label. The PHP panel lists each snippet from the components folder the case renders, with the props it passed; snippets rendered inside those are left out. Placeholders are seeded per case, so the frame shows the same text as the panel:
+Wrap each case in `Playground::case()` to give it a label, an anchor and a frame. The frame loads the case on its own at `?case=<id>`, so media queries react to its width: drag the bar on its right edge, and the width shows next to the label:
 
 ```php
 use Medienbaecker\Playground\Playground;
@@ -47,8 +46,6 @@ A case that renders one snippet can use `Playground::component()` instead:
 ```php
 Playground::component('Large', 'components/button', ['label' => 'Lorem ipsum', 'size' => 'large']);
 ```
-
-Each page runs [axe-core](https://github.com/dequelabs/axe-core) (MPL-2.0, included) on every case when it loads, lists the violations under the case and sums them up in the header. The PHP panel is coloured by [microlighter](https://github.com/davatron5000/microlighter) (MIT, included).
 
 The space around a case comes from two custom properties. Set them in `assets/css/playground/playground.css` for the whole project, or per case through its attributes:
 

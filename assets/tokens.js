@@ -1,4 +1,25 @@
 /**
+ * Copies text, with a fallback for plain-http dev domains
+ */
+function copy(text) {
+  if (window.isSecureContext) {
+    return navigator.clipboard.writeText(text);
+  }
+
+  const element = document.createElement("span");
+  element.textContent = text;
+  document.body.append(element);
+
+  const range = document.createRange();
+  range.selectNodeContents(element);
+  getSelection().removeAllRanges();
+  getSelection().addRange(range);
+  document.execCommand("copy");
+  getSelection().removeAllRanges();
+  element.remove();
+}
+
+/**
  * Draws every custom property that the site's stylesheets define on `:root` or on an attribute
  * selector like `[data-tone="dark"]` that redefines them, read through the CSSOM and sorted by what its value resolves to:
  * colours, the contexts that redefine them, type, lengths, shadows, easings, durations and the rest,

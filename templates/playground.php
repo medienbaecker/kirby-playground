@@ -23,13 +23,11 @@ $case         = get('case');
 
 <?php if ($index !== false && $case !== null): ?>
 	<?php Playground::render($component, $case) ?>
-	<?= js(array_filter([
-		$plugin->asset('axe.min.js')->url(),
-		$componentJs->exists() ? $componentJs->url() : null,
-	])) ?>
+	<?php if ($componentJs->exists()): ?>
+		<?= js($componentJs->url()) ?>
+	<?php endif ?>
 <?php else: ?>
 	<?php if ($index !== false): ?>
-		<?php Playground::recordSnippets() ?>
 		<?php snippet('playground-ui/header', [
 			'title'    => $components[$index]['title'],
 			'previous' => $components[$index - 1] ?? null,
@@ -48,10 +46,6 @@ $case         = get('case');
 		<?php snippet('playground-ui/overview') ?>
 	<?php endif ?>
 
-	<script type="importmap"><?= json_encode(['imports' => [
-		dirname($plugin->asset('microlighter/microlighter.min.js')->url()) . '/grammars/php.js' => $plugin->asset('microlighter/grammars/php.js')->url(),
-	]], JSON_UNESCAPED_SLASHES) ?></script>
-	<?= js($plugin->asset('microlighter/microlighter.min.js')->url(), ['type' => 'module']) ?>
 	<?= js($plugin->asset('playground.js')->url()) ?>
 <?php endif ?>
 
