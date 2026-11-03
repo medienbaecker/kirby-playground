@@ -26,20 +26,22 @@ class Playground
     {
         $id = static::id($label);
 
-        if (static::$only !== null) {
-            if (static::$only === $id) {
-                ob_start();
-                $render();
-                static::$frame = '<div ' . attr([...$attributes, 'class' => $attributes === [] ? 'playground-ui-case__render playground-ui-case__render--plain' : 'playground-ui-case__render']) . '>' . ob_get_clean() . '</div>';
-            }
+        if (static::$only === null) {
+            snippet('playground-ui/case', [
+                'id'    => $id,
+                'label' => $label,
+            ]);
 
             return;
         }
 
-        snippet('playground-ui/case', [
-            'id'    => $id,
-            'label' => $label,
-        ]);
+        if (static::$only === $id) {
+            $class = 'playground-ui-case__render' . ($attributes === [] ? ' playground-ui-case__render--plain' : '');
+
+            ob_start();
+            $render();
+            static::$frame = '<div ' . attr([...$attributes, 'class' => $class]) . '>' . ob_get_clean() . '</div>';
+        }
     }
 
     /**
@@ -61,7 +63,7 @@ class Playground
      */
     public static function swatches(string $label, array $tokens, array $attributes = []): void
     {
-        static::case($label, fn () => snippet('playground-ui/swatches', ['tokens' => $tokens]), attributes: $attributes);
+        static::case($label, fn () => snippet('playground-ui/swatches', ['tokens' => $tokens]), $attributes);
     }
 
     /**
@@ -94,8 +96,7 @@ class Playground
             return;
         }
 
-        static::$only  = $case;
-        static::$frame = '';
+        static::$only = $case;
 
         ob_start();
 
@@ -103,7 +104,6 @@ class Playground
             snippet("playground/{$component}");
         } finally {
             ob_end_clean();
-            static::$only = null;
         }
 
         echo static::$frame ?: '<p class="playground-ui-not-found">No case with the id <code>' . esc($case) . '</code>.</p>';
@@ -116,12 +116,21 @@ class Playground
      */
     public static function components(): array
     {
-        $root    = kirby()->root('snippets') . '/playground';
-        $files   = is_dir($root) ? Dir::index($root, true) : [];
-        $files   = array_filter($files, fn ($file) => pathinfo($file, PATHINFO_EXTENSION) === 'php');
-        $names   = array_map(fn ($file) => substr($file, 0, -4), $files);
-        $plugins = array_filter(array_keys(kirby()->extensions('snippets')), fn ($name) => str_starts_with($name, 'playground/'));
-        $names   = array_unique([...$names, ...array_map(fn ($name) => Str::after($name, 'playground/'), $plugins)]);
+        $root  = kirby()->root('snippets') . '/playground';
+        $files = is_dir($root) ? Dir::index($root, true) : [];
+        $names = [];
+
+        foreach ($files as $file) {
+            if (str_ends_with($file, '.php')) {
+                $names[] = substr($file, 0, -4);
+            }
+        }
+
+        foreach (array_keys(kirby()->extensions('snippets')) as $name) {
+            if (str_starts_with($name, 'playground/')) {
+                $names[] = Str::after($name, 'playground/');
+            }
+        }
 
         $components = array_map(function ($name) {
             $folder = dirname($name);
@@ -130,9 +139,9 @@ class Playground
                 'name'  => $name,
                 'title' => static::title(basename($name)),
                 'group' => $folder === '.' ? '' : static::title($folder),
-                'url'   => static::url($name),
+                'url'   => (kirby()->language()?->url() ?? kirby()->url()) . "/playground/{$name}",
             ];
-        }, $names);
+        }, array_unique($names));
 
         usort($components, fn ($a, $b) => [$a['group'] !== 'Base', $a['group'], $a['title']] <=> [$b['group'] !== 'Base', $b['group'], $b['title']]);
 
@@ -156,25 +165,26 @@ class Playground
     }
 
     /**
-     * Snippets a playground page names in its `@component` tags
+     * Files of the snippets a playground page documents, keyed by snippet name:
+     * those named in its `@component` tags, or without tags `components/<page name>`
      *
-     * @return array<string>
+     * @return array<string, string>
      */
-    public static function shows(string $component): array
+    public static function snippets(string $component): array
     {
-        $file = Snippet::file("playground/{$component}");
+        $names = Docblock::fromFile(Snippet::file("playground/{$component}"))->tag('component') ?: ['components/' . basename($component)];
+        $files = [];
 
-        return $file === null ? [] : array_map('trim', Docblock::fromFile($file)->tag('component'));
-    }
+        foreach ($names as $name) {
+            $name = trim($name);
+            $file = Snippet::file($name);
 
-    /**
-     * URL of a playground page in the current language
-     */
-    public static function url(string $name): string
-    {
-        $base = kirby()->language()?->url() ?? kirby()->url();
+            if ($file !== null) {
+                $files[$name] = $file;
+            }
+        }
 
-        return "{$base}/playground/{$name}";
+        return $files;
     }
 
     private static function id(string $label): string
@@ -192,10 +202,7 @@ class Playground
         return $id;
     }
 
-    /**
-     * Readable title of a snippet name, e.g. `Button cards`
-     */
-    public static function title(string $name): string
+    private static function title(string $name): string
     {
         return ucfirst(str_replace(['-', '/'], [' ', ' / '], $name));
     }

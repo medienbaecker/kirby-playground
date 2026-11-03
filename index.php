@@ -2,7 +2,6 @@
 
 use Kirby\Cms\App as Kirby;
 
-// Manual installation: load classes directly if Composer autoload isn't available
 if (!class_exists('Medienbaecker\Playground\Placeholder')) {
     require __DIR__ . '/classes/Docblock.php';
     require __DIR__ . '/classes/Playground.php';

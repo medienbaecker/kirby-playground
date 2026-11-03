@@ -2,6 +2,7 @@
 
 namespace Medienbaecker\Playground;
 
+use Exception;
 use Kirby\Cms\Files;
 use Kirby\Filesystem\F;
 use Kirby\Http\Remote;
@@ -9,108 +10,83 @@ use Kirby\Http\Remote;
 class ImageGenerator
 {
     /**
-     * Get source directory for cached images
+     * Folder of the downloaded source images
      */
-    public function sourceDir(): string
+    public static function sourceDir(): string
     {
-        // Kept out of media/plugins/, where Assets::clean() sweeps anything
-        // that isn't a registered plugin asset
         return kirby()->root('media') . '/playground-source';
     }
 
     /**
-     * Virtual placeholder image as Kirby File object
+     * Placeholder image from picsum.photos, downloaded on first use
      */
-    public function generate(array|string $options = []): VirtualFile
+    public static function image(array|string $options = []): VirtualFile
     {
         if (is_string($options)) {
             $options = ['seed' => $options];
         }
 
-        $id = $options['id'] ?? null;
-        $seed = $options['seed'] ?? null;
-        $width = max(100, min(2000, $options['width'] ?? 1200));
+        $id     = $options['id'] ?? null;
+        $seed   = $options['seed'] ?? null;
+        $width  = max(100, min(2000, $options['width'] ?? 1200));
         $height = max(100, min(2000, $options['height'] ?? 800));
-        $content = array_merge(['alt' => 'Placeholder image'], $options['content'] ?? []);
 
-        // Generate cache ID based on what makes this image unique
         if ($id !== null) {
             $cacheId = md5("id:{$id}:{$width}:{$height}");
+            $path    = "id/{$id}/";
         } elseif ($seed !== null) {
             $cacheId = md5("seed:{$seed}:{$width}:{$height}");
+            $path    = "seed/{$seed}/";
         } else {
             $cacheId = md5((string) mt_rand());
+            $path    = '';
         }
 
-        $path = $this->sourceDir() . "/{$cacheId}.jpg";
+        $file = static::file($cacheId, ['alt' => 'Placeholder image', ...($options['content'] ?? [])]);
 
-        if (!file_exists($path)) {
-            $this->fetchImage($cacheId, $width, $height, $seed, $id);
+        if (!$file->exists()) {
+            $response = Remote::get("https://picsum.photos/{$path}{$width}/{$height}", ['timeout' => 10]);
+
+            if ($response->code() !== 200) {
+                throw new Exception("Failed to download from picsum.photos (HTTP {$response->code()}). Check your internet connection.");
+            }
+
+            F::write($file->root(), $response->content());
         }
 
-        return new VirtualFile([
-            'filename' => "{$cacheId}.jpg",
-            'parent'   => site(),
-            'root'     => $path,
-            'url'      => url("playground/image/{$cacheId}.jpg"),
-            'content'  => $content
-        ]);
+        return $file;
     }
 
     /**
-     * Multiple placeholder images as Files collection
+     * Placeholder images, each with its own seed
      */
-    public function generateMultiple(int $count = 3, array $options = []): Files
+    public static function images(int $count = 3, array $options = []): Files
     {
+        $seed  = $options['seed'] ?? null;
         $files = [];
-        $baseSeed = $options['seed'] ?? null;
 
-        for ($i = 0; $i < $count; $i++) {
-            $opts = $options;
-            unset($opts['id']);
-
-            if ($baseSeed !== null) {
-                $opts['seed'] = "{$baseSeed}-{$i}";
-            }
-
-            $files[] = $this->generate($opts);
+        for ($index = 0; $index < $count; $index++) {
+            $files[] = static::image([
+                ...$options,
+                'id'   => null,
+                'seed' => $seed === null ? null : "{$seed}-{$index}",
+            ]);
         }
 
         return new Files($files);
     }
 
     /**
-     * Download image from picsum.photos and cache it
+     * The source image with this cache id as a Kirby File object
      */
-    private function fetchImage(string $cacheId, int $width, int $height, ?string $seed = null, ?int $id = null): void
+    public static function file(string $cacheId, array $content = []): VirtualFile
     {
-        $dir = $this->sourceDir();
-        if (!is_dir($dir) && !mkdir($dir, 0755, true)) {
-            throw new \Exception('Cannot create cache directory: ' . $dir);
-        }
-
-        if ($id !== null) {
-            $url = "https://picsum.photos/id/{$id}/{$width}/{$height}";
-        } elseif ($seed !== null) {
-            $url = "https://picsum.photos/seed/{$seed}/{$width}/{$height}";
-        } else {
-            $url = "https://picsum.photos/{$width}/{$height}";
-        }
-
-        $response = Remote::get($url, ['timeout' => 10]);
-
-        if ($response->code() !== 200) {
-            throw new \Exception(
-                "Failed to download from picsum.photos (HTTP {$response->code()}). " .
-                    "Check your internet connection."
-            );
-        }
-
-        $content = $response->content();
-        if (empty($content)) {
-            throw new \Exception('Empty response from picsum.photos');
-        }
-
-        F::write($dir . "/{$cacheId}.jpg", $content);
+        return new VirtualFile([
+            'filename' => "{$cacheId}.jpg",
+            'parent'   => site(),
+            'root'     => static::sourceDir() . "/{$cacheId}.jpg",
+            'url'      => url("playground/image/{$cacheId}.jpg"),
+            'content'  => $content,
+        ]);
     }
 }

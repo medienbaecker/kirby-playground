@@ -6,9 +6,6 @@ use Kirby\Cms\Files;
 
 class Placeholder
 {
-    private static ?TextGenerator $textGenerator = null;
-    private static ?ImageGenerator $imageGenerator = null;
-
     /**
      * Random lorem ipsum text (HTML)
      *
@@ -24,7 +21,7 @@ class Placeholder
      */
     public static function text(array $options = []): string
     {
-        return static::textGenerator()->generate($options);
+        return TextGenerator::text($options);
     }
 
     /**
@@ -40,7 +37,7 @@ class Placeholder
      */
     public static function image(array|string $options = []): VirtualFile
     {
-        return static::imageGenerator()->generate($options);
+        return ImageGenerator::image($options);
     }
 
     /**
@@ -56,24 +53,6 @@ class Placeholder
      */
     public static function images(int $count = 3, array $options = []): Files
     {
-        return static::imageGenerator()->generateMultiple($count, $options);
-    }
-
-    /**
-     * Get source directory for cached images
-     */
-    public static function sourceDir(): string
-    {
-        return static::imageGenerator()->sourceDir();
-    }
-
-    private static function textGenerator(): TextGenerator
-    {
-        return static::$textGenerator ??= new TextGenerator();
-    }
-
-    private static function imageGenerator(): ImageGenerator
-    {
-        return static::$imageGenerator ??= new ImageGenerator();
+        return ImageGenerator::images($count, $options);
     }
 }

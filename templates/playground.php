@@ -1,20 +1,18 @@
 <?php
 
-use Kirby\Template\Snippet;
 use Medienbaecker\Playground\Docblock;
 use Medienbaecker\Playground\Playground;
 
 $component    = $page->component()->value();
 $components   = Playground::components();
-
-snippet('playground-ui/head');
-
+$index        = array_search($component, array_column($components, 'name'), true);
+$case         = get('case');
 $plugin       = kirby()->plugin('medienbaecker/playground');
 $globalCss    = asset('assets/css/playground/playground.css');
 $componentCss = asset("assets/css/playground/{$component}.css");
 $componentJs  = asset("assets/js/playground/{$component}.js");
-$index        = array_search($component, array_column($components, 'name'), true);
-$case         = get('case');
+
+snippet('playground-ui/head');
 ?>
 <?= css(array_filter([
 	$plugin->asset('playground.css')->url(),
@@ -38,11 +36,11 @@ $case         = get('case');
 			<?php if ($index !== false): ?>
 				<div class="playground-ui-intro">
 					<?php snippet('playground-ui/header', ['title' => $components[$index]['title']]) ?>
-					<?php $names = array_filter(Playground::shows($component), fn ($name) => Snippet::file($name) !== null) ?>
-					<?php foreach ($names as $name): ?>
+					<?php $snippets = Playground::snippets($component) ?>
+					<?php foreach ($snippets as $name => $file): ?>
 						<?php snippet('playground-ui/component', [
-							'name'     => count($names) > 1 ? $name : null,
-							'docblock' => Docblock::fromFile(Snippet::file($name)),
+							'name'     => count($snippets) > 1 ? $name : null,
+							'docblock' => Docblock::fromFile($file),
 						]) ?>
 					<?php endforeach ?>
 				</div>

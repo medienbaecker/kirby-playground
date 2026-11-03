@@ -3,44 +3,31 @@
 use Kirby\Cms\Media;
 use Kirby\Cms\Page;
 use Kirby\Exception\NotFoundException;
+use Kirby\Filesystem\F;
 use Kirby\Http\Response;
 use Medienbaecker\Playground\ImageGenerator;
 use Medienbaecker\Playground\Playground;
-use Medienbaecker\Playground\VirtualFile;
 
-// Routes are scoped to all languages so they resolve under a language prefix.
-// Only the language router prepends $language, so single-language sites don't get it.
-$language = fn(array &$args) => kirby()->multilang() ? array_shift($args) : null;
+$shiftLanguage = fn (array &$args) => kirby()->multilang() ? array_shift($args) : null;
 
 return [
     [
         'pattern'  => 'media/playground/(:any)/(:any)',
         'language' => '*',
-        'action'   => function (...$args) use ($language) {
+        'action'   => function (...$args) use ($shiftLanguage) {
             if (kirby()->option('medienbaecker.playground.auth') && !kirby()->user()) {
                 $this->next();
             }
 
-            $language($args);
+            $shiftLanguage($args);
             [$hash, $filename] = $args;
 
-            $cacheId = substr(pathinfo($filename, PATHINFO_FILENAME), 0, 32);
-            $imageGenerator = new ImageGenerator();
-            $sourcePath = $imageGenerator->sourceDir() . "/{$cacheId}.jpg";
+            $file = ImageGenerator::file(substr(F::name($filename), 0, 32));
 
-            if (!file_exists($sourcePath)) {
+            if (!$file->exists()) {
                 return false;
             }
 
-            $file = new VirtualFile([
-                'filename' => "{$cacheId}.jpg",
-                'parent'   => site(),
-                'root'     => $sourcePath,
-                'url'      => url("playground/image/{$cacheId}.jpg"),
-            ]);
-
-            // Mirrors Media::link(): clearing the media folder leaves stale thumb URLs
-            // whose job file is gone, and an uncaught throw never reaches App::io()
             try {
                 return Media::thumb($file, $hash, $filename);
             } catch (NotFoundException) {
@@ -51,22 +38,19 @@ return [
     [
         'pattern'  => 'playground/image/(:any).jpg',
         'language' => '*',
-        'action'   => function (...$args) use ($language) {
+        'action'   => function (...$args) use ($shiftLanguage) {
             if (kirby()->option('medienbaecker.playground.auth') && !kirby()->user()) {
                 $this->next();
             }
 
-            $language($args);
-            $cacheId = $args[0];
+            $shiftLanguage($args);
+            $file = ImageGenerator::file($args[0]);
 
-            $imageGenerator = new ImageGenerator();
-            $path = $imageGenerator->sourceDir() . "/{$cacheId}.jpg";
-
-            if (!file_exists($path)) {
+            if (!$file->exists()) {
                 return false;
             }
 
-            return Response::file($path, [
+            return Response::file($file->root(), [
                 'headers' => ['Cache-Control' => 'public, max-age=31536000']
             ]);
         }
@@ -74,23 +58,22 @@ return [
     [
         'pattern'  => 'playground/(:all?)',
         'language' => '*',
-        'action'   => function (...$args) use ($language) {
+        'action'   => function (...$args) use ($shiftLanguage) {
             if (kirby()->option('medienbaecker.playground.auth') && !kirby()->user()) {
                 $this->next();
             }
 
-            $lang = $language($args);
-            $component = $args[0] ?? null;
+            $language   = $shiftLanguage($args);
+            $component  = $args[0] ?? null;
             $components = Playground::components();
 
             if (!$component && $components !== []) {
                 go($components[0]['url']);
             }
 
-            // Playground pages show dynamic content and should never be cached
             kirby()->response()->cache(false);
 
-            $playgroundPage = Page::factory([
+            $page = Page::factory([
                 'slug'     => 'playground',
                 'template' => 'playground',
                 'content'  => [
@@ -99,33 +82,30 @@ return [
             ]);
 
             if ($component) {
-                if (in_array($component, array_column($components, 'name'), true) === false) {
+                if (!in_array($component, array_column($components, 'name'), true)) {
                     kirby()->response()->code(404);
                 }
 
-                $parent = $playgroundPage;
-
                 foreach (array_slice(explode('/', $component), 0, -1) as $folder) {
-                    $parent = Page::factory([
+                    $page = Page::factory([
                         'slug'     => $folder,
                         'template' => 'playground',
-                        'parent'   => $parent,
+                        'parent'   => $page,
                     ]);
                 }
 
-                $componentPage = Page::factory([
+                $page = Page::factory([
                     'slug'     => basename($component),
                     'template' => 'playground',
-                    'parent'   => $parent,
+                    'parent'   => $page,
                     'content'  => [
                         'title'     => "Playground: {$component}",
                         'component' => $component
                     ]
                 ]);
-                return site()->visit($componentPage, $lang?->code());
-            } else {
-                return site()->visit($playgroundPage, $lang?->code());
             }
+
+            return site()->visit($page, $language?->code());
         }
     ]
 ];
