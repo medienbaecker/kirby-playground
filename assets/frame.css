@@ -62,8 +62,8 @@
 }
 
 .playground-ui-sizes__cell {
-	padding-block: 0.5rem;
-	padding-inline: 0 1rem;
+	padding-block: 0.75rem;
+	padding-inline: 0 2.5rem;
 	border-block-end: 1px solid color-mix(in srgb, currentColor 15%, transparent);
 	text-align: start;
 	vertical-align: middle;

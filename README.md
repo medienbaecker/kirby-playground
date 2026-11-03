@@ -12,23 +12,23 @@ Subfolders become groups in the sidebar: `form/input.php` is listed under "Form"
 
 ## Cases
 
-![A button case dragged to 360px, its buttons wrapping](.github/cases.png)
+![The three cases below, the first dragged to 360px](.github/cases.png)
 
 `Playground::case()` takes a label and a closure that renders the case. Each case gets an anchor and its own iframe, loaded at `?case=<id>`, so media queries react to the frame's width. Drag its right edge to resize it; the width shows next to the label.
 
 ```php
 use Medienbaecker\Playground\Playground;
 
-Playground::case('Long label', fn () => snippet('components/button', ['label' => 'Lorem ipsum dolor sit amet']));
+Playground::case('Primary', fn () => snippet('components/button', ['label' => 'Lorem ipsum dolor', 'url' => '#']));
 
 // Attributes go on the box around the case, e.g. to set a background
-Playground::case('On purple', fn () => snippet('components/button'), attributes: ['data-background' => 'purple-700']);
+Playground::case('On dark', fn () => snippet('components/button', ['label' => 'Lorem ipsum dolor', 'url' => '#']), attributes: ['data-surface' => 'dark']);
 ```
 
 A case that renders one snippet can use `Playground::component()`:
 
 ```php
-Playground::component('Large', 'components/button', ['label' => 'Lorem ipsum', 'size' => 'large']);
+Playground::component('Large', 'components/button', ['label' => 'Lorem ipsum dolor', 'url' => '#', 'size' => 'large']);
 ```
 
 Two custom properties set the space around a case. Set them in `assets/css/playground/playground.css` for all cases, or on one case through its attributes:
@@ -58,17 +58,20 @@ A playground page documents `components/<page name>` when that snippet exists, s
  */
 ```
 
-The page then shows that snippet's docblock above the cases: the description and a table of its `@var` props.
+The page then shows that snippet's docblock above the cases: the description, Markdown allowed, and a table of its `@var` props.
 
 ```php
 <?php
 
 /**
- * Button Component
+ * Button
  *
- * Shown as the description, Markdown allowed.
+ * A link styled as a button, or a button when there is no URL. Nothing is output without a label.
  *
- * @var string|null $label Shown in the props table
+ * @var string|null $label Plain text
+ * @var string|null $url Without one it renders a `<button>`
+ * @var 'primary'|'secondary'|'ghost' $variant
+ * @var 'large'|'medium'|'small' $size
  */
 ```
 
@@ -85,10 +88,11 @@ The first paragraph is the summary and is not shown. A one-line `/** @var Page $
 Three helpers show custom properties with their computed values. Each takes a label and the property names in the order to show them:
 
 ```php
-Playground::swatches('Purple', ['--brand-purple-100', '--brand-purple-300', '--brand-purple-700']);
-Playground::swatches('Roles on purple', ['--color-text', '--color-accent'], attributes: ['data-tone' => 'dark']);
-Playground::sizes('Spacing', ['--spacing-xs', '--spacing-s', '--spacing-m']);
-Playground::type('Font sizes', ['--font-size-s', '--font-size-base', '--font-size-l']);
+Playground::swatches('Colors', ['--color-ink', '--color-muted', '--color-background', '--color-surface', '--color-line', '--color-accent', '--color-on-accent']);
+
+Playground::sizes('Spacing', ['--space-2xs', '--space-xs', '--space-s', '--space-m', '--space-l', '--space-xl', '--space-2xl']);
+
+Playground::type('Font sizes', ['--font-size-2xl', '--font-size-xl', '--font-size-l', '--font-size-m', '--font-size-base', '--font-size-s']);
 ```
 
 ## Placeholder content
