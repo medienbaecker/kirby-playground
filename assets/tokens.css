@@ -17,7 +17,11 @@
 .playground-ui-tokens code {
   font-family: ui-monospace, monospace;
   font-size: 0.8125rem;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+}
+
+.playground-ui-tokens__segment {
+  white-space: nowrap;
 }
 
 .playground-ui-tokens ul {
@@ -39,6 +43,10 @@
 
 .playground-ui-tokens__group {
   margin-block-start: 1.5rem;
+}
+
+.playground-ui-tokens .playground-ui-tokens__component > :not(h3) + * {
+  margin-block-start: 1rem;
 }
 
 .playground-ui-tokens__group-title {

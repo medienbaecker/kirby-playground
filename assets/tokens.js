@@ -1,7 +1,8 @@
 /**
  * Draws every custom property that the site's stylesheets define on `:root` or on an attribute
  * selector like `[data-tone="dark"]` that redefines them, read through the CSSOM and sorted by what its value resolves to:
- * colours, the contexts that redefine them, type, lengths, shadows, easings, durations and the rest
+ * colours, the contexts that redefine them, type, lengths, shadows, easings, durations and the rest,
+ * then the ones that components define on their own selectors, like `.stack { --stack-gap }`
  */
 const container = document.querySelector(".playground-ui-tokens");
 const context = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
@@ -21,8 +22,38 @@ while (pending.length) {
   if (rule.cssRules) pending.unshift(...rule.cssRules);
 }
 
+const splitSelectors = (selector) => {
+  const parts = [];
+  let depth = 0;
+  let start = 0;
+
+  for (let index = 0; index < selector.length; index++) {
+    if ("([".includes(selector[index])) depth++;
+    if (")]".includes(selector[index])) depth--;
+    if (selector[index] === "," && depth === 0) {
+      parts.push(selector.slice(start, index).trim());
+      start = index + 1;
+    }
+  }
+
+  return [...parts, selector.slice(start).trim()];
+};
+
+const selectorOf = (rule) => {
+  let parent = rule.parentRule;
+  while (parent && parent.selectorText === undefined) parent = parent.parentRule;
+  if (!parent) return rule.selectorText ?? "";
+
+  const outer = selectorOf(parent);
+  const wrapped = splitSelectors(outer).length > 1 ? `:is(${outer})` : outer;
+  if (rule.selectorText === undefined) return outer;
+
+  return rule.selectorText.includes("&") ? rule.selectorText.replaceAll("&", wrapped) : `${wrapped} ${rule.selectorText}`;
+};
+
 const declared = new Map();
 const contexts = new Map();
+const scoped = new Map();
 const sharedWithRoot = new Set();
 const usage = new Map();
 
@@ -37,11 +68,17 @@ for (const rule of rules) {
   }
 
   const tokens = properties.filter((property) => property.startsWith("--"));
-  const selectors = (rule.selectorText ?? "").split(",").map((selector) => selector.trim());
   if (!tokens.length) continue;
+  const selectors = splitSelectors(selectorOf(rule));
 
   for (const selector of selectors) {
     const match = selector.match(/^\[([\w-]+)="([^"]+)"\]$/);
+
+    if (selector !== ":root" && !selector.includes("playground-ui")) {
+      if (!scoped.has(selector)) scoped.set(selector, new Map());
+      for (const token of tokens) scoped.get(selector).set(token, rule.style.getPropertyValue(token).trim());
+    }
+
     if (selector !== ":root" && !match) continue;
 
     if (match && !contexts.has(selector)) {
@@ -137,10 +174,11 @@ const typeProperty = ({ name }) =>
 const kindOf = (name, value) => {
   if (CSS.supports("color", value)) return "colour";
   if (typeProperty({ name })) return "type";
+  if (/^-?[\d.]+%?$/.test(value)) return "other";
   if (CSS.supports("transition-duration", value)) return "duration";
   if (/^(cubic-bezier|linear)\(/.test(value) && CSS.supports("transition-timing-function", value)) return "easing";
   if (CSS.supports("inline-size", value)) return "length";
-  if (CSS.supports("box-shadow", value)) return "shadow";
+  if (value !== "none" && CSS.supports("box-shadow", value)) return "shadow";
   return "other";
 };
 
@@ -149,7 +187,8 @@ const kinds = { colour: [], type: [], length: [], shadow: [], easing: [], durati
 
 for (const [name, value] of declared) {
   if (isContextual(name)) continue;
-  kinds[kindOf(name, valueOf(root, name))].push({ name, value });
+  const resolved = valueOf(root, name);
+  kinds[kindOf(name, resolved)].push({ name, value, resolved });
 }
 
 const groupBy = (tokens, keyOf) => {
@@ -173,10 +212,16 @@ const patternOf = ({ name, value }) => {
   return `--${[first, ...rest.map(() => "*")].join("-")}`;
 };
 
+const breakable = (name) =>
+  name
+    .split(/(?<=[^-]-)/)
+    .map((segment) => `<span class="playground-ui-tokens__segment">${segment}</span>`)
+    .join("<wbr>");
+
 const nameAndReference = ({ name, value }) => {
   const reference = referenceOf(value);
 
-  return `<code>${name}</code>${reference ? ` <code class="playground-ui-tokens__muted">${reference}</code>` : ""}`;
+  return `<code>${breakable(name)}</code>${reference ? ` <code class="playground-ui-tokens__muted">${breakable(reference)}</code>` : ""}`;
 };
 
 const section = (title, body) => `
@@ -217,8 +262,8 @@ const bars = (tokens, unit) => `
         (token) => `
           <li class="playground-ui-tokens__bar-row" data-token="${token.name}">
             <span class="playground-ui-tokens__bar-name">${nameAndReference(token)}</span>
-            <span class="playground-ui-tokens__bar" style="inline-size: ${unit === "ms" ? `${durationOf(valueOf(root, token.name)) / 4}px` : `var(${token.name})`}"></span>
-            <code class="playground-ui-tokens__muted" data-${unit}></code>
+            <span class="playground-ui-tokens__bar" style="inline-size: ${unit === "ms" ? `${durationOf(token.resolved) / 4}px` : `var(${token.name})`}"></span>
+            <code class="playground-ui-tokens__muted" data-${unit}>${unit === "ms" ? `${durationOf(token.resolved)}ms` : ""}</code>
           </li>`,
       )
       .join("")}
@@ -232,7 +277,7 @@ const samples = (tokens) => `
       .map(
         (token) => `
           <li class="playground-ui-tokens__sample-row" data-token="${token.name}">
-            <span class="playground-ui-tokens__meta">${nameAndReference(token)} <code class="playground-ui-tokens__muted" data-${typeProperty(token) === "font-size" ? "px" : "value"}></code></span>
+            <span class="playground-ui-tokens__meta">${nameAndReference(token)} <code class="playground-ui-tokens__muted" data-${typeProperty(token) === "font-size" ? "px" : "value"}>${typeProperty(token) === "font-size" ? "" : escape(token.resolved)}</code></span>
             <span class="playground-ui-tokens__sample" style="${typeProperty(token)}: var(${token.name})">Lorem ipsum</span>
           </li>`,
       )
@@ -300,9 +345,9 @@ const easings = (tokens) => `
       .map(
         (token) => `
           <li class="playground-ui-tokens__easing">
-            ${curve(valueOf(root, token.name))}
+            ${curve(token.resolved)}
             <span>${nameAndReference(token)}</span>
-            <code class="playground-ui-tokens__muted">${escape(valueOf(root, token.name))}</code>
+            <code class="playground-ui-tokens__muted">${escape(token.resolved)}</code>
           </li>`,
       )
       .join("")}
@@ -323,7 +368,7 @@ const table = (tokens) => `
             (token) => `
               <tr>
                 <th scope="row">${nameAndReference(token)}</th>
-                <td><code>${escape(valueOf(root, token.name))}</code></td>
+                <td><code>${escape(token.resolved || token.value)}</code></td>
               </tr>`,
           )
           .join("")}
@@ -409,6 +454,40 @@ const lengthGroups = new Map(
   }),
 );
 
+const declarations = (tokens) => [...tokens].map(([name, value]) => `${name}: ${value}`).join("; ");
+
+const components = [...scoped].filter(([selector]) => !contexts.has(selector));
+const renderers = {
+  colour: swatches,
+  type: samples,
+  length: (tokens) => bars(tokens, "px"),
+  shadow: shadows,
+  easing: easings,
+  duration: (tokens) => bars(tokens, "ms"),
+  other: table,
+};
+
+const component = ([selector, tokens]) => {
+  const probe = document.createElement("div");
+  probe.setAttribute("style", declarations(tokens));
+  container.append(probe);
+
+  const byKind = groupBy(
+    [...tokens].map(([name, value]) => ({ name, value, resolved: valueOf(probe, name) })),
+    (token) => kindOf(token.name, token.resolved),
+  );
+  probe.remove();
+
+  return `
+    <div class="playground-ui-tokens__group playground-ui-tokens__component" style="${escape(declarations(tokens)).replace(/"/g, "&quot;")}">
+      <h3 class="playground-ui-tokens__group-title"><code>${escape(selector)}</code></h3>
+      ${Object.keys(renderers)
+        .filter((kind) => byKind.has(kind))
+        .map((kind) => renderers[kind](byKind.get(kind)))
+        .join("")}
+    </div>`;
+};
+
 container.innerHTML = [
   kinds.colour.length && section("Colours", groups(groupBy(kinds.colour, familyOf), swatches)),
   contexts.size &&
@@ -430,6 +509,7 @@ container.innerHTML = [
   kinds.easing.length && section("Easings", groups(groupBy(kinds.easing, prefixOf), easings)),
   kinds.duration.length && section("Durations", groups(groupBy(kinds.duration, prefixOf), (tokens) => bars(tokens, "ms"))),
   kinds.other.length && section("Other", groups(groupBy(kinds.other, prefixOf), table)),
+  components.length && section("Components", components.map(component).join("")),
 ]
   .filter(Boolean)
   .join("");
@@ -475,14 +555,6 @@ for (const context of container.querySelectorAll(".playground-ui-tokens__context
 for (const list of container.querySelectorAll(".playground-ui-tokens__bars")) {
   const width = (row) => row.querySelector(".playground-ui-tokens__bar").getBoundingClientRect().width;
   list.append(...[...list.children].sort((a, b) => width(a) - width(b)));
-}
-
-for (const output of container.querySelectorAll("[data-ms]")) {
-  output.textContent = `${durationOf(valueOf(root, output.closest("[data-token]").dataset.token))}ms`;
-}
-
-for (const output of container.querySelectorAll(".playground-ui-tokens__sample-row [data-value]")) {
-  output.textContent = valueOf(root, output.closest("[data-token]").dataset.token);
 }
 
 const showPixels = () => {
