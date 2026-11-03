@@ -91,15 +91,14 @@
   color: var(--playground-ui-ink);
 }
 
-.playground-ui-sidebar__title {
-  margin: 0;
-  font-weight: 600;
-}
-
 .playground-ui-sidebar__group {
   margin: 1rem 0 0.25rem;
   font-size: inherit;
   font-weight: 600;
+}
+
+.playground-ui-sidebar__group:first-child {
+  margin-block-start: 0;
 }
 
 .playground-ui-sidebar__list {

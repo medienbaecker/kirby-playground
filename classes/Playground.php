@@ -170,11 +170,11 @@ class Playground
     /**
      * URL of a playground page in the current language
      */
-    public static function url(string $name = ''): string
+    public static function url(string $name): string
     {
         $base = kirby()->language()?->url() ?? kirby()->url();
 
-        return rtrim("{$base}/playground/{$name}", '/');
+        return "{$base}/playground/{$name}";
     }
 
     private static function id(string $label): string

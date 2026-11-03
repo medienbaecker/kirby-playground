@@ -81,6 +81,11 @@ return [
 
             $lang = $language($args);
             $component = $args[0] ?? null;
+            $components = Playground::components();
+
+            if (!$component && $components !== []) {
+                go($components[0]['url']);
+            }
 
             // Playground pages show dynamic content and should never be cached
             kirby()->response()->cache(false);
@@ -94,7 +99,7 @@ return [
             ]);
 
             if ($component) {
-                if (in_array($component, array_column(Playground::components(), 'name'), true) === false) {
+                if (in_array($component, array_column($components, 'name'), true) === false) {
                     kirby()->response()->code(404);
                 }
 

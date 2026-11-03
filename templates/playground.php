@@ -7,10 +7,6 @@ use Medienbaecker\Playground\Playground;
 $component    = $page->component()->value();
 $components   = Playground::components();
 
-if ($page->component()->isEmpty() && $components !== []) {
-	go($components[0]['url']);
-}
-
 snippet('playground-ui/head');
 
 $plugin       = kirby()->plugin('medienbaecker/playground');
