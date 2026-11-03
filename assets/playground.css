@@ -202,8 +202,13 @@
   background: var(--playground-ui-tint);
 }
 
-.playground-ui-component {
-  border-block-start: 1px solid var(--playground-ui-line);
+.playground-ui-header:has(+ .playground-ui-component) {
+  padding-block-end: 0.5rem;
+}
+
+.playground-ui-header:not(:has(+ .playground-ui-component)),
+.playground-ui-component:not(:has(+ .playground-ui-component)) {
+  border-block-end: 1px solid var(--playground-ui-line);
 }
 
 .playground-ui-component > * {
@@ -211,7 +216,7 @@
 }
 
 .playground-ui-component {
-  padding-block: 0.75rem;
+  padding-block: 0.5rem 1.25rem;
 }
 
 .playground-ui-component__name {
