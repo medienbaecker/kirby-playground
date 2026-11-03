@@ -9,6 +9,8 @@ use Kirby\Http\Remote;
 
 class ImageGenerator
 {
+	private static int $count = 0;
+
 	/**
 	 * Placeholder image from picsum.photos, downloaded on first use
 	 */
@@ -19,19 +21,16 @@ class ImageGenerator
 		}
 
 		$id     = $options['id'] ?? null;
-		$seed   = $options['seed'] ?? null;
+		$seed   = $options['seed'] ?? ($id === null ? 'image-' . get('case') . '-' . static::$count++ : null);
 		$width  = $options['width'] ?? 1200;
 		$height = $options['height'] ?? 800;
 
 		if ($id !== null) {
 			$cacheId = md5("id:{$id}:{$width}:{$height}");
 			$path    = "id/{$id}/";
-		} elseif ($seed !== null) {
+		} else {
 			$cacheId = md5("seed:{$seed}:{$width}:{$height}");
 			$path    = "seed/{$seed}/";
-		} else {
-			$cacheId = md5(uniqid('', true));
-			$path    = '';
 		}
 
 		$file = static::file($cacheId, ['alt' => 'Placeholder image', ...($options['content'] ?? [])]);

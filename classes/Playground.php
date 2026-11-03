@@ -36,11 +36,9 @@ class Playground
 		}
 
 		if (static::$only === $id) {
-			$class = 'playground-ui-case__render' . ($attributes === [] ? ' playground-ui-case__render--plain' : '');
-
 			ob_start();
 			$render();
-			static::$frame = '<div ' . attr([...$attributes, 'class' => $class]) . '>' . ob_get_clean() . '</div>';
+			static::$frame = '<div ' . attr([...$attributes, 'class' => 'playground-ui-case__render']) . '>' . ob_get_clean() . '</div>';
 		}
 	}
 

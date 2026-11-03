@@ -24,24 +24,24 @@ for (const section of document.querySelectorAll(".playground-ui-case")) {
 	});
 }
 
-const sidebarToggle = document.querySelector(".playground-ui-sidebar__toggle");
+const sidebar = document.querySelector(".playground-ui-sidebar");
 
-if (sidebarToggle) {
-	const root = document.documentElement;
+if (sidebar) {
+	const toggle = sidebar.querySelector(".playground-ui-sidebar__toggle");
 	const wide = matchMedia("(width >= 50rem)");
 	const sync = () => {
-		const expanded = wide.matches ? !root.hasAttribute("data-playground-sidebar-hidden") : root.hasAttribute("data-playground-sidebar-open");
+		const expanded = wide.matches ? !sidebar.hasAttribute("data-collapsed") : sidebar.hasAttribute("data-open");
 
-		sidebarToggle.setAttribute("aria-expanded", expanded);
+		toggle.setAttribute("aria-expanded", expanded);
 	};
 
-	sidebarToggle.addEventListener("click", () => {
+	toggle.addEventListener("click", () => {
 		if (wide.matches) {
-			const hidden = root.toggleAttribute("data-playground-sidebar-hidden");
+			const collapsed = sidebar.toggleAttribute("data-collapsed");
 
-			localStorage.setItem("playground-sidebar", hidden ? "hidden" : "shown");
+			localStorage.setItem("playground-sidebar", collapsed ? "hidden" : "shown");
 		} else {
-			root.toggleAttribute("data-playground-sidebar-open");
+			sidebar.toggleAttribute("data-open");
 		}
 
 		sync();

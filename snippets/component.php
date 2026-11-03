@@ -20,7 +20,9 @@ $type  = function (string $type): string {
 ?>
 <section class="playground-ui-component">
 	<?php if ($name): ?>
-		<h2 class="playground-ui-component__name"><code><?= esc($name) ?></code></h2>
+		<h2 class="playground-ui-component__name">
+			<code class="playground-ui-component__snippet"><?= esc($name) ?></code>
+		</h2>
 	<?php endif ?>
 
 	<?php if ($docblock->description): ?>
@@ -32,17 +34,21 @@ $type  = function (string $type): string {
 			<table class="playground-ui-props__table">
 				<thead>
 					<tr>
-						<th scope="col">Prop</th>
-						<th scope="col">Type</th>
-						<th scope="col">Description</th>
+						<th class="playground-ui-props__cell playground-ui-props__cell--heading" scope="col">Prop</th>
+						<th class="playground-ui-props__cell playground-ui-props__cell--heading" scope="col">Type</th>
+						<th class="playground-ui-props__cell playground-ui-props__cell--heading" scope="col">Description</th>
 					</tr>
 				</thead>
 				<tbody>
 					<?php foreach ($props as $prop): ?>
-						<tr>
-							<th scope="row"><code class="playground-ui-props__name">$<?= preg_replace('/([A-Z])/', '<wbr>$1', esc($prop['name'])) ?></code></th>
-							<td><code><?= implode('<span class="playground-ui-type__pipe">|</span><wbr>', array_map($type, explode('|', preg_replace('/^\?(.*)$/', '$1|null', $prop['type'])))) ?></code></td>
-							<td><?= markdown($prop['description'], ['inline' => true, 'safe' => true]) ?></td>
+						<tr class="playground-ui-props__row">
+							<th class="playground-ui-props__cell" scope="row">
+								<code class="playground-ui-props__name">$<?= preg_replace('/([A-Z])/', '<wbr>$1', esc($prop['name'])) ?></code>
+							</th>
+							<td class="playground-ui-props__cell">
+								<code class="playground-ui-props__type"><?= implode('<span class="playground-ui-type__pipe">|</span><wbr>', array_map($type, explode('|', preg_replace('/^\?(.*)$/', '$1|null', $prop['type'])))) ?></code>
+							</td>
+							<td class="playground-ui-props__cell"><?= markdown($prop['description'], ['inline' => true, 'safe' => true]) ?></td>
 						</tr>
 					<?php endforeach ?>
 				</tbody>

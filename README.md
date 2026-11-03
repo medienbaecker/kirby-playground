@@ -33,8 +33,8 @@ Two custom properties set the space around a case. Set them in `assets/css/playg
 
 ```css
 .playground-ui-case__render {
-  --playground-case-padding-block: 5rem;
-  --playground-case-padding-inline: var(--spacing-inline);
+	--playground-case-padding-block: 5rem;
+	--playground-case-padding-inline: var(--spacing-inline);
 }
 ```
 
@@ -93,47 +93,47 @@ use Medienbaecker\Playground\Placeholder;
 
 ```php
 Placeholder::text([
-    // word count (default: 20)
-    'words' => 50,
-    'words' => [30, 60],
+	// word count (default: 20)
+	'words' => 50,
+	'words' => [30, 60],
 
-    // wrap in <p> tags (default: false)
-    'paragraphs' => false,
-    'paragraphs' => true,
-    'paragraphs' => 3,
-    'paragraphs' => [2, 5],
+	// wrap in <p> tags (default: false)
+	'paragraphs' => false,
+	'paragraphs' => true,
+	'paragraphs' => 3,
+	'paragraphs' => [2, 5],
 
-    // insert random <a> tags (default: false)
-    'links' => false,
-    'links' => true,
-    'links' => 2,
-    'links' => [1, 3],
+	// insert random <a> tags (default: false)
+	'links' => false,
+	'links' => true,
+	'links' => 2,
+	'links' => [1, 3],
 
-    // insert random <strong> tags (default: false)
-    'bold' => false,
-    'bold' => true,
-    'bold' => 1,
-    'bold' => [1, 2],
+	// insert random <strong> tags (default: false)
+	'bold' => false,
+	'bold' => true,
+	'bold' => 1,
+	'bold' => [1, 2],
 
-    // insert random <em> tags (default: false)
-    'italic' => false,
-    'italic' => true,
-    'italic' => 1,
-    'italic' => [1, 3],
+	// insert random <em> tags (default: false)
+	'italic' => false,
+	'italic' => true,
+	'italic' => 1,
+	'italic' => [1, 3],
 
-    // swap random words for long German compounds (default: false)
-    'long' => false,
-    'long' => true,
-    'long' => 1,
-    'long' => [1, 2],
+	// swap random words for long German compounds (default: false)
+	'long' => false,
+	'long' => true,
+	'long' => 1,
+	'long' => [1, 2],
 
-    // start with (default: 'Lorem ipsum ')
-    'prefix' => 'Lorem ipsum ',
-    'prefix' => false,
+	// start with (default: 'Lorem ipsum ')
+	'prefix' => 'Lorem ipsum ',
+	'prefix' => false,
 
-    // end with (default: '.')
-    'suffix' => '.',
-    'suffix' => false,
+	// end with (default: '.')
+	'suffix' => '.',
+	'suffix' => false,
 ])
 ```
 
@@ -159,7 +159,7 @@ Placeholder::image('hero')->thumb('card')
 Placeholder::image('test')->crop(200, 200)
 ```
 
-Images with a seed or ID are downloaded once and cached in `media/playground-source/`; delete that folder to download them again. Images without either, like `Placeholder::image()` or `Placeholder::images(6)`, are downloaded on every request, which is slow.
+Images are downloaded once and cached in `media/playground-source/`; delete that folder to download them again. Images without a seed or ID get one from their case and position, so they stay the same on every reload.
 
 ## Assets
 
@@ -172,8 +172,8 @@ assets/
 │       ├── playground.css
 │       └── buttons.css
 └── js/
-    └── playground/
-        └── buttons.js
+	└── playground/
+		└── buttons.js
 ```
 
 `playground.css` is loaded on every playground page. `buttons.css` is loaded on `/playground/buttons` and its cases, `buttons.js` only in its cases.
@@ -185,7 +185,7 @@ To restrict the playground to logged-in users:
 ```php
 // site/config/config.php
 return [
-  'medienbaecker.playground.auth' => true
+	'medienbaecker.playground.auth' => true
 ];
 ```
 

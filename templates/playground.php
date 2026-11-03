@@ -29,7 +29,6 @@ snippet('playground-ui/head');
 <?php else: ?>
 	<main class="playground-ui">
 		<?php if ($components !== []): ?>
-			<script>document.documentElement.toggleAttribute("data-playground-sidebar-hidden", localStorage.getItem("playground-sidebar") === "hidden")</script>
 			<?php snippet('playground-ui/sidebar', ['current' => $component]) ?>
 		<?php endif ?>
 		<div class="playground-ui__content">

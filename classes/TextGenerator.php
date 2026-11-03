@@ -19,13 +19,18 @@ class TextGenerator
 		$suffix = ($options['suffix'] ?? '.') ?: '';
 
 		$count = max(1, static::amount($options['words'] ?? 20));
-		$words = explode(' ', static::LOREM);
+		$pool  = explode(' ', static::LOREM);
+		$words = [];
 
 		if ($count <= 3) {
-			$words = array_values(array_filter($words, fn ($word) => strlen($word) >= 4));
+			$pool = array_filter($pool, fn ($word) => strlen($word) >= 4);
 		}
 
-		shuffle($words);
+		while (count($words) < $count) {
+			shuffle($pool);
+			$words = [...$words, ...$pool];
+		}
+
 		$words = array_slice($words, 0, $count);
 
 		for ($index = rand(6, 12); $index < count($words) - 1; $index += rand(6, 12)) {
