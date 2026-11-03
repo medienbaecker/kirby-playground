@@ -127,7 +127,6 @@ async function check(section) {
   for (const violation of found) {
     const item = document.createElement("li");
     const link = document.createElement("a");
-    const targets = violation.nodes.flatMap((node) => node.target.filter((target) => typeof target === "string"));
 
     link.href = violation.helpUrl;
     link.textContent = violation.id;
@@ -146,18 +145,6 @@ async function check(section) {
       item.append(element);
     }
 
-    const highlight = (on) => {
-      for (const target of targets) {
-        for (const element of render.querySelectorAll(target)) {
-          element.classList.toggle("playground-ui-axe-target", on);
-        }
-      }
-    };
-
-    item.addEventListener("mouseenter", () => highlight(true));
-    item.addEventListener("mouseleave", () => highlight(false));
-    item.addEventListener("focusin", () => highlight(true));
-    item.addEventListener("focusout", () => highlight(false));
     list.append(item);
   }
 
@@ -165,26 +152,14 @@ async function check(section) {
 }
 
 /**
- * Sums up the violations of every case in the header and links to the cases that have any
+ * Sums up the violations of every case in the header
  */
 function summarize(result) {
   const counts = [...violations.values()];
   const total = counts.reduce((sum, count) => sum + count, 0);
-  const failing = [...violations].filter(([, count]) => count > 0).map(([section]) => section);
+  const failing = counts.filter((count) => count > 0).length;
 
-  if (total === 0) {
-    result.textContent = `Accessibility: no violations in ${counts.length} cases.`;
-    return;
-  }
-
-  result.textContent = `Accessibility: ${total} ${total === 1 ? "violation" : "violations"} in ${failing.length} of ${counts.length} cases: `;
-
-  failing.forEach((section, index) => {
-    const link = document.createElement("a");
-    link.href = `#${section.id}`;
-    link.textContent = section.querySelector(".playground-ui-case__label a").textContent;
-    result.append(index > 0 ? ", " : "", link);
-  });
+  result.textContent = total === 0 ? `Accessibility: no violations in ${counts.length} cases.` : `Accessibility: ${total} ${total === 1 ? "violation" : "violations"} in ${failing} of ${counts.length} cases.`;
 }
 
 /**

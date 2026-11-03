@@ -190,11 +190,6 @@
   color: var(--playground-ui-muted);
 }
 
-.playground-ui-axe-target {
-  outline: 3px solid #d6331f !important;
-  outline-offset: 2px !important;
-}
-
 .playground-ui-case__problems {
   margin-inline-start: 0.5rem;
   padding: 0 0.5rem;
@@ -203,10 +198,6 @@
   color: #ffffff;
   font-size: 0.75rem;
   font-weight: 600;
-}
-
-.playground-ui-header__axe a {
-  color: inherit;
 }
 
 .playground-ui-axe a {
