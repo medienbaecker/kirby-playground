@@ -113,8 +113,8 @@
   z-index: 4;
   display: grid;
   place-items: center;
-  inline-size: 2.5rem;
-  block-size: 2.5rem;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
   padding: 0;
   border: 1px solid var(--playground-ui-line);
   border-radius: 0.25rem;
@@ -171,8 +171,6 @@
     position: absolute;
     inset-block: 0.5625rem auto;
     inset-inline: -0.75rem auto;
-    inline-size: 1.5rem;
-    block-size: 1.5rem;
   }
 
   .playground-ui-sidebar__toggle svg,
