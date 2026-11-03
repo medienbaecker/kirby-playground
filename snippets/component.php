@@ -21,16 +21,16 @@ $type          = function (string $type): string {
 
 ?>
 <section class="playground-ui-component">
+	<?php if ($docblock->description): ?>
+		<div class="playground-ui-component__description"><?= markdown($docblock->description, ['safe' => true, 'breaks' => false]) ?></div>
+	<?php endif ?>
+
 	<h2 class="playground-ui-component__name">
 		<code><?= esc($name) ?></code>
 		<?php if ($status): ?>
 			<span class="playground-ui-component__status"><?= esc($status) ?></span>
 		<?php endif ?>
 	</h2>
-
-	<?php if ($docblock->description): ?>
-		<div class="playground-ui-component__description"><?= markdown($docblock->description, ['safe' => true, 'breaks' => false]) ?></div>
-	<?php endif ?>
 
 	<?php if ($accessibility): ?>
 		<h3 class="playground-ui-component__heading">Accessibility</h3>
@@ -42,6 +42,7 @@ $type          = function (string $type): string {
 	<?php endif ?>
 
 	<?php if ($props): ?>
+		<h3 class="playground-ui-component__heading">Props</h3>
 		<div class="playground-ui-props">
 			<table class="playground-ui-props__table">
 				<thead>

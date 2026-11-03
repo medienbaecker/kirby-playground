@@ -18,7 +18,7 @@ Subfolders become groups in the overview: `/site/snippets/playground/form/input.
 - Optionally loads `assets/css/playground/playground.css` and `assets/css/playground/[component-name].css`
 - Optionally loads `assets/js/playground/[component-name].js`
 - Unknown components return a 404 with a list of the components you do have
-- A header with links to the overview and the previous and next component
+- A sidebar with every playground page, and a header with the title and the component's summary
 - Component docs and a props table from docblocks
 - Every case in its own resizable frame
 - The overview lists the components that have no playground page yet

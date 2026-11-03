@@ -7,8 +7,6 @@
 
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  padding-block: 0.75rem 1.5rem;
   background: var(--playground-ui-tint);
   color: var(--playground-ui-ink);
   font-family: ui-monospace, monospace;
@@ -22,9 +20,87 @@
   }
 }
 
-.playground-ui > :not(.playground-ui-case),
+.playground-ui__content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-inline-size: 0;
+  padding-block: 1.5rem;
+}
+
+.playground-ui__content > :not(.playground-ui-case),
 .playground-ui-case > :not(.playground-ui-case__frame) {
   padding-inline: var(--playground-ui-inset);
+}
+
+.playground-ui-sidebar {
+  order: 1;
+  padding: 1.5rem var(--playground-ui-inset);
+  border-block-start: 1px solid var(--playground-ui-line);
+}
+
+@media (min-width: 50rem) {
+  .playground-ui {
+    flex-direction: row;
+  }
+
+  .playground-ui-sidebar {
+    position: sticky;
+    inset-block-start: 0;
+    flex: none;
+    align-self: flex-start;
+    order: 0;
+    inline-size: 13rem;
+    max-block-size: 100vh;
+    overflow-y: auto;
+    border-block-start: 0;
+    border-inline-end: 1px solid var(--playground-ui-line);
+  }
+}
+
+.playground-ui-sidebar__group {
+  margin: 1rem 0 0.25rem;
+  font-size: inherit;
+  font-weight: 600;
+}
+
+.playground-ui-sidebar a.playground-ui-sidebar__home {
+  color: var(--playground-ui-ink);
+  font-weight: 600;
+}
+
+.playground-ui-sidebar__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.playground-ui-sidebar a {
+  display: block;
+  padding-block: 0.125rem;
+  color: var(--playground-ui-muted);
+  text-decoration: none;
+}
+
+.playground-ui-sidebar a[aria-current] {
+  color: var(--playground-ui-ink);
+}
+
+@media (hover: hover) {
+  .playground-ui-sidebar a:hover {
+    color: var(--playground-ui-ink);
+  }
+}
+
+.playground-ui-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.playground-ui-intro > * {
+  padding-inline: 0;
 }
 
 .playground-ui :focus-visible {
@@ -104,26 +180,16 @@
   }
 }
 
-.playground-ui-header__nav {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 0.5rem 1.5rem;
-}
-
-.playground-ui-header__siblings {
-  display: flex;
-  gap: 1.5rem;
-}
-
 .playground-ui-header__title {
-  margin-block: 1rem 0;
-  font-size: 0.875rem;
-  line-height: 1.5;
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.2;
   overflow-wrap: anywhere;
 }
 
 .playground-ui-component__name {
+  color: var(--playground-ui-muted);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -147,6 +213,11 @@
   margin: 0;
   padding-inline-start: 1.25rem;
   list-style: disc;
+}
+
+.playground-ui-component__description {
+  color: var(--playground-ui-muted);
+  font-size: 0.875rem;
 }
 
 .playground-ui-component__description > * {
