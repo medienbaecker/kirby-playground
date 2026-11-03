@@ -283,9 +283,10 @@
 }
 
 .playground-ui-type__value {
-	padding-inline: 0.25em;
-	border: 1px solid currentColor;
+	padding-block: 0.0625em;
+	padding-inline: 0.375em;
 	border-radius: 0.25em;
+	background-color: color-mix(in oklch, currentColor 14%, transparent);
 	color: oklch(84% 0.12 150);
 }
 
@@ -294,8 +295,8 @@
 }
 
 .playground-ui-type__pipe {
-	padding-inline: 0.125em;
-	color: var(--playground-ui-muted);
+	padding-inline: 0.25em;
+	color: oklch(50% 0 0);
 }
 
 /* Cases */
