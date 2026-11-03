@@ -446,7 +446,7 @@
 
 .playground-ui-sizes__square {
   display: block;
-  background: color-mix(in srgb, currentColor 35%, transparent);
+  background: #a1a1aa;
 }
 
 .playground-ui-type {
