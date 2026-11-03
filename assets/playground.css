@@ -131,7 +131,7 @@
 
   .playground-ui-sidebar__toggle {
     position: absolute;
-    inset-block-start: 1.75rem;
+    inset-block-start: 0.5625rem;
     inset-inline-start: -0.75rem;
     display: grid;
     place-items: center;
