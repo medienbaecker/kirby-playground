@@ -1,3 +1,13 @@
+.playground-ui-tokens {
+  color-scheme: dark;
+  background-color: var(--playground-ui-tint);
+  color: var(--playground-ui-ink);
+}
+
+.playground-ui-tokens :focus-visible {
+  outline-color: var(--playground-ui-ink);
+}
+
 .playground-ui-tokens code,
 .playground-ui-tokens__title,
 .playground-ui-tokens__group-title,
@@ -84,6 +94,9 @@
 }
 
 .playground-ui-tokens__context {
+  --playground-ui-muted: color-mix(in srgb, currentColor 70%, transparent);
+  --playground-ui-line: color-mix(in srgb, currentColor 20%, transparent);
+
   margin-inline: -1.5rem;
   padding: 1.5rem;
 }
@@ -177,7 +190,7 @@
 .playground-ui-tokens__bar {
   flex: none;
   block-size: 0.75rem;
-  background-color: currentColor;
+  background-color: var(--playground-ui-muted);
 }
 
 .playground-ui-tokens__samples {
@@ -211,8 +224,15 @@
 }
 
 .playground-ui-tokens__card {
+  display: block;
   block-size: 6rem;
-  background-color: Canvas;
+  background-color: inherit;
+}
+
+.playground-ui-tokens__stage {
+  display: block;
+  padding: 1rem;
+  background-color: #fff;
 }
 
 .playground-ui-tokens__text-shadow {
@@ -322,7 +342,7 @@
 }
 
 .playground-ui-tokens__square {
-  background-color: currentColor;
+  background-color: var(--playground-ui-muted);
 }
 
 .playground-ui-tokens__measure {

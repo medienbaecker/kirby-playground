@@ -326,6 +326,8 @@ const samples = (tokens) => `
       .join("")}
   </ul>`;
 
+const surface = surfaceToken ? ` style="background-color: var(${surfaceToken})"` : "";
+
 const shadows = (tokens) => `
   <ul class="playground-ui-tokens__shadows">
     ${tokens
@@ -335,7 +337,7 @@ const shadows = (tokens) => `
             ${
               usage.get("text-shadow")?.has(token.name)
                 ? `<span class="playground-ui-tokens__text-shadow" style="text-shadow: var(${token.name})">Lorem ipsum</span>`
-                : `<span class="playground-ui-tokens__card" style="box-shadow: var(${token.name})"></span>`
+                : `<span class="playground-ui-tokens__stage"${surface}><span class="playground-ui-tokens__card" style="box-shadow: var(${token.name})"></span></span>`
             }
             <span>${nameAndReference(token)}</span>
           </li>`,
@@ -631,16 +633,17 @@ container.innerHTML = [
   .filter(Boolean)
   .join("");
 
-const pageBackground = surfaceToken ? colourIn(container, surfaceToken) : channels(getComputedStyle(document.body).backgroundColor);
+const pageBackground = channels(getComputedStyle(container).backgroundColor);
+const isFaint = (color) => contrast(color, pageBackground) < 1.25;
 
 for (const swatch of container.querySelectorAll(".playground-ui-tokens__swatch")) {
   const color = colourIn(swatch, swatch.dataset.token);
   swatch.querySelector("[data-hex]").textContent = toHex(color);
-  if (toHex(blend(color, pageBackground)) === toHex(pageBackground)) swatch.querySelector(".playground-ui-tokens__chip").dataset.faint = "";
+  if (isFaint(color)) swatch.querySelector(".playground-ui-tokens__chip").dataset.faint = "";
 }
 
 for (const context of container.querySelectorAll(".playground-ui-tokens__context")) {
-  const background = surfaceToken ? colourIn(context, surfaceToken) : pageBackground;
+  const background = surfaceToken ? colourIn(context, surfaceToken) : channels(getComputedStyle(document.body).backgroundColor);
 
   for (const role of context.querySelectorAll(".playground-ui-tokens__role")) {
     const name = role.dataset.token;
@@ -678,7 +681,7 @@ for (const step of container.querySelectorAll(".playground-ui-tokens__step")) {
   step.style.color = contrast(black, shown) > contrast(white, shown) ? "#000" : "#fff";
   step.dataset.label = `${step.dataset.token} ${toHex(color)}`;
   step.setAttribute("aria-label", step.dataset.label);
-  if (toHex(shown) === toHex(pageBackground)) step.dataset.faint = "";
+  if (isFaint(color)) step.dataset.faint = "";
 }
 
 for (const list of container.querySelectorAll("[data-sort]")) {
