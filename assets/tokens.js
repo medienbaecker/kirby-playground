@@ -168,8 +168,10 @@ const contrast = (foreground, background) => {
 const gradeFor = (ratio) => (ratio >= 7 ? "AAA" : ratio >= 4.5 ? "AA" : ratio >= 3 ? "AA large" : "fail");
 
 const scaleOf = (name) => name.replace(/-+[^-]+$/, "");
+const typeProperties = ["font-size", "font-family", "font-weight"];
 const typeProperty = ({ name }) =>
-  ["font-size", "font-family", "font-weight"].find((property) => [...(usage.get(property) ?? [])].some((used) => scaleOf(used) === scaleOf(name)));
+  typeProperties.find((property) => usage.get(property)?.has(name)) ??
+  typeProperties.find((property) => [...(usage.get(property) ?? [])].some((used) => scaleOf(used) === scaleOf(name)));
 
 const kindOf = (name, value) => {
   if (CSS.supports("color", value)) return "colour";
@@ -454,9 +456,7 @@ const lengthGroups = new Map(
   }),
 );
 
-const declarations = (tokens) => [...tokens].map(([name, value]) => `${name}: ${value}`).join("; ");
 
-const components = [...scoped].filter(([selector]) => !contexts.has(selector));
 const renderers = {
   colour: swatches,
   type: samples,
@@ -467,9 +467,70 @@ const renderers = {
   other: table,
 };
 
-const component = ([selector, tokens]) => {
+const subjectOf = (selector) => {
+  let depth = 0;
+  let start = 0;
+
+  for (let index = 0; index < selector.length; index++) {
+    if ("([".includes(selector[index])) depth++;
+    if (")]".includes(selector[index])) depth--;
+    if (depth === 0 && " >+~".includes(selector[index])) start = index + 1;
+  }
+
+  return start;
+};
+
+const withoutNegations = (selector) => {
+  let result = selector;
+  let index;
+
+  while ((index = result.indexOf(":not(")) !== -1) {
+    let depth = 0;
+    let end = index + 4;
+
+    do {
+      if (result[end] === "(") depth++;
+      if (result[end] === ")") depth--;
+      end++;
+    } while (depth > 0);
+
+    result = result.slice(0, index) + result.slice(end);
+  }
+
+  return result;
+};
+
+const isInteraction = (state) => {
+  const interactions = /:(hover|focus-visible|focus-within|focus|active)(?![\w-])/g;
+  const rest = withoutNegations(state);
+  let remaining = rest.replace(interactions, "");
+  while (/:(is|has|where)\([\s,]*\)/.test(remaining)) remaining = remaining.replace(/:(is|has|where)\([\s,]*\)/g, "");
+
+  return remaining !== rest && remaining.trim() === "&";
+};
+
+const blocks = new Map();
+
+for (const [selector, tokens] of scoped) {
+  if (contexts.has(selector)) continue;
+
+  const start = subjectOf(selector);
+  const block = selector.slice(start).match(/^\.[\w-]+/)?.[0];
+  if (!block) continue;
+
+  const state = `${selector.slice(0, start)}&${selector.slice(start + block.length)}`;
+  if (isInteraction(state)) continue;
+
+  if (!blocks.has(block)) blocks.set(block, new Map([["&", new Map()]]));
+  blocks.get(block).set(state, new Map([...(blocks.get(block).get(state) ?? []), ...tokens]));
+}
+
+const declarations = (tokens) => [...tokens].map(([name, value]) => `${name}: ${value}`).join("; ");
+const styleOf = (tokens) => escape(declarations(tokens)).replace(/"/g, "&quot;");
+
+const drawn = (tokens, inherited) => {
   const probe = document.createElement("div");
-  probe.setAttribute("style", declarations(tokens));
+  probe.setAttribute("style", declarations(new Map([...inherited, ...tokens])));
   container.append(probe);
 
   const byKind = groupBy(
@@ -478,12 +539,28 @@ const component = ([selector, tokens]) => {
   );
   probe.remove();
 
+  return Object.keys(renderers)
+    .filter((kind) => byKind.has(kind))
+    .map((kind) => renderers[kind](byKind.get(kind)))
+    .join("");
+};
+
+const component = ([block, states]) => {
+  const base = states.get("&");
+
   return `
-    <div class="playground-ui-tokens__group playground-ui-tokens__component" style="${escape(declarations(tokens)).replace(/"/g, "&quot;")}">
-      <h3 class="playground-ui-tokens__group-title"><code>${escape(selector)}</code></h3>
-      ${Object.keys(renderers)
-        .filter((kind) => byKind.has(kind))
-        .map((kind) => renderers[kind](byKind.get(kind)))
+    <div class="playground-ui-tokens__group playground-ui-tokens__component" style="${styleOf(base)}">
+      <h3 class="playground-ui-tokens__group-title"><code>${escape(block)}</code></h3>
+      ${drawn(base, new Map())}
+      ${[...states]
+        .filter(([state]) => state !== "&")
+        .map(
+          ([state, tokens]) => `
+            <div class="playground-ui-tokens__component playground-ui-tokens__state" style="${styleOf(tokens)}">
+              <h4 class="playground-ui-tokens__group-title"><code>${escape(state)}</code></h4>
+              ${drawn(tokens, base)}
+            </div>`,
+        )
         .join("")}
     </div>`;
 };
@@ -509,7 +586,7 @@ container.innerHTML = [
   kinds.easing.length && section("Easings", groups(groupBy(kinds.easing, prefixOf), easings)),
   kinds.duration.length && section("Durations", groups(groupBy(kinds.duration, prefixOf), (tokens) => bars(tokens, "ms"))),
   kinds.other.length && section("Other", groups(groupBy(kinds.other, prefixOf), table)),
-  components.length && section("Components", components.map(component).join("")),
+  blocks.size && section("Components", [...blocks].map(component).join("")),
 ]
   .filter(Boolean)
   .join("");

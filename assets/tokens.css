@@ -45,8 +45,13 @@
   margin-block-start: 1.5rem;
 }
 
-.playground-ui-tokens .playground-ui-tokens__component > :not(h3) + * {
+.playground-ui-tokens .playground-ui-tokens__component > :not(h3, h4) + * {
   margin-block-start: 1rem;
+}
+
+.playground-ui-tokens__state {
+  padding-inline-start: 1rem;
+  border-inline-start: 1px solid var(--playground-ui-line);
 }
 
 .playground-ui-tokens__group-title {

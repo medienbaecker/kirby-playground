@@ -87,7 +87,7 @@ Each component section also lists the templates, snippets and plugins that call 
 
 ## Tokens
 
-The plugin adds a Tokens page at `/playground/tokens`. It reads every custom property your stylesheets define on `:root` or redefine on an attribute selector like `[data-tone="dark"]`, and draws each by its value: colours as swatches, contexts as painted bands with contrast grades, font tokens as samples, lengths and durations as bars, shadows, easing curves, and a table for the rest. Custom properties that components set on their own selectors, like `.stack { --stack-gap }`, follow in a Components section, grouped by selector.
+The plugin adds a Tokens page at `/playground/tokens`. It reads every custom property your stylesheets define on `:root` or redefine on an attribute selector like `[data-tone="dark"]`, and draws each by its value: colours as swatches, contexts as painted bands with contrast grades, font tokens as samples, lengths and durations as bars, shadows, easing curves, and a table for the rest. Custom properties that components set on their own selectors, like `.stack { --stack-gap }`, follow in a Components section, one block per class with its states like `&[aria-busy="true"]` inside. States you trigger yourself, like `:hover` or `:focus-visible`, are left out.
 
 ## Screenshots
 
