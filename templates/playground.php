@@ -30,6 +30,7 @@ $case         = get('case');
 <?php else: ?>
 	<main class="playground-ui">
 		<?php if ($index !== false): ?>
+			<script>document.documentElement.toggleAttribute("data-playground-sidebar-hidden", localStorage.getItem("playground-sidebar") === "hidden")</script>
 			<?php snippet('playground-ui/sidebar', ['current' => $component]) ?>
 		<?php endif ?>
 		<div class="playground-ui__content">

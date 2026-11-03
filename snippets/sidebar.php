@@ -7,7 +7,7 @@
 use Medienbaecker\Playground\Playground;
 
 ?>
-<nav class="playground-ui-sidebar" aria-label="Playground pages">
+<nav class="playground-ui-sidebar" id="playground-ui-sidebar" aria-label="Playground pages">
 	<a class="playground-ui-sidebar__home" href="<?= Playground::url() ?>">Playground</a>
 	<?php $groups = Playground::groups() ?>
 	<?php foreach ($groups as $group => $components): ?>

@@ -194,6 +194,42 @@
   }
 }
 
+.playground-ui-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.playground-ui-header__sidebar {
+  display: none;
+  flex: none;
+  place-items: center;
+  inline-size: 2rem;
+  block-size: 2rem;
+  padding: 0;
+  border: 1px solid var(--playground-ui-line);
+  border-radius: 0.25rem;
+  background: none;
+  color: var(--playground-ui-muted);
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .playground-ui-header__sidebar:hover {
+    color: var(--playground-ui-ink);
+  }
+}
+
+@media (min-width: 50rem) {
+  .playground-ui-header__sidebar {
+    display: grid;
+  }
+
+  [data-playground-sidebar-hidden] .playground-ui-sidebar {
+    display: none;
+  }
+}
+
 .playground-ui-header__title {
   margin: 0;
   font-size: 1.75rem;

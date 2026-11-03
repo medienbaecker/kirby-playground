@@ -24,3 +24,16 @@ for (const section of document.querySelectorAll(".playground-ui-case")) {
   });
 }
 
+
+const sidebarToggle = document.querySelector(".playground-ui-header__sidebar");
+
+if (sidebarToggle) {
+  const update = (hidden) => {
+    document.documentElement.toggleAttribute("data-playground-sidebar-hidden", hidden);
+    sidebarToggle.setAttribute("aria-expanded", String(!hidden));
+    localStorage.setItem("playground-sidebar", hidden ? "hidden" : "shown");
+  };
+
+  update(document.documentElement.hasAttribute("data-playground-sidebar-hidden"));
+  sidebarToggle.addEventListener("click", () => update(sidebarToggle.getAttribute("aria-expanded") === "true"));
+}
