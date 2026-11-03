@@ -5,7 +5,7 @@ for (const section of document.querySelectorAll(".playground-ui-case")) {
   const width = section.querySelector(".playground-ui-case__width");
 
   new ResizeObserver(() => {
-    width.textContent = `${Math.round(frame.clientWidth)}px`;
+    width.textContent = `${frame.clientWidth}px`;
   }).observe(frame);
 
   handle.addEventListener("pointerdown", (event) => {
@@ -28,15 +28,18 @@ const sidebarToggle = document.querySelector(".playground-ui-sidebar__toggle");
 
 if (sidebarToggle) {
   const root = document.documentElement;
-  const wide = matchMedia("(min-width: 50rem)");
+  const wide = matchMedia("(width >= 50rem)");
   const sync = () => {
-    sidebarToggle.setAttribute("aria-expanded", String(wide.matches ? !root.hasAttribute("data-playground-sidebar-hidden") : root.hasAttribute("data-playground-sidebar-open")));
+    const expanded = wide.matches ? !root.hasAttribute("data-playground-sidebar-hidden") : root.hasAttribute("data-playground-sidebar-open");
+
+    sidebarToggle.setAttribute("aria-expanded", expanded);
   };
 
   sidebarToggle.addEventListener("click", () => {
     if (wide.matches) {
-      root.toggleAttribute("data-playground-sidebar-hidden");
-      localStorage.setItem("playground-sidebar", root.hasAttribute("data-playground-sidebar-hidden") ? "hidden" : "shown");
+      const hidden = root.toggleAttribute("data-playground-sidebar-hidden");
+
+      localStorage.setItem("playground-sidebar", hidden ? "hidden" : "shown");
     } else {
       root.toggleAttribute("data-playground-sidebar-open");
     }
