@@ -7,10 +7,12 @@
 .playground-ui-controls,
 .playground-ui-code,
 .playground-ui-case,
+.playground-ui-axe,
 .playground-ui-tokens {
-  --playground-ui-line: color-mix(in srgb, currentColor, transparent 85%);
-  --playground-ui-muted: color-mix(in srgb, currentColor, transparent 40%);
-  --playground-ui-tint: color-mix(in srgb, currentColor, transparent 95%);
+  --playground-ui-ink: #27272a;
+  --playground-ui-muted: #6b6b74;
+  --playground-ui-line: #e4e4e7;
+  --playground-ui-tint: #f4f4f5;
 }
 
 .playground-ui-header,
@@ -20,7 +22,9 @@
 .playground-ui-case__header,
 .playground-ui-case__accessibility,
 .playground-ui-controls,
-.playground-ui-code {
+.playground-ui-code,
+.playground-ui-axe {
+  color: var(--playground-ui-ink);
   font-family: system-ui, sans-serif;
   font-size: 0.875rem;
   line-height: 1.5;
@@ -151,11 +155,50 @@
 .playground-ui-axe {
   margin: 1rem 0 0;
   padding: 0.5rem 0.75rem 0.5rem 1.75rem;
-  border-inline-start: 3px solid currentColor;
+  border-inline-start: 3px solid #b42318;
   list-style: disc;
   font-family: system-ui, sans-serif;
   font-size: 0.875rem;
   line-height: 1.5;
+}
+
+.playground-ui-axe__item + .playground-ui-axe__item {
+  margin-block-start: 0.5rem;
+}
+
+.playground-ui-axe__node {
+  display: grid;
+  gap: 0.125rem;
+  margin-block-start: 0.25rem;
+}
+
+.playground-ui-axe__node code {
+  overflow-wrap: anywhere;
+  font-family: ui-monospace, monospace;
+  font-size: 0.8125rem;
+}
+
+.playground-ui-axe__node span {
+  color: var(--playground-ui-muted);
+}
+
+.playground-ui-axe-target {
+  outline: 3px solid #d6331f !important;
+  outline-offset: 2px !important;
+}
+
+.playground-ui-case__problems {
+  margin-inline-start: 0.5rem;
+  padding: 0 0.5rem;
+  border-radius: 1rem;
+  background: #b42318;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.playground-ui-header__axe a {
+  color: inherit;
 }
 
 .playground-ui-axe a {
@@ -381,9 +424,9 @@
 }
 
 .playground-ui-type {
-  --playground-ui-type-builtin: color-mix(in srgb, #2563eb 70%, currentColor);
-  --playground-ui-type-class: color-mix(in srgb, #c2410c 70%, currentColor);
-  --playground-ui-type-value: color-mix(in srgb, #15803d 70%, currentColor);
+  --playground-ui-type-builtin: #1d4ed8;
+  --playground-ui-type-class: #b4410c;
+  --playground-ui-type-value: #15803d;
 }
 
 .playground-ui-type__builtin {
