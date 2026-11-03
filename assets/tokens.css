@@ -34,6 +34,10 @@
   white-space: nowrap;
 }
 
+.playground-ui-tokens__section + .playground-ui-tokens__section {
+  border-block-start: 1px solid var(--playground-ui-line);
+}
+
 .playground-ui-tokens ul {
   margin: 0;
   padding: 0;
@@ -42,7 +46,6 @@
 
 .playground-ui-tokens__section {
   padding: 1.5rem;
-  border-block-start: 1px solid var(--playground-ui-line);
 }
 
 .playground-ui-tokens__title {
