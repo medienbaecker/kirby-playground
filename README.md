@@ -28,7 +28,7 @@ Subfolders become groups in the overview: `/site/snippets/playground/form/input.
 
 ## Cases
 
-Wrap each case in `Playground::case()` to give it a label, an anchor and a PHP panel with a Copy button. The panel lists each snippet from the components folder the case renders, with the props it passed; snippets rendered inside those are left out:
+Wrap each case in `Playground::case()` to give it a label, an anchor, a frame and a PHP panel with a Copy button. The frame loads the case on its own at `?case=<id>`, so media queries react to its width: drag the bar on its right edge, and the width shows next to the label. The PHP panel lists each snippet from the components folder the case renders, with the props it passed; snippets rendered inside those are left out. Placeholders are seeded per case, so the frame shows the same text as the panel:
 
 ```php
 use Medienbaecker\Playground\Playground;
@@ -48,7 +48,20 @@ A case that renders one snippet can use `Playground::component()` instead:
 Playground::component('Large', 'components/button', ['label' => 'Lorem ipsum', 'size' => 'large']);
 ```
 
-Each page runs [axe-core](https://github.com/dequelabs/axe-core) (MPL-2.0, included) on every case when it loads, lists the violations under the case and sums them up in the header.
+Each page runs [axe-core](https://github.com/dequelabs/axe-core) (MPL-2.0, included) on every case when it loads, lists the violations under the case and sums them up in the header. The PHP panel is coloured by [microlighter](https://github.com/davatron5000/microlighter) (MIT, included).
+
+The space around a case comes from two custom properties. Set them in `assets/css/playground/playground.css` for the whole project, or per case through its attributes:
+
+```css
+.playground-ui-case__render {
+  --playground-case-padding-block: 5rem;
+  --playground-case-padding-inline: var(--spacing-inline);
+}
+```
+
+```php
+Playground::case('Flush', fn () => snippet('components/hero'), attributes: ['style' => '--playground-case-padding-inline: 0']);
+```
 
 ## Component Docs
 

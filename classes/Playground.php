@@ -21,13 +21,31 @@ class Playground
 
     private static int|null $recording = null;
 
+    private static string|null $only = null;
+
     /**
-     * Renders one labelled case with an anchor and the component snippets it calls
+     * Renders one labelled case with an anchor, a resizable frame that shows it and the component snippets it calls
+     * Inside the frame, only the rendered case
      *
      * @param array<string, mixed> $attributes Added to the box around the rendered case, e.g. a surface colour
      */
     public static function case(string $label, Closure $render, string|null $accessibility = null, array $attributes = []): void
     {
+        $id = static::id($label);
+
+        mt_srand(crc32($id));
+
+        if (static::$only !== null) {
+            if (static::$only === $id) {
+                echo '<div ' . attr([...$attributes, 'class' => $attributes === [] ? 'playground-ui-case__render playground-ui-case__render--plain' : 'playground-ui-case__render']) . '>';
+                $render();
+                echo '</div>';
+            }
+
+            mt_srand(crc32("{$id}/next"));
+            return;
+        }
+
         static::$calls     = [];
         static::$recording = static::$depth;
 
@@ -36,18 +54,17 @@ class Playground
         try {
             $render();
         } finally {
-            $html  = trim(ob_get_clean());
+            ob_end_clean();
             $calls = static::$calls;
             static::$calls     = null;
             static::$recording = null;
+            mt_srand(crc32("{$id}/next"));
         }
 
         snippet('playground-ui/case', [
-            'id'            => static::id($label),
+            'id'            => $id,
             'label'         => $label,
-            'html'          => $html,
             'accessibility' => $accessibility,
-            'attributes'    => $attributes,
             'php'           => implode("\n\n", $calls),
         ]);
     }
@@ -61,6 +78,23 @@ class Playground
     public static function component(string $label, string $snippet, array $props = [], string|null $accessibility = null, array $attributes = []): void
     {
         static::case($label, fn () => snippet($snippet, $props), $accessibility, $attributes);
+    }
+
+    /**
+     * Renders a playground page, or only the case with this id for its frame
+     * Placeholders are seeded per case, so the frame shows what the page recorded
+     */
+    public static function render(string $component, string|null $case = null): void
+    {
+        static::$only = $case;
+
+        mt_srand(crc32($component));
+
+        try {
+            snippet("playground/{$component}");
+        } finally {
+            static::$only = null;
+        }
     }
 
     /**

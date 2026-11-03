@@ -35,14 +35,65 @@ for (const button of document.querySelectorAll(".playground-ui-code__copy")) {
   });
 }
 
+/**
+ * Resolves once the frame shows its case
+ */
+function loaded(frame) {
+  return new Promise((resolve) => {
+    if (frame.contentDocument?.readyState === "complete" && frame.contentWindow.axe) {
+      resolve();
+    } else {
+      frame.addEventListener("load", resolve, { once: true });
+    }
+  });
+}
+
+for (const section of document.querySelectorAll(".playground-ui-case")) {
+  const box = section.querySelector(".playground-ui-case__frame");
+  const frame = section.querySelector(".playground-ui-case__iframe");
+  const handle = section.querySelector(".playground-ui-case__handle");
+  const width = section.querySelector(".playground-ui-case__width");
+
+  loaded(frame).then(() => {
+    const render = frame.contentDocument.querySelector(".playground-ui-case__render");
+
+    new frame.contentWindow.ResizeObserver(() => {
+      frame.style.blockSize = `${Math.floor(render.getBoundingClientRect().bottom + frame.contentWindow.scrollY)}px`;
+    }).observe(render);
+  });
+
+  new ResizeObserver(() => {
+    width.textContent = `${Math.round(frame.clientWidth)}px`;
+  }).observe(frame);
+
+  handle.addEventListener("pointerdown", (event) => {
+    handle.setPointerCapture(event.pointerId);
+    frame.style.pointerEvents = "none";
+  });
+
+  handle.addEventListener("pointermove", (event) => {
+    if (handle.hasPointerCapture(event.pointerId)) {
+      box.style.inlineSize = `${event.clientX - box.getBoundingClientRect().left + handle.offsetWidth / 2}px`;
+    }
+  });
+
+  handle.addEventListener("pointerup", () => {
+    frame.style.pointerEvents = "";
+  });
+}
+
 const pageRules = ["bypass", "landmark-one-main", "landmark-unique", "page-has-heading-one", "region"];
 
 /**
  * Runs axe-core on a case and lists the violations under it, each with the elements and how to fix them
  */
 async function check(section) {
-  const render = section.querySelector(".playground-ui-case__render");
-  const { violations } = await axe.run({ include: [render] }, { rules: Object.fromEntries(pageRules.map((rule) => [rule, { enabled: false }])) });
+  const frame = section.querySelector(".playground-ui-case__iframe");
+
+  await loaded(frame);
+
+  const render = frame.contentDocument.querySelector(".playground-ui-case__render");
+  const { violations } = await frame.contentWindow.axe.run({ include: [render] }, { rules: Object.fromEntries(pageRules.map((rule) => [rule, { enabled: false }])) });
 
   if (violations.length === 0) {
     return 0;
@@ -80,7 +131,7 @@ async function check(section) {
     list.append(item);
   }
 
-  render.after(list);
+  section.querySelector(".playground-ui-case__frame").after(list);
 
   return violations.length;
 }

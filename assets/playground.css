@@ -44,7 +44,7 @@
   padding-block: 0.75rem;
 }
 
-.playground-ui-case > :not(.playground-ui-case__render) {
+.playground-ui-case > :not(.playground-ui-case__frame) {
   margin-inline: 0.75rem;
 }
 
@@ -55,7 +55,7 @@
     padding-inline: 1.5rem;
   }
 
-  .playground-ui-case > :not(.playground-ui-case__render) {
+  .playground-ui-case > :not(.playground-ui-case__frame) {
     margin-inline: 1.5rem;
   }
 }
@@ -328,13 +328,86 @@
 }
 
 .playground-ui-case__render {
-  padding-block: 2rem;
+  --playground-case-padding-block: 2rem;
+  --playground-case-padding-inline: 0.5rem;
 }
 
 @media (min-width: 40rem) {
   .playground-ui-case__render {
-    padding-block: 5rem;
+    --playground-case-padding-block: 5rem;
+    --playground-case-padding-inline: 1.5rem;
   }
+}
+
+.playground-ui-case__render {
+  padding: var(--playground-case-padding-block) var(--playground-case-padding-inline);
+}
+
+:root:has(> body > .playground-ui-case__render) {
+  overflow: hidden;
+}
+
+.playground-ui-case__frame {
+  display: flex;
+  inline-size: 100%;
+  min-inline-size: 12rem;
+  max-inline-size: 100%;
+}
+
+.playground-ui-case__iframe {
+  flex: 1;
+  min-inline-size: 0;
+  block-size: 10rem;
+  border: 0;
+  background: #ffffff;
+}
+
+.playground-ui-case__handle {
+  display: grid;
+  flex: none;
+  place-items: center;
+  inline-size: 0.75rem;
+  background: var(--playground-ui-line);
+  cursor: ew-resize;
+  touch-action: none;
+}
+
+.playground-ui-case__handle::before {
+  content: "";
+  inline-size: 2px;
+  block-size: 2rem;
+  border-radius: 1px;
+  background: var(--playground-ui-muted);
+}
+
+@media (hover: hover) {
+  .playground-ui-case__handle:hover::before {
+    background: var(--playground-ui-ink);
+  }
+}
+
+.playground-ui-case__width {
+  color: var(--playground-ui-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+::highlight(string) {
+  color: #86efac;
+}
+
+::highlight(numeric),
+::highlight(boolean),
+::highlight(constant) {
+  color: #fdba74;
+}
+
+::highlight(function) {
+  color: #93c5fd;
+}
+
+::highlight(operator),
+::highlight(punctuation) {
+  color: var(--playground-ui-muted);
 }
 
 .playground-ui-code summary {
