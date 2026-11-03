@@ -28,24 +28,26 @@ $case         = get('case');
 		$componentJs->exists() ? $componentJs->url() : null,
 	])) ?>
 <?php else: ?>
-	<?php if ($index !== false): ?>
-		<?php snippet('playground-ui/header', [
-			'title'    => $components[$index]['title'],
-			'previous' => $components[$index - 1] ?? null,
-			'next'     => $components[$index + 1] ?? null,
-		]) ?>
-		<?php foreach (array_filter(Playground::shows($component), fn ($name) => Snippet::file($name) !== null) as $name): ?>
-			<?php snippet('playground-ui/component', [
-				'name'     => $name,
-				'docblock' => Docblock::fromFile(Snippet::file($name)),
+	<main class="playground-ui">
+		<?php if ($index !== false): ?>
+			<?php snippet('playground-ui/header', [
+				'title'    => $components[$index]['title'],
+				'previous' => $components[$index - 1] ?? null,
+				'next'     => $components[$index + 1] ?? null,
 			]) ?>
-		<?php endforeach ?>
-		<?php Playground::render($component) ?>
-	<?php elseif ($component): ?>
-		<?php snippet('playground-ui/not-found') ?>
-	<?php else: ?>
-		<?php snippet('playground-ui/overview') ?>
-	<?php endif ?>
+			<?php foreach (array_filter(Playground::shows($component), fn ($name) => Snippet::file($name) !== null) as $name): ?>
+				<?php snippet('playground-ui/component', [
+					'name'     => $name,
+					'docblock' => Docblock::fromFile(Snippet::file($name)),
+				]) ?>
+			<?php endforeach ?>
+			<?php Playground::render($component) ?>
+		<?php elseif ($component): ?>
+			<?php snippet('playground-ui/not-found') ?>
+		<?php else: ?>
+			<?php snippet('playground-ui/overview') ?>
+		<?php endif ?>
+	</main>
 
 	<?= js($plugin->asset('playground.js')->url()) ?>
 <?php endif ?>

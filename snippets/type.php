@@ -5,11 +5,11 @@
  */
 
 ?>
-<div class="playground-ui-type">
+<div class="playground-ui-typeset">
 	<?php foreach ($tokens as $token): ?>
-		<div class="playground-ui-type__item">
-			<p class="playground-ui-type__kicker"><code><?= esc($token) ?></code> <span class="playground-ui-value" data-value="px" data-property="font-size" data-token="<?= esc($token, 'attr') ?>"></span></p>
-			<p class="playground-ui-type__sample" style="font-size: var(<?= esc($token, 'attr') ?>)">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt</p>
+		<div class="playground-ui-typeset__item">
+			<p class="playground-ui-typeset__kicker"><code><?= esc($token) ?></code> <span class="playground-ui-value" data-value="px" data-property="font-size" data-token="<?= esc($token, 'attr') ?>"></span></p>
+			<p class="playground-ui-typeset__sample" style="font-size: var(<?= esc($token, 'attr') ?>)">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt</p>
 		</div>
 	<?php endforeach ?>
 </div>
