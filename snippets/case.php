@@ -15,7 +15,7 @@
 	<div class="playground-ui-case__header">
 		<h2 class="playground-ui-case__label"><a href="#<?= esc($id, 'attr') ?>"><?= esc($label) ?></a></h2>
 	</div>
-	<div <?= attr([...$attributes, 'class' => 'playground-ui-case__render']) ?>><?= $html ?></div>
+	<div <?= attr([...$attributes, 'class' => $attributes === [] ? 'playground-ui-case__render playground-ui-case__render--plain' : 'playground-ui-case__render']) ?>><?= $html ?></div>
 	<?php if ($accessibility): ?>
 		<p class="playground-ui-case__accessibility"><strong>Accessibility:</strong> <?= markdown($accessibility, ['inline' => true, 'safe' => true]) ?></p>
 	<?php endif ?>

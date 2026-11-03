@@ -8,6 +8,13 @@
 .playground-ui-code,
 .playground-ui-case,
 .playground-ui-axe,
+.playground-ui-not-found {
+  --playground-ui-ink: #f4f4f5;
+  --playground-ui-muted: #a1a1aa;
+  --playground-ui-line: #3f3f46;
+  --playground-ui-tint: #18181b;
+}
+
 .playground-ui-tokens {
   --playground-ui-ink: #27272a;
   --playground-ui-muted: #6b6b74;
@@ -23,7 +30,8 @@
 .playground-ui-case__accessibility,
 .playground-ui-controls,
 .playground-ui-code,
-.playground-ui-axe {
+.playground-ui-axe,
+.playground-ui-not-found {
   color: var(--playground-ui-ink);
   font-family: system-ui, sans-serif;
   font-size: 0.875rem;
@@ -295,6 +303,30 @@
 }
 
 
+.playground-ui-case,
+.playground-ui-overview,
+.playground-ui-not-found {
+  background: var(--playground-ui-tint);
+}
+
+.playground-ui-not-found {
+  margin: 0;
+  padding: 1.5rem;
+  border-block-end: 1px solid var(--playground-ui-line);
+}
+
+.playground-ui-not-found p {
+  margin: 0;
+}
+
+.playground-ui-not-found code {
+  font-family: ui-monospace, monospace;
+}
+
+.playground-ui-case__render--plain {
+  background: #ffffff;
+}
+
 .playground-ui-case__render {
   padding: 0.5rem;
   border: 1px solid var(--playground-ui-line);
@@ -424,9 +456,9 @@
 }
 
 .playground-ui-type {
-  --playground-ui-type-builtin: #1d4ed8;
-  --playground-ui-type-class: #b4410c;
-  --playground-ui-type-value: #15803d;
+  --playground-ui-type-builtin: #93c5fd;
+  --playground-ui-type-class: #fdba74;
+  --playground-ui-type-value: #86efac;
 }
 
 .playground-ui-type__builtin {
