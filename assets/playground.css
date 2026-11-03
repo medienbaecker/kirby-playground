@@ -253,6 +253,7 @@
 
 
 .playground-ui-props {
+  margin-inline: -0.5rem;
   overflow-x: auto;
   scrollbar-color: var(--playground-ui-line) transparent;
 }
@@ -264,7 +265,7 @@
 
 .playground-ui-props th,
 .playground-ui-props td {
-  padding: 0.5rem 1rem 0.5rem 0;
+  padding: 0.5rem;
   border-block-end: 1px solid var(--playground-ui-line);
   text-align: start;
   vertical-align: top;
@@ -273,6 +274,10 @@
 
 .playground-ui-props thead th {
   color: var(--playground-ui-muted);
+}
+
+.playground-ui-props tbody tr:nth-child(even) {
+  background: oklch(22.5% 0 0);
 }
 
 .playground-ui-props tbody tr:last-child > * {
