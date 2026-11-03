@@ -15,7 +15,7 @@ $componentJs  = asset("assets/js/playground/{$component}.js");
 snippet('playground-ui/head');
 ?>
 <?= css(array_filter([
-	$plugin->asset('playground.css')->url(),
+	$plugin->asset($index !== false && $case !== null ? 'frame.css' : 'playground.css')->url(),
 	$globalCss->exists() ? $globalCss->url() : null,
 	$componentCss->exists() ? $componentCss->url() : null,
 ])) ?>

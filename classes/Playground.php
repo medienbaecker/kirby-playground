@@ -100,7 +100,7 @@ class Playground
 		snippet("playground/{$component}");
 		ob_end_clean();
 
-		echo static::$frame ?: '<p class="playground-ui-not-found">No case with the id <code>' . esc($case) . '</code>.</p>';
+		echo static::$frame ?: '<div class="playground-ui-case__render">No case with the id <code>' . esc($case) . '</code>.</div>';
 	}
 
 	/**
