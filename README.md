@@ -19,8 +19,8 @@ Subfolders become groups in the overview: `/site/snippets/playground/form/input.
 - Optionally loads `assets/js/playground/[component-name].js`
 - Unknown components return a 404 with a list of the components you do have
 - A header with links to the overview and the previous and next component
-- Component docs and a props table from docblocks, and cases with their HTML
-- Component cases with the `snippet()` call that renders them and a form to change their props
+- Component docs and a props table from docblocks
+- Cases with the `snippet()` calls that render them, and component cases with a form to change their props
 - A URL for every case, and an accessibility check with axe-core
 - The overview lists the components that have no playground page yet
 - Loads its own `playground.css` and `playground.js` for the header, docs and cases
@@ -28,7 +28,7 @@ Subfolders become groups in the overview: `/site/snippets/playground/form/input.
 
 ## Cases
 
-Wrap each case in `Playground::case()` to give it a label, an anchor and a panel with its rendered HTML and a Copy button:
+Wrap each case in `Playground::case()` to give it a label, an anchor and a PHP panel with a Copy button. The panel lists each snippet from the components folder the case renders, with the props it passed; snippets rendered inside those are left out:
 
 ```php
 use Medienbaecker\Playground\Playground;
@@ -42,7 +42,7 @@ Playground::case('Icon only', fn () => snippet('components/button', ['iconOnly' 
 Playground::case('On purple', fn () => snippet('components/button'), attributes: ['data-background' => 'purple-700']);
 ```
 
-A case that renders one snippet can use `Playground::component()` instead. It also shows the `snippet()` call and a Props form built from the snippet's `@var` tags: a text field for `string`, a Default, true or false select for `bool`, a number field for `int` and `float`, and a select for a list like `'small'|'medium'|'large'`. Props of other types keep their value. An empty field or Default is not passed. Changing a field renders the case again on the server.
+A case that renders one snippet can use `Playground::component()` instead. It also has a Props form built from the snippet's `@var` tags: a text field for `string`, a Default, true or false select for `bool`, a number field for `int` and `float`, and a select for a list like `'small'|'medium'|'large'`. Props of other types keep their value. An empty field or Default is not passed. Changing a field renders the case again on the server.
 
 ```php
 Playground::component('Large', 'components/button', ['label' => 'Lorem ipsum', 'size' => 'large']);

@@ -68,12 +68,10 @@ async function render(form) {
 
   section.querySelector(".playground-ui-case__render").replaceWith(fresh.querySelector(".playground-ui-case__render"));
 
-  for (const name of ["php", "html"]) {
-    const code = section.querySelector(`.playground-ui-code__${name}`);
+  const code = section.querySelector(".playground-ui-code__php");
 
-    if (code) {
-      code.textContent = fresh.querySelector(`.playground-ui-code__${name}`)?.textContent ?? "";
-    }
+  if (code) {
+    code.textContent = fresh.querySelector(".playground-ui-code__php").textContent;
   }
 
   checking = checking.then(async () => {

@@ -3,6 +3,7 @@
 namespace Medienbaecker\Playground;
 
 use Closure;
+use Kirby\Cms\App;
 use ReflectionClass;
 use Kirby\Filesystem\Dir;
 use Kirby\Template\Snippet;
@@ -20,8 +21,15 @@ class Playground
 
     private static string|null $isolated = null;
 
+    /** @var array<string>|null */
+    private static array|null $calls = null;
+
+    private static int $depth = 0;
+
+    private static int|null $recording = null;
+
     /**
-     * Renders one labelled case with an anchor and its HTML
+     * Renders one labelled case with an anchor and the component snippets it calls
      *
      * @param array<string, mixed> $attributes Added to the box around the rendered case, e.g. a surface colour
      */
@@ -33,12 +41,18 @@ class Playground
             return;
         }
 
+        static::$calls     = [];
+        static::$recording = static::$depth;
+
         ob_start();
 
         try {
             $render();
         } finally {
-            $html = trim(ob_get_clean());
+            $html  = trim(ob_get_clean());
+            $calls = static::$calls;
+            static::$calls     = null;
+            static::$recording = null;
         }
 
         static::output([
@@ -47,7 +61,7 @@ class Playground
             'html'          => $html,
             'accessibility' => $accessibility,
             'attributes'    => $attributes,
-            'php'           => null,
+            'php'           => $calls === [] ? null : implode("\n\n", $calls),
             'controls'      => [],
         ]);
     }
@@ -84,6 +98,39 @@ class Playground
             'php'           => static::php($snippet, $props),
             'controls'      => $controls,
         ]);
+    }
+
+    /**
+     * Wraps the snippet component, so a case can show the component snippets it renders
+     * Only snippets in the components folder count, and none that another snippet renders
+     */
+    public static function recordSnippets(): void
+    {
+        $kirby   = kirby();
+        $snippet = $kirby->component('snippet');
+        $folder  = $kirby->option('medienbaecker.playground.components');
+
+        $kirby->extend(['components' => [
+            'snippet' => function (App $kirby, string|array|null $name, array $data = [], bool $slots = false) use ($snippet, $folder) {
+                if (static::$recording === static::$depth && is_string($name) && str_starts_with($name, "{$folder}/")) {
+                    $props = array_filter(
+                        $data,
+                        fn ($value, $key) => array_key_exists($key, $kirby->data) === false || $kirby->data[$key] !== $value,
+                        ARRAY_FILTER_USE_BOTH
+                    );
+
+                    static::$calls[] = static::php($name, $props);
+                }
+
+                static::$depth++;
+
+                try {
+                    return $snippet($kirby, $name, $data, $slots);
+                } finally {
+                    static::$depth--;
+                }
+            },
+        ]]);
     }
 
     /**

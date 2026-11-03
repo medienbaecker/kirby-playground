@@ -14,6 +14,8 @@ $componentJs  = asset("assets/js/playground/{$component}.js");
 $components   = Playground::components();
 $index        = array_search($component, array_column($components, 'name'), true);
 $case         = get('case');
+
+Playground::recordSnippets();
 ?>
 <?= css(array_filter([
 	$plugin->asset('playground.css')->url(),

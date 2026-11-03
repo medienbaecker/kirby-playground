@@ -6,7 +6,7 @@
  * @var string $html The rendered case
  * @var string|null $accessibility
  * @var array<string, mixed> $attributes Added to the box around the rendered case
- * @var string|null $php The `snippet()` call of a component case
+ * @var string|null $php The `snippet()` calls that render the case
  * @var array $controls Form fields for the props of a component case
  */
 
@@ -58,14 +58,6 @@
 			<button type="button" class="playground-ui-code__copy">Copy</button>
 			<span class="playground-ui-code__status" aria-live="polite"></span>
 			<pre><code class="playground-ui-code__php"><?= esc($php) ?></code></pre>
-		</details>
-	<?php endif ?>
-	<?php if ($html !== ''): ?>
-		<details class="playground-ui-code">
-			<summary>HTML</summary>
-			<button type="button" class="playground-ui-code__copy">Copy</button>
-			<span class="playground-ui-code__status" aria-live="polite"></span>
-			<pre><code class="playground-ui-code__html"><?= esc($html) ?></code></pre>
 		</details>
 	<?php endif ?>
 </section>
