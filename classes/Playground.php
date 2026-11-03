@@ -106,7 +106,7 @@ class Playground
             static::$only = null;
         }
 
-        echo static::$frame;
+        echo static::$frame ?: '<p class="playground-ui-not-found">No case with the id <code>' . esc($case) . '</code>.</p>';
     }
 
     /**

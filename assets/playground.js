@@ -27,12 +27,23 @@ for (const section of document.querySelectorAll(".playground-ui-case")) {
 const sidebarToggle = document.querySelector(".playground-ui-sidebar__toggle");
 
 if (sidebarToggle) {
-  const update = (hidden) => {
-    document.documentElement.toggleAttribute("data-playground-sidebar-hidden", hidden);
-    sidebarToggle.setAttribute("aria-expanded", String(!hidden));
-    localStorage.setItem("playground-sidebar", hidden ? "hidden" : "shown");
+  const root = document.documentElement;
+  const wide = matchMedia("(min-width: 50rem)");
+  const sync = () => {
+    sidebarToggle.setAttribute("aria-expanded", String(wide.matches ? !root.hasAttribute("data-playground-sidebar-hidden") : root.hasAttribute("data-playground-sidebar-open")));
   };
 
-  update(document.documentElement.hasAttribute("data-playground-sidebar-hidden"));
-  sidebarToggle.addEventListener("click", () => update(sidebarToggle.getAttribute("aria-expanded") === "true"));
+  sidebarToggle.addEventListener("click", () => {
+    if (wide.matches) {
+      root.toggleAttribute("data-playground-sidebar-hidden");
+      localStorage.setItem("playground-sidebar", root.hasAttribute("data-playground-sidebar-hidden") ? "hidden" : "shown");
+    } else {
+      root.toggleAttribute("data-playground-sidebar-open");
+    }
+
+    sync();
+  });
+
+  wide.addEventListener("change", sync);
+  sync();
 }
