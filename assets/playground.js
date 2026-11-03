@@ -19,11 +19,10 @@ for (const section of document.querySelectorAll(".playground-ui-case")) {
     }
   });
 
-  handle.addEventListener("pointerup", () => {
+  handle.addEventListener("lostpointercapture", () => {
     frame.style.pointerEvents = "";
   });
 }
-
 
 const sidebarToggle = document.querySelector(".playground-ui-header__sidebar");
 

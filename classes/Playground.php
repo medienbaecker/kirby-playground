@@ -14,6 +14,8 @@ class Playground
 
     private static string|null $only = null;
 
+    private static string $frame = '';
+
     /**
      * Renders one labelled case with an anchor and a resizable frame that shows it
      * Inside the frame, only the rendered case
@@ -26,9 +28,9 @@ class Playground
 
         if (static::$only !== null) {
             if (static::$only === $id) {
-                echo '<div ' . attr([...$attributes, 'class' => $attributes === [] ? 'playground-ui-case__render playground-ui-case__render--plain' : 'playground-ui-case__render']) . '>';
+                ob_start();
                 $render();
-                echo '</div>';
+                static::$frame = '<div ' . attr([...$attributes, 'class' => $attributes === [] ? 'playground-ui-case__render playground-ui-case__render--plain' : 'playground-ui-case__render']) . '>' . ob_get_clean() . '</div>';
             }
 
             return;
@@ -88,13 +90,24 @@ class Playground
      */
     public static function render(string $component, string|null $case = null): void
     {
-        static::$only = $case;
+        if ($case === null) {
+            snippet("playground/{$component}");
+            return;
+        }
+
+        static::$only  = $case;
+        static::$frame = '';
+
+        ob_start();
 
         try {
             snippet("playground/{$component}");
         } finally {
+            ob_end_clean();
             static::$only = null;
         }
+
+        echo static::$frame;
     }
 
     /**

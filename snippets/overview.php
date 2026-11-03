@@ -14,6 +14,7 @@ foreach ($coverage as $component) {
 	}
 }
 
+$groups[''] ??= [];
 usort($groups[''], fn ($a, $b) => strcasecmp($a['title'], $b['title']));
 
 ?>

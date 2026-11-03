@@ -15,13 +15,18 @@ for (const element of document.querySelectorAll(".playground-ui-value")) {
 
   probe.remove();
 
-  if (value === "color") {
+  if (value === "rem") {
+    element.textContent = `${+(pixels / parseFloat(getComputedStyle(document.documentElement).fontSize)).toFixed(2)}rem`;
+  } else if (value === "px") {
+    element.textContent = `${Math.round(pixels)}px`;
+  } else if (/^(rgba?\(|color\(srgb )/.test(color)) {
     const [red, green, blue, alpha = 1] = color.match(/[\d.]+/g).map(Number);
-    const scale = color.startsWith("color(srgb") ? 255 : 1;
+    const scale = color.startsWith("color(") ? 255 : 1;
     const hex = [red, green, blue].map((channel) => Math.round(channel * scale).toString(16).padStart(2, "0")).join("");
+
     element.textContent = alpha < 1 ? `#${hex} ${Math.round(alpha * 100)}%` : `#${hex}`;
   } else {
-    element.textContent = value === "rem" ? `${+(pixels / parseFloat(getComputedStyle(document.documentElement).fontSize)).toFixed(2)}rem` : `${Math.round(pixels)}px`;
+    element.textContent = color;
   }
 }
 
