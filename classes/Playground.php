@@ -22,7 +22,7 @@ class Playground
      *
      * @param array<string, mixed> $attributes Added to the box around the rendered case, e.g. a surface colour
      */
-    public static function case(string $label, Closure $render, string|null $accessibility = null, array $attributes = []): void
+    public static function case(string $label, Closure $render, array $attributes = []): void
     {
         $id = static::id($label);
 
@@ -37,9 +37,8 @@ class Playground
         }
 
         snippet('playground-ui/case', [
-            'id'            => $id,
-            'label'         => $label,
-            'accessibility' => $accessibility,
+            'id'    => $id,
+            'label' => $label,
         ]);
     }
 
@@ -49,9 +48,9 @@ class Playground
      * @param array<string, mixed> $props
      * @param array<string, mixed> $attributes Added to the box around the rendered case, e.g. a surface colour
      */
-    public static function component(string $label, string $snippet, array $props = [], string|null $accessibility = null, array $attributes = []): void
+    public static function component(string $label, string $snippet, array $props = [], array $attributes = []): void
     {
-        static::case($label, fn () => snippet($snippet, $props), $accessibility, $attributes);
+        static::case($label, fn () => snippet($snippet, $props), $attributes);
     }
 
     /**
@@ -138,51 +137,6 @@ class Playground
         usort($components, fn ($a, $b) => [$a['group'] !== 'Base', $a['group'], $a['title']] <=> [$b['group'] !== 'Base', $b['group'], $b['title']]);
 
         return $components;
-    }
-
-    /**
-     * Every snippet in the components folder, with the playground page that shows it and what its docblock has
-     *
-     * @return array<array{name: string, page: array|null, docblock: bool, status: string|null}>
-     */
-    public static function coverage(): array
-    {
-        $folder = kirby()->option('medienbaecker.playground.components');
-        $root   = kirby()->root('snippets') . '/' . $folder;
-        $files  = is_dir($root) ? Dir::index($root, true) : [];
-        $pages  = [];
-
-        foreach (static::components() as $component) {
-            foreach (static::shows($component['name']) as $name) {
-                $pages[$name] ??= $component;
-            }
-        }
-
-        foreach (static::components() as $component) {
-            $pages["{$folder}/" . basename($component['name'])] = $component;
-        }
-
-        $coverage = [];
-
-        foreach ($files as $file) {
-            if (pathinfo($file, PATHINFO_EXTENSION) !== 'php') {
-                continue;
-            }
-
-            $name     = $folder . '/' . substr($file, 0, -4);
-            $docblock = Docblock::fromFile("{$root}/{$file}");
-
-            $coverage[] = [
-                'name'     => $name,
-                'page'     => $pages[$name] ?? null,
-                'docblock' => $docblock->description !== '' || $docblock->tags !== [],
-                'status'   => $docblock->tag('status')[0] ?? null,
-            ];
-        }
-
-        usort($coverage, fn ($a, $b) => $a['name'] <=> $b['name']);
-
-        return $coverage;
     }
 
     /**

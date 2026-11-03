@@ -3,7 +3,6 @@
 /**
  * @var string $id
  * @var string $label
- * @var string|null $accessibility
  */
 
 ?>
@@ -16,7 +15,4 @@
 		<iframe class="playground-ui-case__iframe" src="?case=<?= esc($id, 'attr') ?>" title="<?= esc($label, 'attr') ?>"></iframe>
 		<div class="playground-ui-case__handle"></div>
 	</div>
-	<?php if ($accessibility): ?>
-		<p class="playground-ui-case__accessibility"><strong>Accessibility:</strong> <?= markdown($accessibility, ['inline' => true, 'safe' => true]) ?></p>
-	<?php endif ?>
 </section>

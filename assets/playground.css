@@ -206,13 +206,6 @@
   font: inherit;
 }
 
-.playground-ui-component__status {
-  padding: 0.125rem 0.5rem;
-  border: 1px solid currentColor;
-  border-radius: 1rem;
-  font-size: 0.75rem;
-  font-weight: normal;
-}
 
 .playground-ui-component__description {
   color: var(--playground-ui-muted);
@@ -227,16 +220,7 @@
   margin-block-start: 0.75em;
 }
 
-.playground-ui-component__heading {
-  margin: 0;
-  font-size: inherit;
-}
 
-.playground-ui-component__list {
-  margin: 0;
-  padding-inline-start: 1.25rem;
-  list-style: disc;
-}
 
 .playground-ui-props {
   overflow-x: auto;
@@ -385,10 +369,6 @@
   }
 }
 
-.playground-ui-case__accessibility {
-  margin: 0;
-  padding-block-start: 0.75rem;
-}
 
 /* Inside a frame */
 
@@ -439,26 +419,14 @@
   border-block-end: 1px solid var(--playground-ui-line);
 }
 
-.playground-ui-overview__item a,
-.playground-ui-overview__item--missing {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 0.5rem;
+.playground-ui-overview__item a {
+  display: block;
   padding-block: 0.5rem;
   color: inherit;
   text-decoration: none;
 }
 
-.playground-ui-overview__item--missing {
-  color: var(--playground-ui-muted);
-  font-style: italic;
-}
 
-.playground-ui-overview__item small {
-  color: var(--playground-ui-muted);
-  font-size: 0.75rem;
-}
 
 .playground-ui-overview__item a:focus-visible {
   text-decoration: underline;

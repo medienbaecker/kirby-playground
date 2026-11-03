@@ -5,10 +5,8 @@
  * @var \Medienbaecker\Playground\Docblock $docblock
  */
 
-$props         = $docblock->props();
-$status        = $docblock->tag('status')[0] ?? null;
-$accessibility = $docblock->tag('accessibility');
-$type          = function (string $type): string {
+$props = $docblock->props();
+$type  = function (string $type): string {
 	$type = trim($type);
 
 	return match (true) {
@@ -21,28 +19,12 @@ $type          = function (string $type): string {
 
 ?>
 <section class="playground-ui-component">
-	<?php if ($name || $status): ?>
-		<h2 class="playground-ui-component__name">
-			<?php if ($name): ?>
-				<code><?= esc($name) ?></code>
-			<?php endif ?>
-			<?php if ($status): ?>
-				<span class="playground-ui-component__status"><?= esc($status) ?></span>
-			<?php endif ?>
-		</h2>
+	<?php if ($name): ?>
+		<h2 class="playground-ui-component__name"><code><?= esc($name) ?></code></h2>
 	<?php endif ?>
 
 	<?php if ($docblock->description): ?>
 		<div class="playground-ui-component__description"><?= markdown($docblock->description, ['safe' => true, 'breaks' => false]) ?></div>
-	<?php endif ?>
-
-	<?php if ($accessibility): ?>
-		<h3 class="playground-ui-component__heading">Accessibility</h3>
-		<ul class="playground-ui-component__list">
-			<?php foreach ($accessibility as $item): ?>
-				<li><?= markdown($item, ['inline' => true, 'safe' => true]) ?></li>
-			<?php endforeach ?>
-		</ul>
 	<?php endif ?>
 
 	<?php if ($props): ?>

@@ -21,7 +21,6 @@ Subfolders become groups in the overview: `/site/snippets/playground/form/input.
 - A sidebar with every playground page, and a header with the title and the component's summary
 - Component docs and a props table from docblocks
 - Every case in its own resizable frame
-- The overview lists the components that have no playground page yet
 - Loads its own `playground.css` and `playground.js` for the header, docs and cases
 - Placeholder helpers for lorem ipsum text and images
 
@@ -33,9 +32,6 @@ Wrap each case in `Playground::case()` to give it a label, an anchor and a frame
 use Medienbaecker\Playground\Playground;
 
 Playground::case('Long label', fn () => snippet('components/button', ['label' => 'Lorem ipsum dolor sit amet']));
-
-// With an accessibility note for this case
-Playground::case('Icon only', fn () => snippet('components/button', ['iconOnly' => true]), accessibility: 'The label stays readable for screen readers');
 
 // With attributes on the box around the rendered case, e.g. to paint it in a surface colour
 Playground::case('On purple', fn () => snippet('components/button'), attributes: ['data-background' => 'purple-700']);
@@ -82,15 +78,11 @@ Each named component gets a section above the cases, read from its own docblock:
  *
  * Shown as the description, Markdown allowed.
  *
- * @status ready
- * @accessibility What to keep in mind, one item per tag
  * @var string|null $label Shown in the props table
  */
 ```
 
 The first paragraph is the summary and is not shown. A one-line `/** @var Page $page */` hint before it is skipped.
-
-The overview also lists the snippets in `site/snippets/components` that have no playground page, greyed out, and notes on a page when its component has no docblock or has a `@status`. A component counts as shown when a playground page names it in `@component` or has the same name.
 
 ## Tokens
 
@@ -207,8 +199,6 @@ return [
   'medienbaecker.playground.auth' => true
 ];
 ```
-
-The overview reads the snippets in `site/snippets/components`. Set another folder with `'medienbaecker.playground.components' => 'ui'`.
 
 Playground pages are wrapped in `snippet('head')` and `snippet('bottom')`. If your site uses other names, override `site/snippets/playground-ui/head.php` and `bottom.php`. The same works for `playground-ui/overview`, `playground-ui/header`, `playground-ui/component`, `playground-ui/case` and `playground-ui/not-found`.
 

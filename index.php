@@ -14,8 +14,7 @@ if (!class_exists('Medienbaecker\Playground\Placeholder')) {
 
 Kirby::plugin('medienbaecker/playground', [
     'options' => [
-        'auth'       => false,
-        'components' => 'components'
+        'auth' => false
     ],
 
     'templates' => [
