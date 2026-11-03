@@ -234,7 +234,17 @@
 
 .playground-ui-props__table {
 	inline-size: 100%;
+	min-inline-size: 50rem;
 	border-collapse: collapse;
+	table-layout: fixed;
+}
+
+.playground-ui-props__column--name {
+	inline-size: 12rem;
+}
+
+.playground-ui-props__column--type {
+	inline-size: 24rem;
 }
 
 .playground-ui-props__row {

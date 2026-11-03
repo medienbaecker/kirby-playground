@@ -32,6 +32,11 @@ $type  = function (string $type): string {
 	<?php if ($props): ?>
 		<div class="playground-ui-props">
 			<table class="playground-ui-props__table">
+				<colgroup>
+					<col class="playground-ui-props__column playground-ui-props__column--name">
+					<col class="playground-ui-props__column playground-ui-props__column--type">
+					<col class="playground-ui-props__column">
+				</colgroup>
 				<thead>
 					<tr>
 						<th class="playground-ui-props__cell playground-ui-props__cell--heading" scope="col">Prop</th>
