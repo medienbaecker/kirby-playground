@@ -249,10 +249,6 @@
   content: "\25BE\00A0" / "";
 }
 
-.playground-ui-component__name:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
-}
 
 .playground-ui-component__heading {
   margin-block: 1.25rem 0.25rem;
@@ -320,6 +316,11 @@
 .playground-ui-overview,
 .playground-ui-not-found {
   background: var(--playground-ui-tint);
+}
+
+:is(.playground-ui-header, .playground-ui-overview, .playground-ui-component, .playground-ui-case__header, .playground-ui-controls, .playground-ui-code, .playground-ui-axe, .playground-ui-not-found) :focus-visible,
+.playground-ui-component__name:focus-visible {
+  outline-color: var(--playground-ui-ink);
 }
 
 :root:has(.playground-ui-header, .playground-ui-not-found) body {
