@@ -31,5 +31,5 @@ $groups = Playground::groups();
 			</div>
 		<?php endforeach ?>
 	</nav>
-	<script>document.currentScript.parentElement.toggleAttribute("data-collapsed", localStorage.getItem("playground-sidebar") === "hidden")</script>
+	<script>document.currentScript.parentElement.toggleAttribute("data-collapsed", localStorage.getItem("playground-sidebar") === "collapsed")</script>
 </div>

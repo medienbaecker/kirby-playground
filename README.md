@@ -33,13 +33,13 @@ Two custom properties set the space around a case. Set them in `assets/css/playg
 
 ```css
 .playground-ui-case__render {
-	--playground-case-padding-block: 5rem;
-	--playground-case-padding-inline: var(--spacing-inline);
+	--playground-ui-case-padding-block: 5rem;
+	--playground-ui-case-padding-inline: var(--spacing-inline);
 }
 ```
 
 ```php
-Playground::case('Flush', fn () => snippet('components/hero'), attributes: ['style' => '--playground-case-padding-inline: 0']);
+Playground::case('Flush', fn () => snippet('components/hero'), attributes: ['style' => '--playground-ui-case-padding-inline: 0']);
 ```
 
 ## Component docs

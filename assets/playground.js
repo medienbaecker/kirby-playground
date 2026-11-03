@@ -39,7 +39,7 @@ if (sidebar) {
 		if (wide.matches) {
 			const collapsed = sidebar.toggleAttribute("data-collapsed");
 
-			localStorage.setItem("playground-sidebar", collapsed ? "hidden" : "shown");
+			localStorage.setItem("playground-sidebar", collapsed ? "collapsed" : "expanded");
 		} else {
 			sidebar.toggleAttribute("data-open");
 		}

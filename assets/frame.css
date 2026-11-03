@@ -5,15 +5,15 @@
 }
 
 .playground-ui-case__render {
-	--playground-case-padding-block: 2rem;
-	--playground-case-padding-inline: 0.5rem;
+	--playground-ui-case-padding-block: 2rem;
+	--playground-ui-case-padding-inline: 0.5rem;
 
-	padding-block: var(--playground-case-padding-block);
-	padding-inline: var(--playground-case-padding-inline);
+	padding-block: var(--playground-ui-case-padding-block);
+	padding-inline: var(--playground-ui-case-padding-inline);
 
 	@media (width >= 40rem) {
-		--playground-case-padding-block: 5rem;
-		--playground-case-padding-inline: 1.5rem;
+		--playground-ui-case-padding-block: 5rem;
+		--playground-ui-case-padding-inline: 1.5rem;
 	}
 }
 
