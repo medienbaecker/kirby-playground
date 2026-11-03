@@ -20,8 +20,8 @@
 				<th class="playground-ui-sizes__cell" scope="row">
 					<code class="playground-ui-sizes__token"><?= esc($token) ?></code>
 				</th>
-				<td class="playground-ui-sizes__cell playground-ui-sizes__value playground-ui-value" data-value="rem" data-token="<?= esc($token, 'attr') ?>"></td>
-				<td class="playground-ui-sizes__cell playground-ui-sizes__value playground-ui-value" data-value="px" data-token="<?= esc($token, 'attr') ?>"></td>
+				<td class="playground-ui-sizes__cell playground-ui-sizes__cell--value playground-ui-value" data-value="rem" data-token="<?= esc($token, 'attr') ?>"></td>
+				<td class="playground-ui-sizes__cell playground-ui-sizes__cell--value playground-ui-value" data-value="px" data-token="<?= esc($token, 'attr') ?>"></td>
 				<td class="playground-ui-sizes__cell playground-ui-sizes__cell--square">
 					<span class="playground-ui-sizes__square" style="--playground-ui-sizes-size: var(<?= esc($token, 'attr') ?>)"></span>
 				</td>

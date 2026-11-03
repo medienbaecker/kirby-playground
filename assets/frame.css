@@ -1,6 +1,6 @@
 /* Frame */
 
-:root:has(> body > .playground-ui-case__render) {
+:root {
 	overflow-y: hidden;
 }
 
@@ -29,7 +29,7 @@
 
 .playground-ui-swatches__value,
 .playground-ui-sizes__cell--heading,
-.playground-ui-sizes__value,
+.playground-ui-sizes__cell--value,
 .playground-ui-typeset__kicker {
 	color: color-mix(in srgb, currentColor 65%, transparent);
 }
@@ -71,7 +71,7 @@
 	white-space: nowrap;
 }
 
-.playground-ui-sizes__value {
+.playground-ui-sizes__cell--value {
 	text-align: end;
 }
 

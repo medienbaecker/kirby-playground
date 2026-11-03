@@ -34,7 +34,7 @@ snippet('playground-ui/head');
 		<div class="playground-ui__content">
 			<?php if ($index !== false): ?>
 				<div class="playground-ui-intro">
-					<h1 class="playground-ui__title"><?= esc($components[$index]['title']) ?></h1>
+					<h1 class="playground-ui-intro__title"><?= esc($components[$index]['title']) ?></h1>
 					<?php $snippets = Playground::snippets($component) ?>
 					<?php foreach ($snippets as $name => $file): ?>
 						<?php snippet('playground-ui/component', [

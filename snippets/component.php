@@ -51,7 +51,7 @@ $type  = function (string $type): string {
 								<code class="playground-ui-props__name">$<?= preg_replace('/([A-Z])/', '<wbr>$1', esc($prop['name'])) ?></code>
 							</th>
 							<td class="playground-ui-props__cell">
-								<code class="playground-ui-props__type"><?= implode('<span class="playground-ui-type__pipe">|</span><wbr>', array_map($type, explode('|', preg_replace('/^\?(.*)$/', '$1|null', $prop['type'])))) ?></code>
+								<code class="playground-ui-props__type playground-ui-type"><?= implode('<span class="playground-ui-type__pipe">|</span><wbr>', array_map($type, explode('|', preg_replace('/^\?(.*)$/', '$1|null', $prop['type'])))) ?></code>
 							</td>
 							<td class="playground-ui-props__cell"><?= markdown($prop['description'], ['inline' => true, 'safe' => true]) ?></td>
 						</tr>
