@@ -8,6 +8,8 @@ class TextGenerator
 {
 	private const LOREM = 'dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum';
 
+	private const LONG = ['Donaudampfschifffahrtsgesellschaftskapitän', 'Kraftfahrzeughaftpflichtversicherung', 'Rechtsschutzversicherungsgesellschaften', 'Grundstücksverkehrsgenehmigungszuständigkeit'];
+
 	/**
 	 * Random lorem ipsum text (HTML)
 	 */
@@ -35,6 +37,7 @@ class TextGenerator
 			$words[0] = ucfirst($words[0]);
 		}
 
+		static::wrap($words, $options['long'] ?? false, fn () => static::LONG[array_rand(static::LONG)]);
 		static::wrap($words, $options['links'] ?? false, fn ($word) => '<a href="#">' . $word . '</a>');
 		static::wrap($words, $options['bold'] ?? false, fn ($word) => '<strong>' . $word . '</strong>');
 		static::wrap($words, $options['italic'] ?? false, fn ($word) => '<em>' . $word . '</em>');

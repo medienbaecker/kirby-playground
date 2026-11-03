@@ -121,6 +121,12 @@ Placeholder::text([
     'italic' => 1,
     'italic' => [1, 3],
 
+    // swap random words for long German compounds (default: false)
+    'long' => false,
+    'long' => true,
+    'long' => 1,
+    'long' => [1, 2],
+
     // start with (default: 'Lorem ipsum ')
     'prefix' => 'Lorem ipsum ',
     'prefix' => false,
