@@ -42,7 +42,7 @@ $type          = function (string $type): string {
 	<?php endif ?>
 
 	<?php if ($props): ?>
-		<div class="playground-ui-props" role="region" aria-label="Props of <?= esc($name, 'attr') ?>" tabindex="0">
+		<div class="playground-ui-props">
 			<table class="playground-ui-props__table">
 				<thead>
 					<tr>
