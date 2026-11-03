@@ -1,0 +1,111 @@
+/* Frame */
+
+:root {
+	overflow-y: hidden;
+}
+
+.playground-ui-case__render {
+	--playground-ui-case-padding-block: 2rem;
+	--playground-ui-case-padding-inline: 0.5rem;
+
+	padding-block: var(--playground-ui-case-padding-block);
+	padding-inline: var(--playground-ui-case-padding-inline);
+
+	@media (width >= 40rem) {
+		--playground-ui-case-padding-block: 5rem;
+		--playground-ui-case-padding-inline: 1.5rem;
+	}
+}
+
+/* Token helpers */
+
+.playground-ui-swatches,
+.playground-ui-sizes,
+.playground-ui-typeset__kicker {
+	font-family: ui-monospace, monospace;
+	font-size: 0.75rem;
+	line-height: 1.4;
+}
+
+.playground-ui-swatches__value,
+.playground-ui-sizes__cell--heading,
+.playground-ui-sizes__cell--value,
+.playground-ui-typeset__kicker {
+	color: color-mix(in srgb, currentColor 65%, transparent);
+}
+
+.playground-ui-swatches {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+	gap: 1rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.playground-ui-swatches__item {
+	display: grid;
+	align-content: start;
+	gap: 0.125rem;
+}
+
+.playground-ui-swatches__color {
+	block-size: 4rem;
+	margin-block-end: 0.25rem;
+	background-color: var(--playground-ui-swatches-color);
+	box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 20%, transparent);
+}
+
+.playground-ui-sizes {
+	inline-size: 100%;
+	border-collapse: collapse;
+}
+
+.playground-ui-sizes__cell {
+	padding-block: 0.75rem;
+	padding-inline: 0 2.5rem;
+	border-block-end: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+	text-align: start;
+	vertical-align: middle;
+	font-weight: normal;
+	white-space: nowrap;
+}
+
+.playground-ui-sizes__cell--value {
+	text-align: end;
+}
+
+.playground-ui-sizes__cell--square {
+	inline-size: 100%;
+}
+
+.playground-ui-sizes__square {
+	display: block;
+	inline-size: var(--playground-ui-sizes-size);
+	block-size: var(--playground-ui-sizes-size);
+	background-color: oklch(72% 0 0);
+}
+
+.playground-ui-typeset {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 1.25rem;
+}
+
+.playground-ui-typeset__item {
+	display: grid;
+	gap: 0.25rem;
+}
+
+.playground-ui-typeset__kicker {
+	margin: 0;
+}
+
+.playground-ui-typeset__sample {
+	margin: 0;
+	overflow: hidden;
+	font-size: var(--playground-ui-typeset-size);
+	line-height: 1.2;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
