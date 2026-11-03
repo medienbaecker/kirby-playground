@@ -16,9 +16,15 @@ class TextGenerator
 		$prefix = ($options['prefix'] ?? 'Lorem ipsum ') ?: '';
 		$suffix = ($options['suffix'] ?? '.') ?: '';
 
+		$count = max(1, static::amount($options['words'] ?? 20));
 		$words = explode(' ', static::LOREM);
+
+		if ($count <= 3) {
+			$words = array_values(array_filter($words, fn ($word) => strlen($word) >= 4));
+		}
+
 		shuffle($words);
-		$words = array_slice($words, 0, max(1, static::amount($options['words'] ?? 20)));
+		$words = array_slice($words, 0, $count);
 
 		for ($index = rand(6, 12); $index < count($words) - 1; $index += rand(6, 12)) {
 			$words[$index] .= '.';
