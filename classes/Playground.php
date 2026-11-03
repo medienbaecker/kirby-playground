@@ -332,7 +332,10 @@ class Playground
         return $id;
     }
 
-    private static function title(string $name): string
+    /**
+     * Readable title of a snippet name, e.g. `Button cards`
+     */
+    public static function title(string $name): string
     {
         return ucfirst(str_replace(['-', '/'], [' ', ' / '], $name));
     }

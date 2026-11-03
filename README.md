@@ -22,7 +22,7 @@ Subfolders become groups in the overview: `/site/snippets/playground/form/input.
 - Component docs and a props table from docblocks, and cases with their HTML
 - Component cases with the `snippet()` call that renders them and a form to change their props
 - A URL for every case, and an accessibility check with axe-core
-- A coverage table on the overview
+- The overview lists the components that have no playground page yet
 - Loads its own `playground.css` and `playground.js` for the header, docs and cases
 - Placeholder helpers for lorem ipsum text and images
 
@@ -80,7 +80,7 @@ Each named component gets a section above the cases, read from its own docblock:
 
 The first paragraph is the summary and is not shown. A one-line `/** @var Page $page */` hint before it is skipped.
 
-The overview ends with a coverage table of the snippets in `site/snippets/components` that have no playground page, no docblock or no `@status`. A component counts as shown when a playground page names it in `@component` or has the same name.
+The overview also lists the snippets in `site/snippets/components` that have no playground page, greyed out, and notes on a page when its component has no docblock or has a `@status`. A component counts as shown when a playground page names it in `@component` or has the same name.
 
 ## Tokens
 
@@ -191,9 +191,9 @@ return [
 ];
 ```
 
-The coverage table reads the snippets in `site/snippets/components`. Set another folder with `'medienbaecker.playground.components' => 'ui'`.
+The overview reads the snippets in `site/snippets/components`. Set another folder with `'medienbaecker.playground.components' => 'ui'`.
 
-Playground pages are wrapped in `snippet('head')` and `snippet('bottom')`. If your site uses other names, override `site/snippets/playground-ui/head.php` and `bottom.php`. The same works for `playground-ui/overview`, `playground-ui/header`, `playground-ui/component`, `playground-ui/case`, `playground-ui/coverage` and `playground-ui/not-found`.
+Playground pages are wrapped in `snippet('head')` and `snippet('bottom')`. If your site uses other names, override `site/snippets/playground-ui/head.php` and `bottom.php`. The same works for `playground-ui/overview`, `playground-ui/header`, `playground-ui/component`, `playground-ui/case` and `playground-ui/not-found`.
 
 ## Directory Structure
 

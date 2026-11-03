@@ -20,13 +20,14 @@ $type          = function (string $type): string {
 };
 
 ?>
-<section class="playground-ui-component">
-	<h2 class="playground-ui-component__name">
+<details class="playground-ui-component">
+	<summary class="playground-ui-component__name">
+		<span class="playground-ui-component__docs">Docs</span>
 		<code><?= esc($name) ?></code>
 		<?php if ($status): ?>
 			<span class="playground-ui-component__status"><?= esc($status) ?></span>
 		<?php endif ?>
-	</h2>
+	</summary>
 
 	<?php if ($docblock->description): ?>
 		<div class="playground-ui-component__description"><?= markdown($docblock->description, ['safe' => true]) ?></div>
@@ -63,4 +64,4 @@ $type          = function (string $type): string {
 			</table>
 		</div>
 	<?php endif ?>
-</section>
+</details>

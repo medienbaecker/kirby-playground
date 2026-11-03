@@ -1,6 +1,5 @@
 .playground-ui-header,
 .playground-ui-overview,
-.playground-ui-coverage,
 .playground-ui-component,
 .playground-ui-case__header,
 .playground-ui-case__accessibility,
@@ -16,15 +15,14 @@
 }
 
 .playground-ui-tokens {
-  --playground-ui-ink: #27272a;
-  --playground-ui-muted: #6b6b74;
-  --playground-ui-line: #e4e4e7;
-  --playground-ui-tint: #f4f4f5;
+  --playground-ui-ink: #f4f4f5;
+  --playground-ui-muted: #a1a1aa;
+  --playground-ui-line: #3f3f46;
+  --playground-ui-tint: #18181b;
 }
 
 .playground-ui-header,
 .playground-ui-overview,
-.playground-ui-coverage,
 .playground-ui-component,
 .playground-ui-case__header,
 .playground-ui-case__accessibility,
@@ -39,7 +37,6 @@
 }
 
 .playground-ui-header code,
-.playground-ui-coverage code,
 .playground-ui-component code,
 .playground-ui-code pre {
   font-family: ui-monospace, monospace;
@@ -71,30 +68,10 @@
   color: var(--playground-ui-muted);
 }
 
-.playground-ui-coverage {
-  max-inline-size: 60rem;
-  margin-block-start: 2rem;
-  padding: 0;
-}
 
-.playground-ui-coverage__title {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-}
 
-.playground-ui-coverage__summary {
-  margin: 0.25rem 0 0;
-}
 
-.playground-ui-coverage__table a {
-  color: inherit;
-  text-decoration: underline;
-}
 
-.playground-ui-coverage__missing {
-  color: var(--playground-ui-muted);
-}
 
 .playground-ui-overview__group {
   margin-block: 2rem 0.25rem;
@@ -119,11 +96,26 @@
   border-block-end: 1px solid var(--playground-ui-line);
 }
 
-.playground-ui-overview__item a {
-  display: block;
+.playground-ui-overview__item a,
+.playground-ui-overview__item--missing {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
   padding-block: 0.5rem;
   color: inherit;
   text-decoration: none;
+}
+
+.playground-ui-overview__item small {
+  color: var(--playground-ui-muted);
+  font-size: 0.75rem;
+}
+
+.playground-ui-overview__item--missing {
+  padding-block: 0.5rem;
+  color: var(--playground-ui-muted);
+  font-style: italic;
 }
 
 .playground-ui-overview__item a:focus-visible {
@@ -218,13 +210,43 @@
   max-inline-size: 60rem;
 }
 
+.playground-ui-component {
+  padding-block: 0.75rem;
+}
+
 .playground-ui-component__name {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
-  margin: 0 0 1rem;
   font-size: 1rem;
+  list-style: none;
+  cursor: pointer;
+}
+
+.playground-ui-component__name::-webkit-details-marker {
+  display: none;
+}
+
+.playground-ui-component[open] > .playground-ui-component__name {
+  margin-block-end: 1rem;
+}
+
+.playground-ui-component__docs {
+  color: var(--playground-ui-muted);
+}
+
+.playground-ui-component__docs::before {
+  content: "\25B8\00A0" / "";
+}
+
+.playground-ui-component[open] .playground-ui-component__docs::before {
+  content: "\25BE\00A0" / "";
+}
+
+.playground-ui-component__name:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
 }
 
 .playground-ui-component__heading {
@@ -250,22 +272,18 @@
   font-weight: normal;
 }
 
-.playground-ui-props,
-.playground-ui-coverage__table {
+.playground-ui-props {
   margin-block-start: 1.25rem;
   overflow-x: auto;
 }
 
-.playground-ui-props__table,
-.playground-ui-coverage__table table {
+.playground-ui-props__table {
   inline-size: 100%;
   border-collapse: collapse;
 }
 
 .playground-ui-props th,
-.playground-ui-props td,
-.playground-ui-coverage__table th,
-.playground-ui-coverage__table td {
+.playground-ui-props td {
   padding: 0.5rem 1rem 0.5rem 0;
   border-block-end: 1px solid var(--playground-ui-line);
   text-align: start;
@@ -273,8 +291,7 @@
   font-weight: normal;
 }
 
-.playground-ui-props thead th,
-.playground-ui-coverage__table thead th {
+.playground-ui-props thead th {
   color: var(--playground-ui-muted);
 }
 
@@ -300,6 +317,10 @@
   background: var(--playground-ui-tint);
 }
 
+:root:has(.playground-ui-header, .playground-ui-not-found) body {
+  background-color: #18181b;
+}
+
 .playground-ui-not-found {
   margin: 0;
   padding: 1.5rem;
@@ -319,13 +340,13 @@
 }
 
 .playground-ui-case__render {
-  padding: 0.5rem;
+  padding: 2rem 0.5rem;
   border: 1px solid var(--playground-ui-line);
 }
 
 @media (min-width: 40rem) {
   .playground-ui-case__render {
-    padding: 1.5rem;
+    padding: 5rem 1.5rem;
   }
 }
 
