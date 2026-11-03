@@ -8,6 +8,9 @@ use Medienbaecker\Playground\Playground;
 
 ?>
 <div class="playground-ui-sidebar">
+	<button type="button" class="playground-ui-sidebar__toggle" aria-controls="playground-ui-sidebar" aria-expanded="true" aria-label="Sidebar">
+		<svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+	</button>
 	<nav class="playground-ui-sidebar__nav" id="playground-ui-sidebar" aria-label="Playground pages">
 		<a class="playground-ui-sidebar__home" href="<?= Playground::url() ?>">Playground</a>
 		<?php $groups = Playground::groups() ?>
@@ -22,7 +25,4 @@ use Medienbaecker\Playground\Playground;
 			</ul>
 		<?php endforeach ?>
 	</nav>
-	<button type="button" class="playground-ui-sidebar__toggle" aria-controls="playground-ui-sidebar" aria-expanded="true" aria-label="Sidebar">
-		<svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
-	</button>
 </div>

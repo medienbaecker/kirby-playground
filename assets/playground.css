@@ -60,21 +60,23 @@
 
 /* Sidebar */
 
-.playground-ui-sidebar__nav {
-  display: none;
-  padding: 1.5rem var(--playground-ui-inset);
-}
-
-[data-playground-sidebar-open] .playground-ui-sidebar__nav {
+.playground-ui-sidebar {
   position: fixed;
   inset-block: 0;
   inset-inline-end: 0;
   z-index: 3;
-  display: block;
-  inline-size: min(16rem, 85vw);
-  overflow-y: auto;
+  inline-size: 1rem;
   border-inline-start: 1px solid var(--playground-ui-line);
   background: var(--playground-ui-tint);
+}
+
+.playground-ui-sidebar__nav {
+  display: none;
+  block-size: 100%;
+  padding: 1.5rem var(--playground-ui-inset);
+  overflow-y: auto;
+  scrollbar-color: var(--playground-ui-line) transparent;
+  scrollbar-width: thin;
 }
 
 .playground-ui-sidebar a {
@@ -107,10 +109,9 @@
 }
 
 .playground-ui-sidebar__toggle {
-  position: fixed;
-  inset-block-end: 0.75rem;
-  inset-inline-end: 0.75rem;
-  z-index: 4;
+  position: absolute;
+  inset-block-start: 0.5625rem;
+  inset-inline-start: -0.75rem;
   display: grid;
   place-items: center;
   inline-size: 1.5rem;
@@ -131,6 +132,14 @@
   scale: -1 1;
 }
 
+[data-playground-sidebar-open] .playground-ui-sidebar {
+  inline-size: min(16rem, 85vw);
+}
+
+[data-playground-sidebar-open] .playground-ui-sidebar__nav {
+  display: block;
+}
+
 [data-playground-sidebar-open] .playground-ui-sidebar__toggle svg {
   scale: none;
 }
@@ -142,35 +151,26 @@
   }
 }
 
+@media (max-width: 49.99rem) {
+  .playground-ui {
+    padding-inline-end: 1rem;
+  }
+}
+
 @media (min-width: 50rem) {
-  .playground-ui-sidebar {
+  .playground-ui-sidebar,
+  [data-playground-sidebar-open] .playground-ui-sidebar {
     position: sticky;
     inset-block-start: 0;
-    z-index: 2;
     flex: none;
     align-self: flex-start;
     order: 1;
     inline-size: 13rem;
     block-size: 100vh;
-    border-inline-start: 1px solid var(--playground-ui-line);
   }
 
-  .playground-ui-sidebar__nav,
-  [data-playground-sidebar-open] .playground-ui-sidebar__nav {
-    position: static;
+  .playground-ui-sidebar__nav {
     display: block;
-    inline-size: auto;
-    block-size: 100%;
-    overflow-y: auto;
-    border: 0;
-    scrollbar-color: var(--playground-ui-line) transparent;
-    scrollbar-width: thin;
-  }
-
-  .playground-ui-sidebar__toggle {
-    position: absolute;
-    inset-block: 0.5625rem auto;
-    inset-inline: -0.75rem auto;
   }
 
   .playground-ui-sidebar__toggle svg,
