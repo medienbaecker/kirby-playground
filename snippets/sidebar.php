@@ -23,6 +23,6 @@ use Medienbaecker\Playground\Playground;
 		<?php endforeach ?>
 	</nav>
 	<button type="button" class="playground-ui-sidebar__toggle" aria-controls="playground-ui-sidebar" aria-expanded="true" aria-label="Sidebar">
-		<svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+		<svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
 	</button>
 </div>

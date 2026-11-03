@@ -113,14 +113,13 @@
   .playground-ui-sidebar {
     position: sticky;
     inset-block-start: 0;
+    z-index: 2;
     flex: none;
     align-self: flex-start;
-    order: 0;
     inline-size: 13rem;
     block-size: 100vh;
-    z-index: 2;
     border-block-start: 0;
-    border-inline-end: 1px solid var(--playground-ui-line);
+    border-inline-start: 1px solid var(--playground-ui-line);
   }
 
   .playground-ui-sidebar__nav {
@@ -133,7 +132,7 @@
   .playground-ui-sidebar__toggle {
     position: absolute;
     inset-block-start: 1.75rem;
-    inset-inline-end: -0.75rem;
+    inset-inline-start: -0.75rem;
     display: grid;
     place-items: center;
     inline-size: 1.5rem;
@@ -151,25 +150,15 @@
   }
 
   [data-playground-sidebar-hidden] .playground-ui-sidebar {
-    position: relative;
-    inline-size: 0;
-    border-inline-end: 0;
+    inline-size: 1rem;
   }
 
   [data-playground-sidebar-hidden] .playground-ui-sidebar__nav {
     display: none;
   }
 
-  [data-playground-sidebar-hidden] .playground-ui-sidebar__toggle {
-    inset-inline: var(--playground-ui-inset) auto;
-  }
-
   [data-playground-sidebar-hidden] .playground-ui-sidebar__toggle svg {
     scale: -1 1;
-  }
-
-  [data-playground-sidebar-hidden] .playground-ui-intro {
-    padding-inline-start: calc(var(--playground-ui-inset) + 2.25rem);
   }
 }
 
