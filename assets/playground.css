@@ -29,26 +29,19 @@
 .playground-ui-axe,
 .playground-ui-not-found {
   color: var(--playground-ui-ink);
-  font-family: system-ui, sans-serif;
-  font-size: 0.875rem;
-  line-height: 1.5;
-}
-
-.playground-ui-header code,
-.playground-ui-component code,
-.playground-ui-code pre {
   font-family: ui-monospace, monospace;
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
 }
 
 .playground-ui-header,
 .playground-ui-overview,
 .playground-ui-component {
-  padding: 1.5rem 0.75rem;
+  padding: 0.75rem;
 }
 
 .playground-ui-case {
-  padding-block: 1.5rem;
+  padding-block: 0.75rem;
 }
 
 .playground-ui-case > :not(.playground-ui-case__render) {
@@ -73,7 +66,7 @@
 
 .playground-ui-overview__group {
   margin-block: 2rem 0.25rem;
-  font-size: 0.875rem;
+  font-size: inherit;
   font-weight: 600;
 }
 
@@ -139,9 +132,9 @@
 }
 
 .playground-ui-header__title {
-  margin-block: 1.5rem 0.5rem;
-  font-size: 2rem;
-  line-height: 1.1;
+  margin-block: 1rem 0.25rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
   overflow-wrap: anywhere;
 }
 
@@ -154,9 +147,6 @@
   padding: 0.5rem 0.75rem 0.5rem 1.75rem;
   border-inline-start: 3px solid #b42318;
   list-style: disc;
-  font-family: system-ui, sans-serif;
-  font-size: 0.875rem;
-  line-height: 1.5;
 }
 
 .playground-ui-axe__item + .playground-ui-axe__item {
@@ -171,8 +161,6 @@
 
 .playground-ui-axe__node code {
   overflow-wrap: anywhere;
-  font-family: ui-monospace, monospace;
-  font-size: 0.8125rem;
 }
 
 .playground-ui-axe__node span {
@@ -213,7 +201,7 @@
 }
 
 .playground-ui-component {
-  padding-block: 0.5rem 1.25rem;
+  padding-block: 0.5rem 0.75rem;
 }
 
 .playground-ui-component__name {
@@ -221,7 +209,6 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
-  font-size: 1rem;
   list-style: none;
   cursor: pointer;
 }
@@ -248,7 +235,7 @@
 
 .playground-ui-component__heading {
   margin-block: 1.25rem 0.25rem;
-  font-size: 0.875rem;
+  font-size: inherit;
 }
 
 .playground-ui-component__list {
@@ -298,7 +285,7 @@
   justify-content: space-between;
   align-items: baseline;
   gap: 0 1rem;
-  margin-block-end: 1rem;
+  margin-block-end: 0.5rem;
 }
 
 .playground-ui-case__label {
@@ -354,7 +341,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
-  padding: 0.25rem 0.75rem;
+  padding: 0.125rem 0.5rem;
   border: 1px solid var(--playground-ui-line);
   border-radius: 0.25rem;
   color: var(--playground-ui-ink);
@@ -406,7 +393,7 @@
 
 .playground-ui-code {
   position: relative;
-  margin-block-start: 1rem;
+  margin-block-start: 0.5rem;
 }
 
 .playground-ui-code pre {
@@ -425,7 +412,7 @@
 }
 
 .playground-ui-code__copy {
-  padding: 0.25rem 0.75rem;
+  padding: 0.125rem 0.5rem;
   border: 1px solid currentColor;
   border-radius: 0.25rem;
   background: transparent;

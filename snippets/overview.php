@@ -22,8 +22,8 @@ usort($groups[''], fn ($a, $b) => strcasecmp($a['title'], $b['title']));
 </header>
 <div class="playground-ui-overview">
 	<?php foreach ($groups as $group => $components): ?>
-		<?php if ($group !== ''): ?>
-			<h2 class="playground-ui-overview__group"><?= esc($group) ?></h2>
+		<?php if (count($groups) > 1): ?>
+			<h2 class="playground-ui-overview__group"><?= esc($group === '' ? 'Components' : $group) ?></h2>
 		<?php endif ?>
 		<ul class="playground-ui-overview__list">
 			<?php foreach ($components as $component): ?>

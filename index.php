@@ -30,7 +30,7 @@ Kirby::plugin('medienbaecker/playground', [
         'playground-ui/component' => __DIR__ . '/snippets/component.php',
         'playground-ui/case'      => __DIR__ . '/snippets/case.php',
         'playground-ui/not-found' => __DIR__ . '/snippets/not-found.php',
-        'playground/tokens'       => __DIR__ . '/snippets/tokens.php'
+        'playground/base/tokens'  => __DIR__ . '/snippets/tokens.php'
     ],
 
     'routes' => require __DIR__ . '/routes.php'

@@ -97,7 +97,7 @@ class Playground
     }
 
     /**
-     * Every playground snippet of the site and of plugins, root files first, then grouped by folder
+     * Every playground snippet of the site and of plugins: the `base` folder first, then root files, then the other folders
      *
      * @return array<array{name: string, title: string, group: string, url: string}>
      */
@@ -121,7 +121,7 @@ class Playground
             ];
         }, $names);
 
-        usort($components, fn ($a, $b) => [$a['group'], $a['title']] <=> [$b['group'], $b['title']]);
+        usort($components, fn ($a, $b) => [$a['group'] !== 'Base', $a['group'], $a['title']] <=> [$b['group'] !== 'Base', $b['group'], $b['title']]);
 
         return $components;
     }

@@ -18,15 +18,13 @@
 .playground-ui-tokens__shadow-item,
 .playground-ui-tokens__easing,
 .playground-ui-tokens__table {
-  font-family: system-ui, sans-serif;
-  font-size: 0.875rem;
+  font-family: ui-monospace, monospace;
+  font-size: 0.75rem;
   font-weight: normal;
   line-height: 1.5;
 }
 
 .playground-ui-tokens code {
-  font-family: ui-monospace, monospace;
-  font-size: 0.8125rem;
   overflow-wrap: break-word;
 }
 
@@ -50,7 +48,7 @@
 
 .playground-ui-tokens__title {
   margin: 0;
-  font-size: 1rem;
+  font-size: 0.75rem;
   font-weight: 600;
 }
 
