@@ -101,7 +101,7 @@ for (const [browserName, browserType] of Object.entries(browsers)) {
         await document.fonts.ready;
       });
 
-      const target = shot.page ? page : page.locator(".playground-ui-case");
+      const target = shot.page ? page : page.locator(".playground-ui-case__render");
       await target.screenshot({ path: join(current, file), animations: "disabled", caret: "hide", ...(shot.page ? { fullPage: true } : {}) });
 
       const before = join(approved, file);

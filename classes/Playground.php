@@ -3,6 +3,7 @@
 namespace Medienbaecker\Playground;
 
 use Closure;
+use ReflectionClass;
 use Kirby\Filesystem\Dir;
 use Kirby\Filesystem\F;
 use Kirby\Template\Snippet;
@@ -23,7 +24,7 @@ class Playground
     /**
      * Renders one labelled case with an anchor and its HTML
      *
-     * @param array<string, mixed> $attributes Added to the case's wrapper, e.g. a surface colour
+     * @param array<string, mixed> $attributes Added to the box around the rendered case, e.g. a surface colour
      */
     public static function case(string $label, Closure $render, string|null $accessibility = null, array $attributes = []): void
     {
@@ -56,7 +57,7 @@ class Playground
      * Renders one snippet as a case, with the PHP call that renders it and a form for its props
      *
      * @param array<string, mixed> $props
-     * @param array<string, mixed> $attributes Added to the case's wrapper, e.g. a surface colour
+     * @param array<string, mixed> $attributes Added to the box around the rendered case, e.g. a surface colour
      */
     public static function component(string $label, string $snippet, array $props = [], string|null $accessibility = null, array $attributes = []): void
     {
@@ -272,7 +273,7 @@ class Playground
     }
 
     /**
-     * A form field for each `@var` prop with a type it can edit: text, toggle, number or a list of values
+     * A form field for each `@var` prop with a type it can edit: text, true or false, number or a list of values
      *
      * @param array<string, mixed> $props
      * @return array<array{name: string, input: string, value: mixed, options: array<string>}>
@@ -291,7 +292,7 @@ class Playground
             $input = match (true) {
                 is_object($value) || is_array($value)                            => null,
                 $types === ['string']                                            => 'text',
-                $types === ['bool']                                              => 'checkbox',
+                $types === ['bool']                                              => 'boolean',
                 $types === ['int'], $types === ['float']                         => 'number',
                 $types !== [] && preg_grep('/^([\'"]).*\1$/', $types) === $types => 'select',
                 default                                                          => null,
@@ -339,7 +340,7 @@ class Playground
     private static function export(mixed $value, int $depth = 0): string
     {
         if (is_object($value)) {
-            return '$' . lcfirst(Str::afterLast(get_class($value), '\\'));
+            return '$' . lcfirst((new ReflectionClass($value))->getShortName());
         }
 
         if (is_array($value) === false) {

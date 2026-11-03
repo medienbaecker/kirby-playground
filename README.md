@@ -39,11 +39,11 @@ Playground::case('Long label', fn () => snippet('components/button', ['label' =>
 // With an accessibility note for this case
 Playground::case('Icon only', fn () => snippet('components/button', ['iconOnly' => true]), accessibility: 'The label stays readable for screen readers');
 
-// With attributes on the case's wrapper, e.g. to paint it in a surface colour
+// With attributes on the box around the rendered case, e.g. to paint it in a surface colour
 Playground::case('On purple', fn () => snippet('components/button'), attributes: ['data-background' => 'purple-700']);
 ```
 
-A case that renders one snippet can use `Playground::component()` instead. It also shows the `snippet()` call and a Props form built from the snippet's `@var` tags: a text field for `string`, a checkbox for `bool`, a number field for `int` and `float`, and a select for a list like `'small'|'medium'|'large'`. Props of other types keep their value. An empty field or an unchecked checkbox is not passed. Changing a field renders the case again on the server.
+A case that renders one snippet can use `Playground::component()` instead. It also shows the `snippet()` call and a Props form built from the snippet's `@var` tags: a text field for `string`, a Default, true or false select for `bool`, a number field for `int` and `float`, and a select for a list like `'small'|'medium'|'large'`. Props of other types keep their value. An empty field or Default is not passed. Changing a field renders the case again on the server.
 
 ```php
 Playground::component('Large', 'components/button', ['label' => 'Lorem ipsum', 'size' => 'large']);
@@ -51,7 +51,7 @@ Playground::component('Large', 'components/button', ['label' => 'Lorem ipsum', '
 
 Every case has its own URL, linked as "Open alone": `/playground/buttons?case=large`. On that URL, placeholder text and unseeded placeholder images are the same on every request.
 
-The "Check accessibility" button in the header runs [axe-core](https://github.com/dequelabs/axe-core) (MPL-2.0, included) on every case and lists the violations under it.
+Each page runs [axe-core](https://github.com/dequelabs/axe-core) (MPL-2.0, included) on every case when it loads, lists the violations under the case and sums them up in the header. A case changed through its Props form is checked again.
 
 ## Component Docs
 
@@ -87,7 +87,7 @@ Each component section also lists the templates, snippets and plugins that call 
 
 ## Tokens
 
-The plugin adds a Tokens page at `/playground/tokens`. It reads every custom property your stylesheets define on `:root` or redefine on an attribute selector like `[data-tone="dark"]`, and draws each by its value: colours as swatches, contexts as painted bands with contrast grades, font tokens as samples, lengths and durations as bars, shadows, easing curves, and a table for the rest.
+The plugin adds a Tokens page at `/playground/tokens`. It reads every custom property your stylesheets define on `:root` or redefine on an attribute selector like `[data-tone="dark"]`, and draws each by its value: colours as swatches, contexts as painted bands with contrast grades, font tokens as samples, lengths and durations as bars, shadows, easing curves, and a table for the rest. Custom properties that components set on their own selectors, like `.stack { --stack-gap }`, follow in a Components section, grouped by selector.
 
 ## Screenshots
 

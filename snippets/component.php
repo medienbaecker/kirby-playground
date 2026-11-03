@@ -22,14 +22,14 @@ $usage         = Playground::usage($name);
 	</h2>
 
 	<?php if ($docblock->description): ?>
-		<div class="playground-ui-component__description"><?= markdown($docblock->description) ?></div>
+		<div class="playground-ui-component__description"><?= markdown($docblock->description, ['safe' => true]) ?></div>
 	<?php endif ?>
 
 	<?php if ($accessibility): ?>
 		<h3 class="playground-ui-component__heading">Accessibility</h3>
 		<ul class="playground-ui-component__list">
 			<?php foreach ($accessibility as $item): ?>
-				<li><?= markdown($item, ['inline' => true]) ?></li>
+				<li><?= markdown($item, ['inline' => true, 'safe' => true]) ?></li>
 			<?php endforeach ?>
 		</ul>
 	<?php endif ?>
@@ -49,7 +49,7 @@ $usage         = Playground::usage($name);
 						<tr>
 							<th scope="row"><code>$<?= preg_replace('/([A-Z])/', '<wbr>$1', esc($prop['name'])) ?></code></th>
 							<td><code><?= str_replace('|', '|<wbr>', esc($prop['type'])) ?></code></td>
-							<td><?= markdown($prop['description'], ['inline' => true]) ?></td>
+							<td><?= markdown($prop['description'], ['inline' => true, 'safe' => true]) ?></td>
 						</tr>
 					<?php endforeach ?>
 				</tbody>

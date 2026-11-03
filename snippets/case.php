@@ -5,20 +5,20 @@
  * @var string $label
  * @var string $html The rendered case
  * @var string|null $accessibility
- * @var array<string, mixed> $attributes
+ * @var array<string, mixed> $attributes Added to the box around the rendered case
  * @var string|null $php The `snippet()` call of a component case
  * @var array $controls Form fields for the props of a component case
  */
 
 ?>
-<section <?= attr([...$attributes, 'class' => 'playground-ui-case', 'id' => $id]) ?>>
+<section class="playground-ui-case" id="<?= esc($id, 'attr') ?>">
 	<div class="playground-ui-case__header">
 		<h2 class="playground-ui-case__label"><a href="#<?= esc($id, 'attr') ?>"><?= esc($label) ?></a></h2>
 		<a class="playground-ui-case__alone" href="?case=<?= esc(rawurlencode($id), 'attr') ?>">Open alone</a>
 	</div>
-	<div class="playground-ui-case__render"><?= $html ?></div>
+	<div <?= attr([...$attributes, 'class' => 'playground-ui-case__render']) ?>><?= $html ?></div>
 	<?php if ($accessibility): ?>
-		<p class="playground-ui-case__accessibility"><strong>Accessibility:</strong> <?= markdown($accessibility, ['inline' => true]) ?></p>
+		<p class="playground-ui-case__accessibility"><strong>Accessibility:</strong> <?= markdown($accessibility, ['inline' => true, 'safe' => true]) ?></p>
 	<?php endif ?>
 	<?php if ($controls): ?>
 		<details class="playground-ui-controls">
@@ -34,8 +34,12 @@
 								<option <?= attr(['value' => $option, 'selected' => $control['value'] === $option]) ?>><?= esc($option) ?></option>
 							<?php endforeach ?>
 						</select>
-					<?php elseif ($control['input'] === 'checkbox'): ?>
-						<input type="checkbox" id="<?= esc($field, 'attr') ?>" name="<?= esc($control['name'], 'attr') ?>" <?= attr(['checked' => $control['value'] === true]) ?>>
+					<?php elseif ($control['input'] === 'boolean'): ?>
+						<select id="<?= esc($field, 'attr') ?>" name="<?= esc($control['name'], 'attr') ?>" data-type="boolean">
+							<option value="">Default</option>
+							<option <?= attr(['value' => 'true', 'selected' => $control['value'] === true]) ?>>true</option>
+							<option <?= attr(['value' => 'false', 'selected' => $control['value'] === false]) ?>>false</option>
+						</select>
 					<?php else: ?>
 						<input <?= attr([
 							'type'  => $control['input'],

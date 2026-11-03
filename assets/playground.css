@@ -6,9 +6,11 @@
 .playground-ui-case__accessibility,
 .playground-ui-controls,
 .playground-ui-code,
+.playground-ui-case,
 .playground-ui-tokens {
   --playground-ui-line: color-mix(in srgb, currentColor, transparent 85%);
   --playground-ui-muted: color-mix(in srgb, currentColor, transparent 40%);
+  --playground-ui-tint: color-mix(in srgb, currentColor, transparent 95%);
 }
 
 .playground-ui-header,
@@ -36,7 +38,16 @@
 .playground-ui-overview,
 .playground-ui-component,
 .playground-ui-case {
-  padding: 1.5rem;
+  padding: 1.5rem 0.75rem;
+}
+
+@media (min-width: 40rem) {
+  .playground-ui-header,
+  .playground-ui-overview,
+  .playground-ui-component,
+  .playground-ui-case {
+    padding-inline: 1.5rem;
+  }
 }
 
 .playground-ui-overview__title {
@@ -109,12 +120,8 @@
   overflow-wrap: anywhere;
 }
 
-.playground-ui-header__check {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.5rem 1rem;
-  margin: 0.75rem 0 0;
+.playground-ui-header__axe {
+  margin: 0 0 0.75rem;
 }
 
 .playground-ui-axe {
@@ -132,9 +139,17 @@
   font-family: ui-monospace, monospace;
 }
 
+.playground-ui-header,
 .playground-ui-component {
-  max-inline-size: 60rem;
+  background: var(--playground-ui-tint);
+}
+
+.playground-ui-component {
   border-block-start: 1px solid var(--playground-ui-line);
+}
+
+.playground-ui-component > * {
+  max-inline-size: 60rem;
 }
 
 .playground-ui-component__name {
@@ -217,7 +232,14 @@
 }
 
 .playground-ui-case__render {
-  display: contents;
+  padding: 0.5rem;
+  border: 1px solid var(--playground-ui-line);
+}
+
+@media (min-width: 40rem) {
+  .playground-ui-case__render {
+    padding: 1.5rem;
+  }
 }
 
 .playground-ui-controls {
@@ -244,7 +266,7 @@
   font: inherit;
 }
 
-.playground-ui-controls__form input:not([type="checkbox"]),
+.playground-ui-controls__form input,
 .playground-ui-controls__form select {
   inline-size: 100%;
   padding: 0.25rem 0.5rem;
@@ -252,10 +274,6 @@
   border-radius: 0.25rem;
   background: transparent;
   color: inherit;
-}
-
-.playground-ui-controls__form input[type="checkbox"] {
-  justify-self: start;
 }
 
 .playground-ui-case__label a {
@@ -308,8 +326,7 @@
   inset-inline-end: 0;
 }
 
-.playground-ui-code__copy,
-.playground-ui-header__axe {
+.playground-ui-code__copy {
   padding: 0.25rem 0.75rem;
   border: 1px solid currentColor;
   border-radius: 0.25rem;
@@ -319,14 +336,12 @@
   cursor: pointer;
 }
 
-.playground-ui-code__copy:focus-visible,
-.playground-ui-header__axe:focus-visible {
+.playground-ui-code__copy:focus-visible {
   background: color-mix(in srgb, currentColor 10%, transparent);
 }
 
 @media (hover: hover) {
-  .playground-ui-code__copy:hover,
-  .playground-ui-header__axe:hover {
+  .playground-ui-code__copy:hover {
     background: color-mix(in srgb, currentColor 10%, transparent);
   }
 }

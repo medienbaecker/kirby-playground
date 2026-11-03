@@ -38,11 +38,13 @@ async function render(form) {
   const props = {};
 
   for (const field of form.elements) {
-    if (field.type === "checkbox") {
-      if (field.checked) {
-        props[field.name] = true;
-      }
-    } else if (field.value !== "") {
+    if (field.value === "") {
+      continue;
+    }
+
+    if (field.dataset.type === "boolean") {
+      props[field.name] = field.value === "true";
+    } else {
       props[field.name] = field.type === "number" ? Number(field.value) : field.value;
     }
   }
@@ -66,9 +68,16 @@ async function render(form) {
     const code = section.querySelector(`.playground-ui-code__${name}`);
 
     if (code) {
-      code.textContent = fresh.querySelector(`.playground-ui-code__${name}`).textContent;
+      code.textContent = fresh.querySelector(`.playground-ui-code__${name}`)?.textContent ?? "";
     }
   }
+
+  checking = checking.then(async () => {
+    if (window.axe) {
+      await check(section);
+      summarize(axeResult);
+    }
+  });
 }
 
 for (const form of document.querySelectorAll(".playground-ui-controls__form")) {
@@ -81,68 +90,79 @@ for (const form of document.querySelectorAll(".playground-ui-controls__form")) {
   });
 }
 
+const axeResult = document.querySelector(".playground-ui-header__axe");
+const violations = new Map();
+let checking = Promise.resolve();
+
 /**
- * Runs axe-core on every case and lists the violations under each one
+ * Runs axe-core on a case and lists the violations under it
  */
-async function check(button) {
-  const result = button.nextElementSibling;
-  const cases = document.querySelectorAll(".playground-ui-case");
-  let violations = 0;
-  let failing = 0;
+async function check(section) {
+  section.querySelector(".playground-ui-axe")?.remove();
 
-  button.disabled = true;
-  result.textContent = "Checking…";
+  const render = section.querySelector(".playground-ui-case__render");
+  const { violations: found } = await axe.run({ include: [render] });
 
-  try {
-    if (window.axe === undefined) {
-      await new Promise((resolve, reject) => {
-        const script = document.createElement("script");
-        script.src = button.dataset.script;
-        script.onload = resolve;
-        script.onerror = reject;
-        document.head.append(script);
-      });
-    }
-  } catch {
-    result.textContent = "axe-core could not be loaded.";
-    button.disabled = false;
+  violations.set(section, found.length);
+
+  if (found.length === 0) {
     return;
   }
 
-  for (const section of cases) {
-    section.querySelector(".playground-ui-axe")?.remove();
+  const list = document.createElement("ul");
+  list.className = "playground-ui-axe";
 
-    const { violations: found } = await axe.run({ include: [section.querySelector(".playground-ui-case__render")] });
-
-    if (found.length === 0) {
-      continue;
-    }
-
-    const list = document.createElement("ul");
-    list.className = "playground-ui-axe";
-
-    for (const violation of found) {
-      const item = document.createElement("li");
-      const link = document.createElement("a");
-      link.href = violation.helpUrl;
-      link.textContent = violation.id;
-      item.append(link, `: ${violation.help}, ${violation.nodes.length} ${violation.nodes.length === 1 ? "element" : "elements"}`);
-      list.append(item);
-    }
-
-    section.querySelector(".playground-ui-case__render").after(list);
-    violations += found.length;
-    failing += 1;
+  for (const violation of found) {
+    const item = document.createElement("li");
+    const link = document.createElement("a");
+    link.href = violation.helpUrl;
+    link.textContent = violation.id;
+    item.append(link, `: ${violation.help}, ${violation.nodes.length} ${violation.nodes.length === 1 ? "element" : "elements"}`);
+    list.append(item);
   }
 
-  result.textContent = violations === 0 ? `No violations in ${cases.length} cases.` : `${violations} violations in ${failing} of ${cases.length} cases.`;
-  button.disabled = false;
+  render.after(list);
 }
 
-const axeButton = document.querySelector(".playground-ui-header__axe");
+/**
+ * Sums up the violations of every case in the header
+ */
+function summarize(result) {
+  const counts = [...violations.values()];
+  const total = counts.reduce((sum, count) => sum + count, 0);
+  const failing = counts.filter((count) => count > 0).length;
+
+  result.textContent = total === 0 ? `Accessibility: no violations in ${counts.length} cases.` : `Accessibility: ${total} ${total === 1 ? "violation" : "violations"} in ${failing} of ${counts.length} cases.`;
+}
+
+/**
+ * Loads axe-core and checks every case of the page
+ */
+async function checkAll(result) {
+  result.textContent = "Checking accessibility…";
+
+  try {
+    await new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = result.dataset.script;
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.append(script);
+    });
+  } catch {
+    result.textContent = "axe-core could not be loaded.";
+    return;
+  }
+
+  for (const section of document.querySelectorAll(".playground-ui-case")) {
+    await check(section);
+  }
+
+  summarize(result);
+}
 
 if (document.querySelector(".playground-ui-case") === null) {
-  axeButton?.parentElement.remove();
-} else {
-  axeButton?.addEventListener("click", () => check(axeButton));
+  axeResult?.remove();
+} else if (axeResult) {
+  checking = checkAll(axeResult);
 }
