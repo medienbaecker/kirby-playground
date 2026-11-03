@@ -24,7 +24,7 @@ for (const section of document.querySelectorAll(".playground-ui-case")) {
   });
 }
 
-const sidebarToggle = document.querySelector(".playground-ui-header__sidebar");
+const sidebarToggle = document.querySelector(".playground-ui-sidebar__toggle");
 
 if (sidebarToggle) {
   const update = (hidden) => {

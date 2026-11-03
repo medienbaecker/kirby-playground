@@ -7,17 +7,22 @@
 use Medienbaecker\Playground\Playground;
 
 ?>
-<nav class="playground-ui-sidebar" id="playground-ui-sidebar" aria-label="Playground pages">
-	<a class="playground-ui-sidebar__home" href="<?= Playground::url() ?>">Playground</a>
-	<?php $groups = Playground::groups() ?>
-	<?php foreach ($groups as $group => $components): ?>
-		<?php if (count($groups) > 1): ?>
-			<h2 class="playground-ui-sidebar__group"><?= esc($group === '' ? 'Components' : $group) ?></h2>
-		<?php endif ?>
-		<ul class="playground-ui-sidebar__list">
-			<?php foreach ($components as $component): ?>
-				<li><a <?= attr(['href' => $component['url'], 'aria-current' => $component['name'] === $current ? 'page' : null]) ?>><?= esc($component['title']) ?></a></li>
-			<?php endforeach ?>
-		</ul>
-	<?php endforeach ?>
-</nav>
+<div class="playground-ui-sidebar">
+	<nav class="playground-ui-sidebar__nav" id="playground-ui-sidebar" aria-label="Playground pages">
+		<a class="playground-ui-sidebar__home" href="<?= Playground::url() ?>">Playground</a>
+		<?php $groups = Playground::groups() ?>
+		<?php foreach ($groups as $group => $components): ?>
+			<?php if (count($groups) > 1): ?>
+				<h2 class="playground-ui-sidebar__group"><?= esc($group === '' ? 'Components' : $group) ?></h2>
+			<?php endif ?>
+			<ul class="playground-ui-sidebar__list">
+				<?php foreach ($components as $component): ?>
+					<li><a <?= attr(['href' => $component['url'], 'aria-current' => $component['name'] === $current ? 'page' : null]) ?>><?= esc($component['title']) ?></a></li>
+				<?php endforeach ?>
+			</ul>
+		<?php endforeach ?>
+	</nav>
+	<button type="button" class="playground-ui-sidebar__toggle" aria-controls="playground-ui-sidebar" aria-expanded="true" aria-label="Sidebar">
+		<svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+	</button>
+</div>
