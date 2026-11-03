@@ -196,7 +196,8 @@
   }
 
   .playground-ui-sidebar:hover .playground-ui-sidebar__toggle,
-  .playground-ui-sidebar__toggle:focus-visible {
+  .playground-ui-sidebar__toggle:focus-visible,
+  [data-playground-sidebar-hidden] .playground-ui-sidebar__toggle {
     opacity: 1;
   }
 }
