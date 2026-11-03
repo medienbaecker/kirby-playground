@@ -6,11 +6,13 @@ A Kirby plugin that shows your snippets in test cases at `/playground`.
 
 ## Usage
 
-Put playground snippets in `site/snippets/playground/`. A snippet `buttons.php` is shown at `/playground/buttons`, and `/playground` opens the first page.
+Put playground snippets in `site/snippets/playground/`. A snippet `quote.php` is shown at `/playground/quote`, and `/playground` opens the first page.
 
 Subfolders become groups in the sidebar: `form/input.php` is listed under "Form" at `/playground/form/input`. A `base` folder comes first, for pages that are not components, like typography or spacing. The sidebar on the right lists every page and can be collapsed.
 
 ## Cases
+
+![A button case dragged to 360px, its buttons wrapping](.github/cases.png)
 
 `Playground::case()` takes a label and a closure that renders the case. Each case gets an anchor and its own iframe, loaded at `?case=<id>`, so media queries react to the frame's width. Drag its right edge to resize it; the width shows next to the label.
 
@@ -33,8 +35,8 @@ Two custom properties set the space around a case. Set them in `assets/css/playg
 
 ```css
 .playground-ui-case__render {
-	--playground-ui-case-padding-block: 5rem;
-	--playground-ui-case-padding-inline: var(--spacing-inline);
+    --playground-ui-case-padding-block: 5rem;
+    --playground-ui-case-padding-inline: var(--spacing-inline);
 }
 ```
 
@@ -43,6 +45,8 @@ Playground::case('Flush', fn () => snippet('components/hero'), attributes: ['sty
 ```
 
 ## Component docs
+
+![The docs of the button component: description and props table](.github/docs.png)
 
 A playground page documents `components/<page name>` when that snippet exists, so `playground/button.php` shows the docs of `components/button.php`. To document other snippets, or several, name them with `@component` tags:
 
@@ -72,6 +76,12 @@ The first paragraph is the summary and is not shown. A one-line `/** @var Page $
 
 ## Tokens
 
+![Colour swatches with their values](.github/swatches.png)
+
+![Spacing tokens in rem and px, each with a square of its size](.github/sizes.png)
+
+![Font size tokens, each with a line of text in its size](.github/type.png)
+
 Three helpers show custom properties with their computed values. Each takes a label and the property names in the order to show them:
 
 ```php
@@ -93,47 +103,47 @@ use Medienbaecker\Playground\Placeholder;
 
 ```php
 Placeholder::text([
-	// word count (default: 20)
-	'words' => 50,
-	'words' => [30, 60],
+    // word count (default: 20)
+    'words' => 50,
+    'words' => [30, 60],
 
-	// wrap in <p> tags (default: false)
-	'paragraphs' => false,
-	'paragraphs' => true,
-	'paragraphs' => 3,
-	'paragraphs' => [2, 5],
+    // wrap in <p> tags (default: false)
+    'paragraphs' => false,
+    'paragraphs' => true,
+    'paragraphs' => 3,
+    'paragraphs' => [2, 5],
 
-	// insert random <a> tags (default: false)
-	'links' => false,
-	'links' => true,
-	'links' => 2,
-	'links' => [1, 3],
+    // insert random <a> tags (default: false)
+    'links' => false,
+    'links' => true,
+    'links' => 2,
+    'links' => [1, 3],
 
-	// insert random <strong> tags (default: false)
-	'bold' => false,
-	'bold' => true,
-	'bold' => 1,
-	'bold' => [1, 2],
+    // insert random <strong> tags (default: false)
+    'bold' => false,
+    'bold' => true,
+    'bold' => 1,
+    'bold' => [1, 2],
 
-	// insert random <em> tags (default: false)
-	'italic' => false,
-	'italic' => true,
-	'italic' => 1,
-	'italic' => [1, 3],
+    // insert random <em> tags (default: false)
+    'italic' => false,
+    'italic' => true,
+    'italic' => 1,
+    'italic' => [1, 3],
 
-	// swap random words for long German compounds (default: false)
-	'long' => false,
-	'long' => true,
-	'long' => 1,
-	'long' => [1, 2],
+    // swap random words for long German compounds (default: false)
+    'long' => false,
+    'long' => true,
+    'long' => 1,
+    'long' => [1, 2],
 
-	// start with (default: 'Lorem ipsum ')
-	'prefix' => 'Lorem ipsum ',
-	'prefix' => false,
+    // start with (default: 'Lorem ipsum ')
+    'prefix' => 'Lorem ipsum ',
+    'prefix' => false,
 
-	// end with (default: '.')
-	'suffix' => '.',
-	'suffix' => false,
+    // end with (default: '.')
+    'suffix' => '.',
+    'suffix' => false,
 ])
 ```
 
@@ -170,13 +180,13 @@ assets/
 ├── css/
 │   └── playground/
 │       ├── playground.css
-│       └── buttons.css
+│       └── quote.css
 └── js/
-	└── playground/
-		└── buttons.js
+    └── playground/
+        └── quote.js
 ```
 
-`playground.css` is loaded on every playground page. `buttons.css` is loaded on `/playground/buttons` and its cases, `buttons.js` only in its cases.
+`playground.css` is loaded on every playground page. `quote.css` is loaded on `/playground/quote` and its cases, `quote.js` only in its cases.
 
 ## Configuration
 
@@ -185,7 +195,7 @@ To restrict the playground to logged-in users:
 ```php
 // site/config/config.php
 return [
-	'medienbaecker.playground.auth' => true
+    'medienbaecker.playground.auth' => true
 ];
 ```
 
