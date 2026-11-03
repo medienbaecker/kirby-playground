@@ -103,12 +103,26 @@
   padding-inline: 0;
 }
 
+.playground-ui-component + .playground-ui-component {
+  margin-block-start: 1.5rem;
+}
+
 .playground-ui :focus-visible {
   outline-color: var(--playground-ui-ink);
 }
 
+:root:has(.playground-ui) {
+  color-scheme: dark;
+  scrollbar-color: oklch(36% 0 0) oklch(20% 0 0);
+}
+
 :root:has(.playground-ui) body {
   background-color: oklch(20% 0 0);
+}
+
+.playground-ui-sidebar,
+.playground-ui-props {
+  scrollbar-color: var(--playground-ui-line) transparent;
 }
 
 .playground-ui-case {
@@ -355,10 +369,6 @@
 .playground-ui-case__label a {
   color: var(--playground-ui-muted);
   text-decoration: none;
-}
-
-.playground-ui-case__label a::before {
-  content: "# " / "";
 }
 
 .playground-ui-case__label a:focus-visible {

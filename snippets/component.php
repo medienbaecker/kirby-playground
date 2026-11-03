@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @var string $name Snippet name, e.g. `components/button`
+ * @var string|null $name Snippet name, e.g. `components/button`, shown when a page documents more than one
  * @var \Medienbaecker\Playground\Docblock $docblock
  */
 
@@ -21,16 +21,20 @@ $type          = function (string $type): string {
 
 ?>
 <section class="playground-ui-component">
+	<?php if ($name || $status): ?>
+		<h2 class="playground-ui-component__name">
+			<?php if ($name): ?>
+				<code><?= esc($name) ?></code>
+			<?php endif ?>
+			<?php if ($status): ?>
+				<span class="playground-ui-component__status"><?= esc($status) ?></span>
+			<?php endif ?>
+		</h2>
+	<?php endif ?>
+
 	<?php if ($docblock->description): ?>
 		<div class="playground-ui-component__description"><?= markdown($docblock->description, ['safe' => true, 'breaks' => false]) ?></div>
 	<?php endif ?>
-
-	<h2 class="playground-ui-component__name">
-		<code><?= esc($name) ?></code>
-		<?php if ($status): ?>
-			<span class="playground-ui-component__status"><?= esc($status) ?></span>
-		<?php endif ?>
-	</h2>
 
 	<?php if ($accessibility): ?>
 		<h3 class="playground-ui-component__heading">Accessibility</h3>
@@ -42,7 +46,6 @@ $type          = function (string $type): string {
 	<?php endif ?>
 
 	<?php if ($props): ?>
-		<h3 class="playground-ui-component__heading">Props</h3>
 		<div class="playground-ui-props">
 			<table class="playground-ui-props__table">
 				<thead>

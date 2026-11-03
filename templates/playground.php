@@ -36,9 +36,10 @@ $case         = get('case');
 			<?php if ($index !== false): ?>
 				<div class="playground-ui-intro">
 					<?php snippet('playground-ui/header', ['title' => $components[$index]['title']]) ?>
-					<?php foreach (array_filter(Playground::shows($component), fn ($name) => Snippet::file($name) !== null) as $name): ?>
+					<?php $names = array_filter(Playground::shows($component), fn ($name) => Snippet::file($name) !== null) ?>
+					<?php foreach ($names as $name): ?>
 						<?php snippet('playground-ui/component', [
-							'name'     => $name,
+							'name'     => count($names) > 1 ? $name : null,
 							'docblock' => Docblock::fromFile(Snippet::file($name)),
 						]) ?>
 					<?php endforeach ?>
