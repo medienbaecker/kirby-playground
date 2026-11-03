@@ -20,8 +20,8 @@ class ImageGenerator
 
 		$id     = $options['id'] ?? null;
 		$seed   = $options['seed'] ?? null;
-		$width  = max(100, min(2000, $options['width'] ?? 1200));
-		$height = max(100, min(2000, $options['height'] ?? 800));
+		$width  = $options['width'] ?? 1200;
+		$height = $options['height'] ?? 800;
 
 		if ($id !== null) {
 			$cacheId = md5("id:{$id}:{$width}:{$height}");

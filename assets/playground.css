@@ -5,9 +5,6 @@
 	--playground-ui-muted: oklch(72% 0 0);
 	--playground-ui-line: oklch(36% 0 0);
 	--playground-ui-tint: oklch(20% 0 0);
-	--playground-ui-type-builtin: oklch(80% 0.1 250);
-	--playground-ui-type-class: oklch(82% 0.1 60);
-	--playground-ui-type-value: oklch(84% 0.12 150);
 }
 
 :root:has(.playground-ui) {
@@ -69,7 +66,6 @@
 	block-size: 100%;
 	padding: 1.5rem var(--playground-ui-inset);
 	overflow-y: auto;
-	scrollbar-color: var(--playground-ui-line) transparent;
 	scrollbar-width: thin;
 }
 
@@ -229,7 +225,6 @@
 .playground-ui-props {
 	margin-inline: -0.5rem;
 	overflow-x: auto;
-	scrollbar-color: var(--playground-ui-line) transparent;
 }
 
 .playground-ui-props__table {
@@ -263,11 +258,11 @@
 }
 
 .playground-ui-type__builtin {
-	color: var(--playground-ui-type-builtin);
+	color: oklch(80% 0.1 250);
 }
 
 .playground-ui-type__class {
-	color: var(--playground-ui-type-class);
+	color: oklch(82% 0.1 60);
 	text-decoration: none;
 }
 
@@ -275,7 +270,7 @@
 	padding-inline: 0.25em;
 	border: 1px solid currentColor;
 	border-radius: 0.25em;
-	color: var(--playground-ui-type-value);
+	color: oklch(84% 0.12 150);
 }
 
 .playground-ui-type__null,
