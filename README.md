@@ -2,48 +2,34 @@
 
 ![An overview of different button styles](https://github.com/user-attachments/assets/c33d7d9e-70b9-431f-a811-932a1cd62943)
 
+A Kirby plugin that shows your snippets in test cases at `/playground`.
+
 ## Usage
 
-1. Create your tests as snippets in `/site/snippets/playground/`
-2. Access your tests at `/playground/[component-name]`
+Put playground snippets in `site/snippets/playground/`. A snippet `buttons.php` is shown at `/playground/buttons`, and `/playground` opens the first page.
 
-For example, if you have a snippet named `buttons.php`, it will be available at `/playground/buttons`.
-
-Subfolders become groups in the sidebar: `/site/snippets/playground/form/input.php` is listed under "Form" and available at `/playground/form/input`. A `base` folder comes first, for pages that are not components, like typography or spacing.
-
-## Features
-
-- Custom route handling for `/playground/(:all?)` that can optionally be restricted to logged-in users
-- Components are rendered through virtual pages, without requiring actual page files
-- Optionally loads `assets/css/playground/playground.css` and `assets/css/playground/[component-name].css`
-- Optionally loads `assets/js/playground/[component-name].js`
-- Unknown components return a 404 with a list of the components you do have
-- A sidebar with every playground page, and a header with the title and the component's summary
-- Component docs and a props table from docblocks
-- Every case in its own resizable frame
-- Loads its own `playground.css` and `playground.js` for the header, docs and cases
-- Placeholder helpers for lorem ipsum text and images
+Subfolders become groups in the sidebar: `form/input.php` is listed under "Form" at `/playground/form/input`. A `base` folder comes first, for pages that are not components, like typography or spacing. The sidebar on the right lists every page and can be collapsed.
 
 ## Cases
 
-Wrap each case in `Playground::case()` to give it a label, an anchor and a frame. The frame loads the case on its own at `?case=<id>`, so media queries react to its width: drag the bar on its right edge, and the width shows next to the label:
+`Playground::case()` takes a label and a closure that renders the case. Each case gets an anchor and its own iframe, loaded at `?case=<id>`, so media queries react to the frame's width. Drag its right edge to resize it; the width shows next to the label.
 
 ```php
 use Medienbaecker\Playground\Playground;
 
 Playground::case('Long label', fn () => snippet('components/button', ['label' => 'Lorem ipsum dolor sit amet']));
 
-// With attributes on the box around the rendered case, e.g. to paint it in a surface colour
+// Attributes go on the box around the case, e.g. to set a background
 Playground::case('On purple', fn () => snippet('components/button'), attributes: ['data-background' => 'purple-700']);
 ```
 
-A case that renders one snippet can use `Playground::component()` instead:
+A case that renders one snippet can use `Playground::component()`:
 
 ```php
 Playground::component('Large', 'components/button', ['label' => 'Lorem ipsum', 'size' => 'large']);
 ```
 
-The space around a case comes from two custom properties. Set them in `assets/css/playground/playground.css` for the whole project, or per case through its attributes:
+Two custom properties set the space around a case. Set them in `assets/css/playground/playground.css` for all cases, or on one case through its attributes:
 
 ```css
 .playground-ui-case__render {
@@ -56,9 +42,9 @@ The space around a case comes from two custom properties. Set them in `assets/cs
 Playground::case('Flush', fn () => snippet('components/hero'), attributes: ['style' => '--playground-case-padding-inline: 0']);
 ```
 
-## Component Docs
+## Component docs
 
-Name the components a playground snippet shows in its docblock:
+A playground page documents `components/<page name>` when that snippet exists, so `playground/button.php` shows the docs of `components/button.php`. To document other snippets, or several, name them with `@component` tags:
 
 ```php
 <?php
@@ -68,7 +54,7 @@ Name the components a playground snippet shows in its docblock:
  */
 ```
 
-Each named component gets a section above the cases, read from its own docblock:
+The page then shows that snippet's docblock above the cases: the description and a table of its `@var` props.
 
 ```php
 <?php
@@ -82,11 +68,11 @@ Each named component gets a section above the cases, read from its own docblock:
  */
 ```
 
-The first paragraph is the summary and is not shown. A one-line `/** @var Page $page */` hint before it is skipped.
+The first paragraph is the summary and is not shown. A one-line `/** @var Page $page */` hint before the docblock is skipped.
 
 ## Tokens
 
-Three helpers turn design tokens into cases. Each takes a label and the custom property names, in the order to show them, and writes their computed values next to them:
+Three helpers show custom properties with their computed values. Each takes a label and the property names in the order to show them:
 
 ```php
 Playground::swatches('Purple', ['--brand-purple-100', '--brand-purple-300', '--brand-purple-700']);
@@ -95,9 +81,9 @@ Playground::sizes('Spacing', ['--spacing-xs', '--spacing-s', '--spacing-m']);
 Playground::type('Font sizes', ['--font-size-s', '--font-size-base', '--font-size-l']);
 ```
 
-## Placeholder Content
+## Placeholder content
 
-Generate placeholder content directly in your playground snippets (or anywhere else) by using the `Placeholder` class:
+The `Placeholder` class makes text and images for playground snippets, or anywhere else:
 
 ```php
 use Medienbaecker\Playground\Placeholder;
@@ -145,53 +131,50 @@ Placeholder::text([
 ])
 ```
 
-For names, titles, or other non-sentence content, set `prefix` and `suffix` to `false` (or `null` or `''`):
+For names or titles, turn off the prefix and suffix to get random words without "Lorem ipsum" and the period:
 
 ```php
 Placeholder::text(['words' => 5, 'prefix' => false, 'suffix' => false])
 ```
 
-This way you will get random words, _not_ starting with Lorem ipsum and _not_ ending with a period.
-
 ### Images
 
-Returns virtual Kirby File objects with full thumb support. Images are downloaded from [picsum.photos](https://picsum.photos) and cached locally.
+Images come from [picsum.photos](https://picsum.photos) as Kirby file objects, so thumbs work:
 
 ```php
-// Seeded image (recommended - cached locally)
-Placeholder::image('hero')  // shorthand
-Placeholder::image(['seed' => 'hero'])
+Placeholder::image('hero')  // shorthand for ['seed' => 'hero']
 Placeholder::image(['seed' => 'card', 'width' => 400, 'height' => 300])
-
-// Specific image by picsum ID
-Placeholder::image(['id' => 237])
-
-// Multiple images
-Placeholder::images(6, ['seed' => 'gallery'])  // gallery-0, gallery-1, ...
-Placeholder::images(4, ['width' => 400, 'height' => 300, 'seed' => 'thumbs'])
-
-// Random image (downloads fresh each page load - slow!)
-Placeholder::image()
-Placeholder::images(6)
-
-// With file content (alt, caption, etc.)
+Placeholder::image(['id' => 237])  // picsum image ID
 Placeholder::image(['seed' => 'hero', 'content' => ['alt' => 'Hero image', 'caption' => Placeholder::text(['words' => 10])]])
-```
 
-**Use seeds for fast page loads.** Unseeded images download from picsum.photos on every request. Seeded images are cached locally after the first download.
+Placeholder::images(6, ['seed' => 'gallery'])  // gallery-0, gallery-1, ...
 
-Full thumb support:
-
-```php
 Placeholder::image('hero')->thumb('card')
 Placeholder::image('test')->crop(200, 200)
 ```
 
-Images are cached in `media/playground-source/`. Delete that folder to re-download.
+Images with a seed or ID are downloaded once and cached in `media/playground-source/`; delete that folder to download them again. Images without either, like `Placeholder::image()` or `Placeholder::images(6)`, are downloaded on every request, which is slow.
+
+## Assets
+
+The playground loads these files when they exist:
+
+```
+assets/
+├── css/
+│   └── playground/
+│       ├── playground.css
+│       └── buttons.css
+└── js/
+    └── playground/
+        └── buttons.js
+```
+
+`playground.css` is loaded on every playground page. `buttons.css` is loaded on `/playground/buttons` and its cases, `buttons.js` only in its cases.
 
 ## Configuration
 
-You can enable authentication to restrict access to logged-in Panel users:
+To restrict the playground to logged-in users:
 
 ```php
 // site/config/config.php
@@ -200,21 +183,4 @@ return [
 ];
 ```
 
-Playground pages are wrapped in `snippet('head')` and `snippet('bottom')`. If your site uses other names, override `site/snippets/playground-ui/head.php` and `bottom.php`. The same works for `playground-ui/sidebar`, `playground-ui/header`, `playground-ui/component`, `playground-ui/case` and `playground-ui/not-found`.
-
-## Directory Structure
-
-```
-assets/
-├── css/
-│   └── playground/
-│       ├── playground.css
-│       └── your-component.css
-├── js/
-│   └── playground/
-│       └── your-component.js
-site/
-├── snippets/
-│   └── playground/
-│       └── your-component.php
-```
+Playground pages are wrapped in `snippet('head')` and `snippet('bottom')`. If your snippets have other names, override `site/snippets/playground-ui/head.php` and `bottom.php`. The other `playground-ui/*` snippets can be overridden the same way: `sidebar`, `header`, `component`, `case`, `not-found`, `swatches`, `sizes` and `type`.
