@@ -24,3 +24,14 @@ for (const element of document.querySelectorAll(".playground-ui-value")) {
     element.textContent = value === "rem" ? `${+(pixels / parseFloat(getComputedStyle(document.documentElement).fontSize)).toFixed(2)}rem` : `${Math.round(pixels)}px`;
   }
 }
+
+/**
+ * Sizes the frame to the case inside it, as soon as it renders rather than once every image has loaded
+ */
+if (window.frameElement) {
+  const render = document.querySelector(".playground-ui-case__render");
+
+  new ResizeObserver(() => {
+    frameElement.style.blockSize = `${Math.floor(render.getBoundingClientRect().bottom + scrollY)}px`;
+  }).observe(render);
+}

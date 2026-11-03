@@ -1,29 +1,8 @@
-/**
- * Resolves once the frame shows its case
- */
-function loaded(frame) {
-  return new Promise((resolve) => {
-    if (frame.contentDocument?.readyState === "complete" && frame.contentDocument.URL !== "about:blank") {
-      resolve();
-    } else {
-      frame.addEventListener("load", resolve, { once: true });
-    }
-  });
-}
-
 for (const section of document.querySelectorAll(".playground-ui-case")) {
   const box = section.querySelector(".playground-ui-case__frame");
   const frame = section.querySelector(".playground-ui-case__iframe");
   const handle = section.querySelector(".playground-ui-case__handle");
   const width = section.querySelector(".playground-ui-case__width");
-
-  loaded(frame).then(() => {
-    const render = frame.contentDocument.querySelector(".playground-ui-case__render");
-
-    new frame.contentWindow.ResizeObserver(() => {
-      frame.style.blockSize = `${Math.floor(render.getBoundingClientRect().bottom + frame.contentWindow.scrollY)}px`;
-    }).observe(render);
-  });
 
   new ResizeObserver(() => {
     width.textContent = `${Math.round(frame.clientWidth)}px`;
