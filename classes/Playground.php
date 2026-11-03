@@ -156,11 +156,13 @@ class Playground
         $pages  = [];
 
         foreach (static::components() as $component) {
-            $pages["{$folder}/" . basename($component['name'])] ??= $component;
-
             foreach (static::shows($component['name']) as $name) {
-                $pages[$name] = $component;
+                $pages[$name] ??= $component;
             }
+        }
+
+        foreach (static::components() as $component) {
+            $pages["{$folder}/" . basename($component['name'])] = $component;
         }
 
         $coverage = [];
