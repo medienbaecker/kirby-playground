@@ -48,17 +48,7 @@ Playground::case('Flush', fn () => snippet('components/hero'), attributes: ['sty
 
 ![The docs of the button component: description and props table](.github/docs.png)
 
-A playground page documents `components/<page name>` when that snippet exists, so `playground/button.php` shows the docs of `components/button.php`. To document other snippets, or several, name them with `@component` tags:
-
-```php
-<?php
-
-/**
- * @component components/button
- */
-```
-
-The page then shows that snippet's docblock above the cases: the description, Markdown allowed, and a table of its `@var` props.
+`playground/button.php` shows the docs of `components/button.php`: the description from its docblock, Markdown allowed, and a table of its `@var` props.
 
 ```php
 <?php
@@ -75,7 +65,7 @@ The page then shows that snippet's docblock above the cases: the description, Ma
  */
 ```
 
-The first paragraph is the summary and is not shown. A one-line `/** @var Page $page */` hint before the docblock is skipped.
+The first line, the name, isn't shown; the page title already says it. To document other snippets, or several, name them in the playground page's docblock with `@component components/<name>`.
 
 ## Tokens
 
