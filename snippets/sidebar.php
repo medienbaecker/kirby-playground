@@ -1,12 +1,8 @@
 <?php
 
 /**
- * @var string $current Name of the page shown
+ * @var array<string, array<array{title: string, url: string, current: bool}>> $groups Links, keyed by group heading
  */
-
-use Medienbaecker\Playground\Playground;
-
-$groups = Playground::groups();
 
 ?>
 <div class="playground-ui-sidebar">
@@ -16,15 +12,15 @@ $groups = Playground::groups();
 		</svg>
 	</button>
 	<nav class="playground-ui-sidebar__nav" id="playground-ui-sidebar" aria-label="Playground pages">
-		<?php foreach ($groups as $group => $components): ?>
+		<?php foreach ($groups as $heading => $links): ?>
 			<div class="playground-ui-sidebar__group">
 				<?php if (count($groups) > 1): ?>
-					<h2 class="playground-ui-sidebar__heading"><?= esc($group === '' ? 'Components' : $group) ?></h2>
+					<h2 class="playground-ui-sidebar__heading"><?= esc($heading) ?></h2>
 				<?php endif ?>
 				<ul class="playground-ui-sidebar__list">
-					<?php foreach ($components as $component): ?>
+					<?php foreach ($links as $link): ?>
 						<li class="playground-ui-sidebar__item">
-							<a <?= attr(['class' => 'playground-ui-sidebar__link', 'href' => $component['url'], 'aria-current' => $component['name'] === $current ? 'page' : null]) ?>><?= esc($component['title']) ?></a>
+							<a <?= attr(['class' => 'playground-ui-sidebar__link', 'href' => $link['url'], 'aria-current' => $link['current'] ? 'page' : null]) ?>><?= esc($link['title']) ?></a>
 						</li>
 					<?php endforeach ?>
 				</ul>

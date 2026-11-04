@@ -85,6 +85,22 @@ Playground::sizes('Spacing', ['--space-2xs', '--space-xs', '--space-s', '--space
 Playground::type('Font sizes', ['--font-size-2xl', '--font-size-xl', '--font-size-l', '--font-size-m', '--font-size-base', '--font-size-s']);
 ```
 
+## Test pages
+
+Any template can show its page in the playground's interface with `Playground::page()`: a frame per case, and a sidebar with the pages you pass, keyed by group heading. Cases can come from content you edit in the Panel, so the blueprints get tested too:
+
+```php
+<?php
+
+use Medienbaecker\Playground\Playground;
+
+Playground::page(function () use ($page) {
+    foreach ($page->children() as $case) {
+        Playground::component($case->title()->value(), 'components/quote', $case->content()->toArray());
+    }
+}, ['Tests' => $page->siblings()]);
+```
+
 ## Placeholder content
 
 The `Placeholder` class makes text and images for playground snippets, or anywhere else:

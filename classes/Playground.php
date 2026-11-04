@@ -85,19 +85,40 @@ class Playground
 	}
 
 	/**
-	 * Renders a playground page, or only the case with this id for its frame
+	 * A whole page in the playground's interface, from any template: the cases from `$cases`, and a sidebar
+	 * with the pages in `$sidebar`, keyed by group heading
+	 *
+	 * @param array<string, \Kirby\Cms\Pages> $sidebar
 	 */
-	public static function render(string $component, string|null $case = null): void
+	public static function page(Closure $cases, array $sidebar = []): void
+	{
+		snippet('playground-ui/layout', [
+			'title'   => page()->title()->value(),
+			'cases'   => $cases,
+			'docs'    => [],
+			'sidebar' => array_map(fn ($pages) => $pages->values(fn ($page) => [
+				'title'   => $page->title()->value(),
+				'url'     => $page->url(),
+				'current' => $page->is(page()),
+			]), $sidebar),
+			'name'    => null,
+		]);
+	}
+
+	/**
+	 * Renders the cases, or only the case with this id for its frame
+	 */
+	public static function render(Closure $cases, string|null $case = null): void
 	{
 		if ($case === null) {
-			snippet("playground/{$component}");
+			$cases();
 			return;
 		}
 
 		static::$only = $case;
 
 		ob_start();
-		snippet("playground/{$component}");
+		$cases();
 		ob_end_clean();
 
 		echo static::$frame ?: '<div class="playground-ui-case__render">No case with the id <code>' . esc($case) . '</code>.</div>';
@@ -143,16 +164,20 @@ class Playground
 	}
 
 	/**
-	 * Components keyed by group, `''` for those outside a folder
+	 * Sidebar links to every playground page, keyed by group, `Components` for those outside a folder
 	 *
-	 * @return array<string, array>
+	 * @return array<string, array<array{title: string, url: string, current: bool}>>
 	 */
-	public static function groups(): array
+	public static function groups(string|null $current = null): array
 	{
 		$groups = [];
 
 		foreach (static::components() as $component) {
-			$groups[$component['group']][] = $component;
+			$groups[$component['group'] ?: 'Components'][] = [
+				'title'   => $component['title'],
+				'url'     => $component['url'],
+				'current' => $component['name'] === $current,
+			];
 		}
 
 		return $groups;
