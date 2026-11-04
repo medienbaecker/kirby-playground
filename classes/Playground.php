@@ -92,16 +92,24 @@ class Playground
 	 */
 	public static function page(Closure $cases, array $sidebar = []): void
 	{
+		$links = [];
+
+		foreach ($sidebar as $heading => $pages) {
+			foreach ($pages as $link) {
+				$links[$heading][] = [
+					'title'   => $link->title()->value(),
+					'url'     => $link->url(),
+					'current' => $link->is(page()),
+				];
+			}
+		}
+
 		snippet('playground-ui/layout', [
-			'title'   => page()->title()->value(),
-			'cases'   => $cases,
-			'docs'    => [],
-			'sidebar' => array_map(fn ($pages) => $pages->values(fn ($page) => [
-				'title'   => $page->title()->value(),
-				'url'     => $page->url(),
-				'current' => $page->is(page()),
-			]), $sidebar),
-			'name'    => null,
+			'title'     => page()->title()->value(),
+			'cases'     => $cases,
+			'docs'      => [],
+			'sidebar'   => $links,
+			'component' => null,
 		]);
 	}
 

@@ -5,7 +5,7 @@
  * @var \Closure $cases Renders the page's cases
  * @var array<string, string> $docs Files of the snippets to document, keyed by snippet name
  * @var array<string, array<array{title: string, url: string, current: bool}>> $sidebar Links, keyed by group heading
- * @var string|null $name Loads `assets/css/playground/<name>.css` and `assets/js/playground/<name>.js`
+ * @var string|null $component Loads `assets/css/playground/<component>.css` and `assets/js/playground/<component>.js`
  */
 
 use Medienbaecker\Playground\Docblock;
@@ -13,24 +13,25 @@ use Medienbaecker\Playground\Playground;
 
 $case      = get('case');
 $plugin    = kirby()->plugin('medienbaecker/playground');
-$globalCss = asset('assets/css/playground/playground.css');
-$ownCss    = $name ? asset("assets/css/playground/{$name}.css") : null;
-$ownJs     = $name ? asset("assets/js/playground/{$name}.js") : null;
-$versioned = fn ($asset) => $asset?->exists() ? $asset->url() . '?v=' . $asset->modified() : null;
+$versioned = function (string $path) {
+	$asset = asset($path);
+
+	return $asset->exists() ? $asset->url() . '?v=' . $asset->modified() : null;
+};
 
 snippet('playground-ui/head');
 ?>
 <?= css(array_filter([
 	$plugin->asset($case !== null ? 'frame.css' : 'playground.css')->url(),
-	$versioned($globalCss),
-	$versioned($ownCss),
+	$versioned('assets/css/playground/playground.css'),
+	$component ? $versioned("assets/css/playground/{$component}.css") : null,
 ])) ?>
 
 <?php if ($case !== null): ?>
 	<?php Playground::render($cases, $case) ?>
 	<?= js(array_filter([
 		$plugin->asset('frame.js')->url(),
-		$versioned($ownJs),
+		$component ? $versioned("assets/js/playground/{$component}.js") : null,
 	])) ?>
 <?php else: ?>
 	<main class="playground-ui">

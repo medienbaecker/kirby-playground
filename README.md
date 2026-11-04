@@ -209,4 +209,4 @@ return [
 ];
 ```
 
-Playground pages are wrapped in `snippet('head')` and `snippet('bottom')`. If your snippets have other names, override `site/snippets/playground-ui/head.php` and `bottom.php`. The other `playground-ui/*` snippets can be overridden the same way: `sidebar`, `component`, `case`, `not-found`, `swatches`, `sizes` and `type`.
+Playground pages are wrapped in `snippet('head')` and `snippet('bottom')`. If your snippets have other names, override `site/snippets/playground-ui/head.php` and `bottom.php`. The other `playground-ui/*` snippets can be overridden the same way: `layout`, `sidebar` (it gets `$groups`, links keyed by heading), `component`, `case`, `not-found`, `swatches`, `sizes` and `type`.
