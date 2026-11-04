@@ -85,6 +85,37 @@ Playground::sizes('Spacing', ['--space-2xs', '--space-xs', '--space-s', '--space
 Playground::type('Font sizes', ['--font-size-2xl', '--font-size-xl', '--font-size-l', '--font-size-m', '--font-size-base', '--font-size-s']);
 ```
 
+## Test pages
+
+`Playground::page()` puts any page into the playground's interface. Write the cases in its template, and pass the pages for the sidebar, keyed by heading. The cases can come from content you edit in the Panel, so your blueprints get tested too:
+
+![A blocks field with a heading, two texts, a list and a long heading](.github/test-panel.png)
+
+```php
+<?php
+
+use Medienbaecker\Playground\Playground;
+
+Playground::page(function () use ($page) {
+    foreach ($page->text()->toBlocks() as $block) {
+        Playground::case(ucfirst($block->type()), fn () => print $block);
+    }
+}, ['Tests' => $page->siblings()]);
+```
+
+![The same page with a frame per block and its sibling pages in the sidebar](.github/test-page.png)
+
+`Playground::page()` writes the whole document, so the template needs nothing else. Frames load the same URL with `?case=<id>`, so the page has to list the same cases in the same order on every request.
+
+When a case brings its own spacing, turn off the space around it in `assets/css/playground/playground.css`:
+
+```css
+.playground-ui-case__render:has(> .section) {
+    --playground-ui-case-padding-block: 0;
+    --playground-ui-case-padding-inline: 0;
+}
+```
+
 ## Placeholder content
 
 The `Placeholder` class makes text and images for playground snippets, or anywhere else:
@@ -193,4 +224,4 @@ return [
 ];
 ```
 
-Playground pages are wrapped in `snippet('head')` and `snippet('bottom')`. If your snippets have other names, override `site/snippets/playground-ui/head.php` and `bottom.php`. The other `playground-ui/*` snippets can be overridden the same way: `sidebar`, `component`, `case`, `not-found`, `swatches`, `sizes` and `type`.
+Playground pages are wrapped in `snippet('head')` and `snippet('bottom')`. If your snippets have other names, override `site/snippets/playground-ui/head.php` and `bottom.php`. The other `playground-ui/*` snippets can be overridden the same way: `layout`, `sidebar` (it gets `$groups`, links keyed by heading), `component`, `case`, `not-found`, `swatches`, `sizes` and `type`.
