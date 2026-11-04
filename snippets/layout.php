@@ -16,20 +16,21 @@ $plugin    = kirby()->plugin('medienbaecker/playground');
 $globalCss = asset('assets/css/playground/playground.css');
 $ownCss    = $name ? asset("assets/css/playground/{$name}.css") : null;
 $ownJs     = $name ? asset("assets/js/playground/{$name}.js") : null;
+$versioned = fn ($asset) => $asset?->exists() ? $asset->url() . '?v=' . $asset->modified() : null;
 
 snippet('playground-ui/head');
 ?>
 <?= css(array_filter([
 	$plugin->asset($case !== null ? 'frame.css' : 'playground.css')->url(),
-	$globalCss->exists() ? $globalCss->url() : null,
-	$ownCss?->exists() ? $ownCss->url() : null,
+	$versioned($globalCss),
+	$versioned($ownCss),
 ])) ?>
 
 <?php if ($case !== null): ?>
 	<?php Playground::render($cases, $case) ?>
 	<?= js(array_filter([
 		$plugin->asset('frame.js')->url(),
-		$ownJs?->exists() ? $ownJs->url() : null,
+		$versioned($ownJs),
 	])) ?>
 <?php else: ?>
 	<main class="playground-ui">
