@@ -3,6 +3,7 @@
 /**
  * @var string $id
  * @var string $label
+ * @var string $document The frame's document, written into the frame by `playground.js`
  */
 
 ?>
@@ -14,7 +15,8 @@
 		<span class="playground-ui-case__width"></span>
 	</div>
 	<div class="playground-ui-case__frame">
-		<iframe class="playground-ui-case__iframe" src="?case=<?= esc($id, 'attr') ?>" title="<?= esc($label, 'attr') ?>"></iframe>
+		<iframe class="playground-ui-case__iframe" title="<?= esc($label, 'attr') ?>"></iframe>
+		<template class="playground-ui-case__document"><?= $document ?></template>
 		<div class="playground-ui-case__handle"></div>
 	</div>
 </section>

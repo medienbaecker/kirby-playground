@@ -30,7 +30,8 @@ Kirby::plugin('medienbaecker/playground', [
 		'playground-ui/sizes'     => __DIR__ . '/snippets/sizes.php',
 		'playground-ui/type'      => __DIR__ . '/snippets/type.php',
 		'playground-ui/sidebar'   => __DIR__ . '/snippets/sidebar.php',
-		'playground-ui/layout'    => __DIR__ . '/snippets/layout.php'
+		'playground-ui/layout'    => __DIR__ . '/snippets/layout.php',
+		'playground-ui/frame'     => __DIR__ . '/snippets/frame.php'
 	],
 
 	'routes' => require __DIR__ . '/routes.php'

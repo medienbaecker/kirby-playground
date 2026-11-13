@@ -17,8 +17,16 @@
 	}
 }
 
+/* Error */
+
+.playground-ui-case__error {
+	margin: 0;
+	overflow-wrap: anywhere;
+}
+
 /* Token helpers */
 
+.playground-ui-case__error,
 .playground-ui-swatches,
 .playground-ui-sizes,
 .playground-ui-typeset__kicker {

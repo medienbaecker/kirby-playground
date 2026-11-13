@@ -6,40 +6,45 @@ use Closure;
 use Kirby\Filesystem\Dir;
 use Kirby\Template\Snippet;
 use Kirby\Toolkit\Str;
+use Throwable;
 
 class Playground
 {
 	/** @var array<string, true> */
 	private static array $ids = [];
 
-	private static string|null $only = null;
-
-	private static string $frame = '';
+	private static string|null $component = null;
 
 	/**
 	 * Renders one labelled case with an anchor and a resizable frame that shows it
-	 * Inside the frame, only the rendered case
+	 * An error in the case shows in its frame instead of breaking the page
 	 *
 	 * @param array<string, mixed> $attributes Added to the box around the rendered case, e.g. a surface colour
 	 */
 	public static function case(string $label, Closure $render, array $attributes = []): void
 	{
-		$id = static::id($label);
+		$level = ob_get_level();
+		ob_start();
 
-		if (static::$only === null) {
-			snippet('playground-ui/case', [
-				'id'    => $id,
-				'label' => $label,
-			]);
-
-			return;
-		}
-
-		if (static::$only === $id) {
-			ob_start();
+		try {
 			$render();
-			static::$frame = '<div ' . attr([...$attributes, 'class' => 'playground-ui-case__render']) . '>' . ob_get_clean() . '</div>';
+			$output = ob_get_clean();
+		} catch (Throwable $error) {
+			while (ob_get_level() > $level) {
+				ob_end_clean();
+			}
+
+			$output = '<p class="playground-ui-case__error">' . esc($error->getMessage()) . '<br>' . esc($error->getFile()) . ':' . $error->getLine() . '</p>';
 		}
+
+		snippet('playground-ui/case', [
+			'id'       => static::id($label),
+			'label'    => $label,
+			'document' => snippet('playground-ui/frame', [
+				'render'    => '<div ' . attr([...$attributes, 'class' => 'playground-ui-case__render']) . '>' . $output . '</div>',
+				'component' => static::$component,
+			], true),
+		]);
 	}
 
 	/**
@@ -114,22 +119,22 @@ class Playground
 	}
 
 	/**
-	 * Renders the cases, or only the case with this id for its frame
+	 * Renders the cases, each in a frame that loads the component's assets
 	 */
-	public static function render(Closure $cases, string|null $case = null): void
+	public static function render(Closure $cases, string|null $component = null): void
 	{
-		if ($case === null) {
-			$cases();
-			return;
-		}
-
-		static::$only = $case;
-
-		ob_start();
+		static::$component = $component;
 		$cases();
-		ob_end_clean();
+	}
 
-		echo static::$frame ?: '<div class="playground-ui-case__render">No case with the id <code>' . esc($case) . '</code>.</div>';
+	/**
+	 * The URL of a site asset with its modified time, so browsers fetch new versions, or `null` if it doesn't exist
+	 */
+	public static function versioned(string $path): string|null
+	{
+		$asset = asset($path);
+
+		return $asset->exists() ? $asset->url() . '?v=' . $asset->modified() : null;
 	}
 
 	/**
