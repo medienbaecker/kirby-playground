@@ -177,6 +177,10 @@
 	gap: 1.5rem;
 	min-inline-size: 0;
 	padding-block: 1.5rem;
+
+	&:not([data-ready]) .playground-ui-case {
+		visibility: hidden;
+	}
 }
 
 /* Intro */

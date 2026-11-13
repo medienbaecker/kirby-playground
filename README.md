@@ -14,7 +14,7 @@ Subfolders become groups in the sidebar: `form/input.php` is listed under "Form"
 
 ![The three cases below, the first dragged to 360px](.github/cases.png)
 
-`Playground::case()` takes a label and a closure that renders the case. Each case gets an anchor and its own iframe, loaded at `?case=<id>`, so media queries react to the frame's width. Drag its right edge to resize it; the width shows next to the label.
+`Playground::case()` takes a label and a closure that renders the case. Each case gets an anchor and its own iframe, so media queries react to the frame's width. All cases render in the page's request, and the cases show once every frame has its height, so the page doesn't jump while it loads. An error in a case shows in its frame instead of breaking the page. Drag its right edge to resize it; the width shows next to the label.
 
 ```php
 use Medienbaecker\Playground\Playground;
@@ -105,7 +105,7 @@ Playground::page(function () use ($page) {
 
 ![The same page with a frame per block and its sibling pages in the sidebar](.github/test-page.png)
 
-`Playground::page()` writes the whole document, so the template needs nothing else. Frames load the same URL with `?case=<id>`, so the page has to list the same cases in the same order on every request.
+`Playground::page()` writes the whole document, so the template needs nothing else.
 
 When a case brings its own spacing, turn off the space around it in `assets/css/playground/playground.css`:
 
@@ -194,7 +194,7 @@ Placeholder::image('hero')->thumb('card')
 Placeholder::image('test')->crop(200, 200)
 ```
 
-Images are downloaded once and cached in `media/playground-source/`; delete that folder to download them again. Images without a seed or ID get one from their case and position, so they stay the same on every reload.
+Images are downloaded once and cached in `media/playground-source/`; delete that folder to download them again. Images without a seed or ID get one from their position on the page, so they stay the same on every reload.
 
 ## Assets
 

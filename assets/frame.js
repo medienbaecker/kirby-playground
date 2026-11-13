@@ -37,5 +37,6 @@ if (window.frameElement) {
 
 	new ResizeObserver(() => {
 		frameElement.style.blockSize = `${Math.floor(render.getBoundingClientRect().bottom)}px`;
+		frameElement.toggleAttribute("data-sized", true);
 	}).observe(render);
 }
